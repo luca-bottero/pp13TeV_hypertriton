@@ -7,7 +7,7 @@ import uproot
 from hipe4ml.tree_handler import TreeHandler
 
 #%%
-data = TreeHandler("/home/luca/Desktop/Tesi/Code/pp/SignalTable_pp13TeV_mtexp.root", "SignalTable").get_data_frame()
+data = TreeHandler("/home/luca/Desktop/Tesi/Code/pp13TeV_hypertriton/SignalTable_pp13TeV_mtexp.root", "SignalTable").get_data_frame()
 
 #%%
 training_variables = ["pt", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr", "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2"]
@@ -45,64 +45,69 @@ plt.savefig("./images/ct_distr_rej.png",dpi = 300, facecolor = 'white')
 plt.show()
 
 # %%
-# EFFICENCY HISTOGRAMS
+# efficiency HISTOGRAMS
 
 hist_rec, bin_edges = np.histogram(rec['pt'], bins=100, density=False)
 hist_gen, bin_edges = np.histogram(data['gPt'], bins=bin_edges, density=False)
 plt.bar((bin_edges[1:] + bin_edges[:-1]) * .5, (hist_rec/hist_gen),width=(bin_edges[1] - bin_edges[0]), color="blue")
-plt.title('$p_T$ efficency', fontsize=15)
+plt.title('$p_T$ efficiency', fontsize=15)
 plt.xlabel('$p_T$  [GeV/c]', fontsize=12)
-plt.ylabel('efficency', fontsize=12)
-plt.savefig('./images/pt_efficency.png',dpi = 300, facecolor = 'white')
+plt.ylabel('efficiency', fontsize=12)
+plt.savefig('./images/pt_efficiency.png',dpi = 300, facecolor = 'white')
 plt.show()
 
 hist_rec, bin_edges = np.histogram(rec_rej_acc['pt'], bins=100, density=False)
 hist_gen, bin_edges = np.histogram(data.query('rej_accept > 0')['gPt'], bins=bin_edges, density=False)    #!!!!! should I include .query('rej_accept > 0') ???
 plt.bar((bin_edges[1:] + bin_edges[:-1]) * .5, (hist_rec/hist_gen),width=(bin_edges[1] - bin_edges[0]), color="orange")
-plt.title('$p_T$ efficency with rejection', fontsize=15)
+plt.title('$p_T$ efficiency with rejection', fontsize=15)
 plt.xlabel('$p_T$  [GeV/c]', fontsize=12)
-plt.ylabel('efficency', fontsize=12)
-plt.savefig('./images/pt_efficency_rej.png',dpi = 300, facecolor = 'white')
+plt.ylabel('efficiency', fontsize=12)
+plt.savefig('./images/pt_efficiency_rej.png',dpi = 300, facecolor = 'white')
 plt.show()
 
 hist_rec, bin_edges = np.histogram(rec['ct'], bins=100, density=False)
 hist_gen, bin_edges = np.histogram(data['gCt'], bins=bin_edges, density=False)
 plt.bar((bin_edges[1:] + bin_edges[:-1]) * .5, (hist_rec/hist_gen),width=(bin_edges[1] - bin_edges[0]), color="blue")
-plt.title('ct efficency', fontsize=15)
+plt.title('ct efficiency', fontsize=15)
 plt.xlabel('ct  [cm]', fontsize=12)
-plt.ylabel('efficency', fontsize=12)
-plt.savefig('./images/ct_efficency.png',dpi = 300, facecolor = 'white')
+plt.ylabel('efficiency', fontsize=12)
+plt.savefig('./images/ct_efficiency.png',dpi = 300, facecolor = 'white')
 plt.show()
 
 hist_rec, bin_edges = np.histogram(rec_rej_acc['ct'], bins=100, density=False)
 hist_gen, bin_edges = np.histogram(data.query('rej_accept > 0')['gCt'], bins=bin_edges, density=False)
 plt.bar((bin_edges[1:] + bin_edges[:-1]) * .5, (hist_rec/hist_gen),width=(bin_edges[1] - bin_edges[0]), color="orange")
-plt.title('ct efficency with rejection', fontsize=15)
+plt.title('ct efficiency with rejection', fontsize=15)
 plt.xlabel('ct  [cm]', fontsize=12)
-plt.ylabel('efficency', fontsize=12)
-plt.savefig('./images/ct_efficency_rej.png',dpi = 300, facecolor = 'white')
+plt.ylabel('efficiency', fontsize=12)
+plt.savefig('./images/ct_efficiency_rej.png',dpi = 300, facecolor = 'white')
 plt.show()
 
 #%%
 # EFFICIENCIES WITH CUTS
 
-hist_rec, bin_edges = np.histogram(rec_rej_acc['pt'], bins=100, density=False)
-hist_gen, bin_edges = np.histogram(data.query('rej_accept > 0')['gPt'], bins=bin_edges, density=False)    #!!!!! should I include .query('rej_accept > 0') ???
-plt.bar((bin_edges[1:] + bin_edges[:-1]) * .5, (hist_rec/hist_gen),width=(bin_edges[1] - bin_edges[0]), color="orange")
-plt.title('$p_T$ efficency with rejection', fontsize=15)
-plt.xlabel('$p_T$  [GeV/c]', fontsize=12)
-plt.ylabel('efficency', fontsize=12)
-plt.savefig('./images/pt_efficency_rej.png',dpi = 300, facecolor = 'white')
-plt.show()
+query = 'abs(tpc_nsig_de) < 3 & abs(tpc_nsig_pr) < 3 & abs(tpc_nsig_pi) < 3 & cos_pa > '
 
-hist_rec, bin_edges = np.histogram(rec_rej_acc['ct'], bins=100, density=False)
-hist_gen, bin_edges = np.histogram(data.query('rej_accept > 0')['gCt'], bins=bin_edges, density=False)
-plt.bar((bin_edges[1:] + bin_edges[:-1]) * .5, (hist_rec/hist_gen),width=(bin_edges[1] - bin_edges[0]), color="orange")
-plt.title('ct efficency with rejection', fontsize=15)
-plt.xlabel('ct  [cm]', fontsize=12)
-plt.ylabel('efficency', fontsize=12)
-plt.savefig('./images/ct_efficency_rej.png',dpi = 300, facecolor = 'white')
-plt.show()
+for cos_pa in (0.99,0.98):
+    hist_rec, bin_edges = np.histogram(rec_rej_acc.query(query + str(cos_pa))['pt'], bins=100, density=False)
+    hist_gen, bin_edges = np.histogram(data.query('rej_accept > 0')['gPt'], bins=bin_edges, density=False)    
+    plt.bar((bin_edges[1:] + bin_edges[:-1]) * .5, (hist_rec/hist_gen),width=(bin_edges[1] - bin_edges[0]), color="orange")
+    plt.title('$p_T$, TPC $|n\sigma| < 3$  $\cos(p_a)>$'+str(cos_pa), fontsize=15)
+    plt.xlabel('$p_T$  [GeV/c]', fontsize=12)
+    plt.ylabel('efficiency', fontsize=12)
+    plt.savefig('./images/pt_eff_rej_cospa_' + str(cos_pa) + '.png',dpi = 300, facecolor = 'white')
+    plt.show()
+
+    hist_rec, bin_edges = np.histogram(rec_rej_acc.query(query + str(cos_pa))['ct'], bins=100, density=False)
+    hist_gen, bin_edges = np.histogram(data.query('rej_accept > 0')['gCt'], bins=bin_edges, density=False)
+    plt.bar((bin_edges[1:] + bin_edges[:-1]) * .5, (hist_rec/hist_gen),width=(bin_edges[1] - bin_edges[0]), color="orange")
+    plt.title('ct, TPC $|n\sigma| < 3$  $\cos(p_a)>$'+str(cos_pa), fontsize=15)
+    plt.xlabel('ct  [cm]', fontsize=12)
+    plt.ylabel('efficiency', fontsize=12)
+    plt.savefig('./images/ct_eff_rej_cospa_' + str(cos_pa) + '.png',dpi = 300, facecolor = 'white')
+    plt.show()
+
+
 
 
 
@@ -112,10 +117,10 @@ plt.show()
 hist_gen, bin_edges = np.histogram(rec['gPt'], bins=100, density=False)
 hist_rec, bin_edges = np.histogram(rec['pt'], bins=bin_edges, density=False)
 plt.bar((bin_edges[1:] + bin_edges[:-1]) * .5, (hist_rec/hist_gen),width=(bin_edges[1] - bin_edges[0]), color="blue")
-plt.title('$p_T$ efficency', fontsize=15)
+plt.title('$p_T$ efficiency', fontsize=15)
 plt.xlabel('$p_T$  [GeV/c]', fontsize=12)
 plt.ylabel('Count', fontsize=12)
-plt.savefig('./images/pt_efficency.png',dpi = 300, facecolor = 'white')
+plt.savefig('./images/pt_efficiency.png',dpi = 300, facecolor = 'white')
 plt.show()
 
 hist_gen, bin_edges = np.histogram(rec_rej_acc['gPt'], bins=100, density=False)
