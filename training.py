@@ -15,7 +15,7 @@ from hipe4ml import plot_utils
 print('Loading Monte-Carlo data...')
 mc_signal_raw = TreeHandler(os.path.abspath(os.getcwd()) + '/data/SignalTable_pp13TeV_tofPID_mtexp.root', "SignalTable")
 print('Done \nFiltering MC data...')
-mc_signal = mc_signal_raw.get_subset('rej_accept > 0')
+mc_signal = mc_signal_raw.get_subset('rej_accept > 0 and pt>0')
 del mc_signal_raw       #free the memory. This and the comment are useful because of intense memory usage 
 print('Done \nLoading background...')
 backgorund_ls = TreeHandler(os.path.abspath(os.getcwd()) + '/data/DataTable_pp_LS.root', "DataTable")
@@ -50,8 +50,8 @@ model_hdl.train_test_model(train_test_data)
 
 #%%
 
-y_pred_train = model_hdl.predict(train_test_data[0], False)
-y_pred_test = model_hdl.predict(train_test_data[2], False)
+y_pred_train = model_hdl.predict(train_test_data[0], True)
+y_pred_test = model_hdl.predict(train_test_data[2], True)
 
 plt.rcParams["figure.figsize"] = (10, 7)
 leg_labels = ['background', 'signal']
