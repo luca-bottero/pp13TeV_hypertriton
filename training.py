@@ -6,6 +6,7 @@ import seaborn as sns
 import uproot
 import os
 import xgboost as xgb
+import shap
 from sklearn.model_selection import train_test_split
 from hipe4ml.model_handler import ModelHandler
 from hipe4ml.tree_handler import TreeHandler
@@ -108,7 +109,7 @@ for score in np.arange(0., max_score, 0.1):
     ax.set_xlabel(r'Mass (GeV/$c^2$)')
     ax.margins(x=0)
     ax.xaxis.set_label_coords(0.9, -0.075)
-    plt.savefig('./images/model_out_GT_' + str(score) + '.png',dpi = 300, facecolor = 'white')
+    plt.savefig('./images/model_out_GT_' + str(np.round(score,2)) + '.png',dpi = 300, facecolor = 'white')
 
 
 
@@ -124,8 +125,11 @@ plt.xlabel('BDT output')
 plt.ylabel('Efficiency')
 plt.savefig('./images/bdt_eff_bdt_out.png',dpi=300,facecolor='white')
 
-
-
 # %%
+xgb_model = model_hdl.get_original_model()
+sorted_idx = xgb_model.feature_importances_.argsort()
+plt.barh([training_variables[i] for i in sorted_idx], xgb_model.feature_importances_[sorted_idx])
+plt.xlabel("Xgboost Feature Importance")
+
 
 # %%
