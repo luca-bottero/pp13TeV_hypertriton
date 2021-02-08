@@ -45,6 +45,7 @@ train_test_data = train_test_generator([mc_signal, backgorund_ls], [1,0], test_s
   
 #%%
 
+
 model_clf = xgb.XGBClassifier()
 model_hdl = ModelHandler(model_clf, training_variables)
 model_hdl.train_test_model(train_test_data)     
@@ -111,8 +112,6 @@ for score in np.arange(0., max_score, 0.1):
     ax.xaxis.set_label_coords(0.9, -0.075)
     plt.savefig('./images/model_out_GT_' + str(np.round(score,2)) + '.png',dpi = 300, facecolor = 'white')
 
-
-
 # %%
 backgorund_ls.apply_model_handler(model_hdl)
 mc_signal.apply_model_handler(model_hdl)
@@ -130,6 +129,7 @@ xgb_model = model_hdl.get_original_model()
 sorted_idx = xgb_model.feature_importances_.argsort()
 plt.barh([training_variables[i] for i in sorted_idx], xgb_model.feature_importances_[sorted_idx])
 plt.xlabel("Xgboost Feature Importance")
+plt.savefig('./images/xgb_feature_importance.png', dpi=300, facecolor='white')
 
 
 # %%

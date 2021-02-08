@@ -276,3 +276,6 @@ plt.savefig('./images/ct_reg_gen_rej.png',dpi = 300, facecolor = 'white')
 plt.show()
 
 # %%
+
+
+# %%
