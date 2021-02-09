@@ -2,15 +2,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
 import uproot
 import os
 import xgboost as xgb
-import shap
+import mass_fit
+import ROOT
 from sklearn.model_selection import train_test_split
 from hipe4ml.model_handler import ModelHandler
 from hipe4ml.tree_handler import TreeHandler
-from hipe4ml.analysis_utils import train_test_generator, bdt_efficiency_array
+from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 #%%
 print('Loading Monte-Carlo data...')
@@ -24,11 +24,13 @@ print("Done \nLoading datas...")
 data = TreeHandler(os.path.abspath(os.getcwd()) + '/data/DataTable_pp.root', "DataTable")
 print('Done')
 
+training_variables = ["pt", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr", "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2"]
+
+
 #mc_signal = mc_signal_raw.get_subset('rej_accept > 0')
 #mc_signal_bal = mc_signal_raw.get_subset('rej_accept > 0', size=103200)      #balanced
 #%%
 # DATA EXPLORATION
-training_variables = ["pt", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr", "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2"]
 print(list(data.get_data_frame().columns))
 
 print(len(data.get_data_frame()))               #104732
@@ -39,9 +41,6 @@ print(len(mc_signal.get_data_frame()))          #2272026
 # TRAINING WITH UNBALANCED DATASET
 
 train_test_data = train_test_generator([mc_signal, backgorund_ls], [1,0], test_size=0.5)
-  
-#%%
-
 
 model_clf = xgb.XGBClassifier()
 model_hdl = ModelHandler(model_clf, training_variables)
@@ -56,7 +55,8 @@ plt.rcParams["figure.figsize"] = (10, 7)
 leg_labels = ['background', 'signal']
 
 ml_out_fig = plot_utils.plot_output_train_test(model_hdl, train_test_data, 100, 
-                                               True, leg_labels, True, density=True)
+                                               True, leg_labels, True, density=False)
+plt.savefig('./images/output_train_test.png',dpi=300,facecolor='white')
 
 roc_train_test_fig = plot_utils.plot_roc_train_test(train_test_data[3], y_pred_test,
                                                     train_test_data[1], y_pred_train, None, leg_labels)
@@ -88,18 +88,17 @@ print(len(selected_data_hndl)/len(data))
 # %%
 max_score = max(data.get_data_frame()['model_output'])
 
-if False:
-    for score in np.arange(0., max_score, 0.1):
-        selected_data_hndl = data.get_subset('model_output > ' + str(score))
-        plot_utils.plot_distr(selected_data_hndl,labels='score > ' + str(np.round(score,2)), column='m', bins=34, colors='orange', density=False,fill=True, range=[2.96,3.04])
-        ax = plt.gca()
-        ax.set_xlabel(r'Mass (GeV/$c^2$)')
-        ax.margins(x=0)
-        ax.xaxis.set_label_coords(0.9, -0.075)
-        plt.savefig('./images/model_out_GT_' + str(np.round(score,2)) + '.png',dpi = 300, facecolor = 'white')
+for score in np.arange(0., max_score, 0.1):
+    selected_data_hndl = data.get_subset('model_output > ' + str(score))
+    plot_utils.plot_distr(selected_data_hndl,labels='score > ' + str(np.round(score,2)), column='m', bins=34, colors='orange', density=False,fill=True, range=[2.96,3.04])
+    ax = plt.gca()
+    ax.set_xlabel(r'Mass (GeV/$c^2$)')
+    ax.margins(x=0)
+    ax.xaxis.set_label_coords(0.9, -0.075)
+    plt.savefig('./images/model_out_GT_' + str(np.round(score,2)) + '.png',dpi = 300, facecolor = 'white')
 
 # %%
-# BDT EFFICIENCY AS FUNCTION OF BDT OUTPUT
+# BDT EFFICIENCY AS FUNCTION OF BDT OUTPUT AND INVERSE
 bdt_efficiency = bdt_efficiency_array(train_test_data[3],y_pred_test)
 
 plt.plot(bdt_efficiency[1],bdt_efficiency[0])
@@ -107,6 +106,29 @@ plt.title("BDT efficiency as a function of BDT output")
 plt.xlabel('BDT output')
 plt.ylabel('Efficiency')
 plt.savefig('./images/bdt_eff_bdt_out.png',dpi=300,facecolor='white')
+plt.show()
+
+score_from_eff = score_from_efficiency_array(train_test_data[3],y_pred_test,np.arange(0,1,0.001))
+plt.plot(np.arange(0,1,0.001),score_from_eff)
+plt.title('BDT score as a function of BDT efficiency')
+plt.xlabel('Efficiency')
+plt.ylabel('BDT output')
+plt.savefig('./images/bdt_out_dbt_eff.png',dpi=300,facecolor='white')
+plt.show()
+
+#%%
+#Calculate the previous values on range 65-90 %
+min_eff = 0.65
+max_eff = 0.9
+
+scores = score_from_efficiency_array(train_test_data[3],y_pred_test,np.arange(min_eff,max_eff,0.01))
+
+mass_fit.systematic_estimate(data,scores)
+
+#%%
+import imp
+imp.reload(mass_fit)
+
 
 #%%
 # BDT FEATURE IMPORTANCE USING HIPE4ML WITH SHAP
@@ -123,8 +145,5 @@ plt.barh([training_variables[i] for i in sorted_idx], xgb_model.feature_importan
 plt.xlabel("Xgboost Feature Importance")
 plt.savefig('./images/xgb_feature_importance.png', dpi=300, facecolor='white')
 
-
 # %%
-train_test_data[2]
-
 # %%
