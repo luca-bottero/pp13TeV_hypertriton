@@ -126,7 +126,7 @@ max_eff = 0.9
 
 scores = score_from_efficiency_array(train_test_data[3],y_pred_test,np.arange(min_eff,max_eff,0.01))
 
-mass_fit.systematic_estimate(data,scores)
+mass_fit.systematic_estimate(data,scores,np.arange(.65,.9,.01))
 
 
 #%%

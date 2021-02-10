@@ -12,9 +12,9 @@ from hipe4ml.model_handler import ModelHandler
 from hipe4ml import plot_utils
 from array import array
 
-def mass_fitter(hist,score):
+def mass_fitter(hist,score,efficiency):
     aghast_hist = aghast.from_numpy(hist)
-    root_hist = aghast.to_root(aghast_hist,'Score_' + str(np.round(score,4)))
+    root_hist = aghast.to_root(aghast_hist,'Efficiency ' + str(np.round(efficiency,4)))
 
     canvas = ROOT.TCanvas()
     root_hist.Draw()
@@ -23,10 +23,11 @@ def mass_fitter(hist,score):
     #gaus = ROOT.TF1('gaus','gaus',2.96,3.04)
     #bkg = ROOT.TF1('poly','pol 2',2.96,3.04)
     total = ROOT.TF1('total','pol1(0) + gaus(2)',2.96,3.04)
-    total.SetParameter(3, 2.99)
-    total.SetParameter(2, 20)
+    total.SetParameter(3, 2.992)
+    total.SetParLimits(3, 2.99, 2.995)
+    total.SetParameter(2, 25)
     total.SetParameter(4, 0.003)
-    total.SetParLimits(4, 0.006, 0.00001)
+    #total.SetParLimits(4, 0.006, 0.00001)
     '''
     gaus.SetLineColor( 1 )
     bkg.SetLineColor( 2 )
@@ -45,17 +46,28 @@ def mass_fitter(hist,score):
     root_hist.Fit('total', 'R+', '',2.96,3.04)
 
     ROOT.gStyle.SetOptFit(1111)
-    canvas.SaveAs('./images/mass_sys/score_' + str(np.round(score,4)) + '.png')
+    canvas.SaveAs('./images/mass_sys/eff_' + str(np.round(efficiency,4)) + '.png')
+
+    count = total.GetParameters()[2]
+    return count
 
 
-def systematic_estimate(data,scores):
+def systematic_estimate(data,scores,efficiencies):
+
+    count = []
+    i = 0
     for score in scores:
         selected_data_hndl = data.get_subset('model_output > ' + str(score)).get_data_frame()
         #hist = plot_utils.plot_distr(selected_data_hndl, column='m', bins=34, colors='orange', density=False,fill=True, range=[2.96,3.04])
         hist = np.histogram(selected_data_hndl['m'],bins=34,range=(2.96,3.04))
-        mass_fitter(hist=hist,score=score)
+        count.append(mass_fitter(hist=hist,score=score,efficiency=efficiencies[i]))
+        i += 1
 
-
-
+    plt.plot(efficiencies,count)
+    plt.title('Count from fit as a function of efficiency')
+    plt.xlabel('Efficiency')
+    plt.ylabel('Count')
+    plt.annotate('Mean: ' + str(np.round(np.mean(count),4)) + "\n$\sigma$: " + str(np.round(np.std(count),4)) ,xy=(0.68,23))
+    plt.savefig('./images/fit_count_eff_png',dpi=300,facecolor = 'white')
 
 #%%
