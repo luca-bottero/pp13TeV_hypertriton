@@ -20,10 +20,14 @@ def mass_fitter(hist,score):
     root_hist.Draw()
     canvas.Draw()
 
-    gaus = ROOT.TF1('gaus','gaus',2.96,3.04)
-    bkg = ROOT.TF1('poly','pol 2',2.96,3.04)
-    total = ROOT.TF1('total','gaus + pol 2',2.96,3.04)
-    
+    #gaus = ROOT.TF1('gaus','gaus',2.96,3.04)
+    #bkg = ROOT.TF1('poly','pol 2',2.96,3.04)
+    total = ROOT.TF1('total','pol1(0) + gaus(2)',2.96,3.04)
+    total.SetParameter(3, 2.99)
+    total.SetParameter(2, 20)
+    total.SetParameter(4, 0.003)
+    total.SetParLimits(4, 0.006, 0.00001)
+    '''
     gaus.SetLineColor( 1 )
     bkg.SetLineColor( 2 )
     total.SetLineColor( 3 )
@@ -36,9 +40,9 @@ def mass_fitter(hist,score):
     poly_par = bkg.GetParameters()
     par[0], par[1], par[2] = gaus_par[0], gaus_par[1], gaus_par[2]
     par[3], par[4], par[5] = poly_par[0], poly_par[1], poly_par[2]
-
-    total.SetParameters(par)
-    root_hist.Fit('total', 'R+','',2.96,3.04 )
+    '''
+    #total.SetParameters(par)
+    root_hist.Fit('total', 'R+', '',2.96,3.04)
 
     ROOT.gStyle.SetOptFit(1111)
     canvas.SaveAs('./images/mass_sys/score_' + str(np.round(score,4)) + '.png')

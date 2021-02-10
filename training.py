@@ -118,16 +118,15 @@ plt.show()
 
 #%%
 #Calculate the previous values on range 65-90 %
+import imp
+imp.reload(mass_fit)
+
 min_eff = 0.65
 max_eff = 0.9
 
 scores = score_from_efficiency_array(train_test_data[3],y_pred_test,np.arange(min_eff,max_eff,0.01))
 
 mass_fit.systematic_estimate(data,scores)
-
-#%%
-import imp
-imp.reload(mass_fit)
 
 
 #%%
