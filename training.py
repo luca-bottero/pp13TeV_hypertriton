@@ -7,15 +7,34 @@ import os
 import xgboost as xgb
 import mass_fit
 import ROOT
+from concurrent.futures import ThreadPoolExecutor
 from sklearn.model_selection import train_test_split
 from hipe4ml.model_handler import ModelHandler
 from hipe4ml.tree_handler import TreeHandler
 from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 #%%
-print('Loading Monte-Carlo data...')
-mc_signal_raw = TreeHandler(os.path.abspath(os.getcwd()) + '/data/SignalTable_pp13TeV_tofPID_mtexp.root', "SignalTable")
-print('Done \nFiltering MC data...')
+
+def get_large_data(data_path, table):
+
+    executor = ThreadPoolExecutor()
+    iterator = uproot.pandas.iterate(data_path, table, executor=executor, reportfile=True)
+
+    selected_data = pd.DataFrame()
+
+    for current_file, data in iterator:
+        #print('current file: {}'.format(current_file))
+        #print ('start entry chunk: {}, stop entry chunk: {}'.format(data.index[0], data.index[-1]))
+
+        selected_data = selected_data.append(data.query('rej_accept > 0 & pt > 0'))
+
+    return TreeHandler(selected_data.to_parquet())
+
+#parquet, yaml
+
+mc_signal_raw =  get_large_data(os.path.abspath(os.getcwd()) + '/data/SignalTable_pp13TeV_mtexp.root',"SignalTable")
+
+
 mc_signal = mc_signal_raw.get_subset('rej_accept > 0 and pt>0')
 del mc_signal_raw       #free the memory. This and the comment are useful because of intense memory usage 
 print('Done \nLoading background...')
@@ -35,18 +54,16 @@ print(list(data.get_data_frame().columns))
 
 print(len(data.get_data_frame()))               #104732
 print(len(backgorund_ls.get_data_frame()))      #103200
-print(len(mc_signal.get_data_frame()))          #2272026
+print(len(mc_signal.get_data_frame()))          #304921
 
 # %%
-# TRAINING WITH UNBALANCED DATASET
+# TRAINING
 
 train_test_data = train_test_generator([mc_signal, backgorund_ls], [1,0], test_size=0.5)
 
 model_clf = xgb.XGBClassifier()
 model_hdl = ModelHandler(model_clf, training_variables)
 model_hdl.train_test_model(train_test_data)     
-
-#%%
 
 y_pred_train = model_hdl.predict(train_test_data[0], True)
 y_pred_test = model_hdl.predict(train_test_data[2], True)
@@ -61,31 +78,8 @@ plt.savefig('./images/output_train_test.png',dpi=300,facecolor='white')
 roc_train_test_fig = plot_utils.plot_roc_train_test(train_test_data[3], y_pred_test,
                                                     train_test_data[1], y_pred_train, None, leg_labels)
 
-#%%
-
-data.apply_model_handler(model_hdl)
-selected_data_hndl = data.get_subset('model_output > 0.95 & m>=2.96 & m<=3.04')
-
-labels_list = ["after selection","before selection"]
-colors_list = ['orangered', 'cornflowerblue']
-plot_utils.plot_distr([selected_data_hndl, data], column='pt', bins=34, labels=labels_list, colors=colors_list,log=True, density=False,fill=True,  alpha=0.5)    #histtype='step',
-ax = plt.gca()
-ax.set_xlabel(r'$p_T$ (GeV/$c$)')
-ax.margins(x=0)
-ax.xaxis.set_label_coords(0.9, -0.075)
-
-labels_list = ["after selection","before selection"]
-colors_list = ['orangered', 'cornflowerblue']
-plot_utils.plot_distr([selected_data_hndl, data], column='centrality',log=True, bins=34, labels=labels_list, colors=colors_list, density=False,fill=True,  alpha=0.5)
-ax = plt.gca()
-ax.set_xlabel(r'Mass (GeV/$c^2$)')
-ax.margins(x=0)
-ax.xaxis.set_label_coords(0.9, -0.075)
-
-print(len(selected_data_hndl))
-print(len(selected_data_hndl)/len(data))
-
 # %%
+# MASS AS A FUNCTION OF THE SCORE
 max_score = max(data.get_data_frame()['model_output'])
 
 for score in np.arange(0., max_score, 0.1):
@@ -108,13 +102,49 @@ plt.ylabel('Efficiency')
 plt.savefig('./images/bdt_eff_bdt_out.png',dpi=300,facecolor='white')
 plt.show()
 
-score_from_eff = score_from_efficiency_array(train_test_data[3],y_pred_test,np.arange(0,1,0.001))
-plt.plot(np.arange(0,1,0.001),score_from_eff)
+score_from_eff = score_from_efficiency_array(train_test_data[3],y_pred_test,np.arange(0.0000001,0.9999999,0.001))
+plt.plot(np.arange(0.0000001,0.9999999,0.001),score_from_eff)
+plt.plot(np.arange(0.0000001,0.9999999,0.001),score_from_eff,marker='o',color='red',linestyle='none')
+plt.vlines(0.99,-4,12.5)
+
 plt.title('BDT score as a function of BDT efficiency')
 plt.xlabel('Efficiency')
 plt.ylabel('BDT output')
 plt.savefig('./images/bdt_out_dbt_eff.png',dpi=300,facecolor='white')
 plt.show()
+
+#%%
+# CUT DATAS AT 99% EFFICIENCY
+eff_99 = score_from_eff[-10]
+
+data.apply_model_handler(model_hdl)
+selected_data_hndl = data.get_subset('model_output > ' + str(eff_99) ' & m>=2.96 & m<=3.04')
+
+del mc_signal, backgorund_ls, data
+
+#%%
+
+
+
+labels_list = ["after selection","before selection"]
+colors_list = ['orangered', 'cornflowerblue']
+plot_utils.plot_distr([selected_data_hndl, data], column='pt', bins=34, labels=labels_list, colors=colors_list,log=True, density=False,fill=True,  alpha=0.5)    #histtype='step',
+ax = plt.gca()
+ax.set_xlabel(r'$p_T$ (GeV/$c$)')
+ax.margins(x=0)
+ax.xaxis.set_label_coords(0.9, -0.075)
+
+labels_list = ["after selection","before selection"]
+colors_list = ['orangered', 'cornflowerblue']
+plot_utils.plot_distr([selected_data_hndl, data], column='centrality',log=True, bins=34, labels=labels_list, colors=colors_list, density=False,fill=True,  alpha=0.5)
+ax = plt.gca()
+ax.set_xlabel(r'Mass (GeV/$c^2$)')
+ax.margins(x=0)
+ax.xaxis.set_label_coords(0.9, -0.075)
+
+print(len(selected_data_hndl))
+print(len(selected_data_hndl)/len(data))
+
 
 #%%
 #Calculate the previous values on range 65-90 %

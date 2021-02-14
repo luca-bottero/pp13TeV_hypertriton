@@ -46,7 +46,7 @@ def mass_fitter(hist,score,efficiency):
     root_hist.Fit('total', 'R+', '',2.96,3.04)
 
     ROOT.gStyle.SetOptFit(1111)
-    canvas.SaveAs('./images/mass_sys/eff_' + str(np.round(efficiency,4)) + '.png')
+    canvas.SaveAs('./images/results/mass_distr/hist_eff_' + str(np.round(efficiency,4)) + '.png')
 
     count = total.GetParameters()[2]
     return count
@@ -64,10 +64,10 @@ def systematic_estimate(data,scores,efficiencies):
         i += 1
 
     plt.plot(efficiencies,count)
-    plt.title('Count from fit as a function of efficiency')
+    plt.title('Count of signal (from fit) as a function of efficiency')
     plt.xlabel('Efficiency')
     plt.ylabel('Count')
     plt.annotate('Mean: ' + str(np.round(np.mean(count),4)) + "\n$\sigma$: " + str(np.round(np.std(count),4)) ,xy=(0.68,23))
-    plt.savefig('./images/fit_count_eff_png',dpi=300,facecolor = 'white')
+    plt.savefig('./images/results/fit_count_eff.png',dpi=300,facecolor = 'white')
 
 #%%
