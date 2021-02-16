@@ -7,6 +7,8 @@ import os
 import xgboost as xgb
 import mass_fit
 import ROOT
+import hist
+import seaborn as sns
 from concurrent.futures import ThreadPoolExecutor
 from sklearn.model_selection import train_test_split
 from hipe4ml.model_handler import ModelHandler
@@ -26,8 +28,8 @@ def get_large_data(hndl,data_path, table, query = ''):
     selected_data = pd.DataFrame()
 
     for current_file, data in iterator:
-        print('current file: {}'.format(current_file))
-        print ('start entry chunk: {}, stop entry chunk: {}'.format(data.index[0], data.index[-1]))
+        #print('current file: {}'.format(current_file))
+        #print ('start entry chunk: {}, stop entry chunk: {}'.format(data.index[0], data.index[-1]))
 
         if query == '':
             selected_data = selected_data.append(data)
@@ -123,6 +125,32 @@ def bdt_feature_importance(train_test_data, model_handler):
     feat_imp_1, feat_imp_2 = plot_utils.plot_feature_imp(train_test_data[2],train_test_data[3],model_hdl,approximate=False)
     feat_imp_1.savefig('./images/model/feature_importance_HIPE4ML_violin.png',dpi=300,facecolor='white')
     feat_imp_2.savefig('./images/model/feature_importance_HIPE4ML_bar.png',dpi=300,facecolor='white')
+
+
+# %%
+
+def scatter_with_hist(x_data,y_data,x_axis,y_axis,x_label='',y_label='',eff = 0.):
+    '''
+    Plots a scatterplot with histograms of the distributions
+    '''
+    
+    plot = (
+        hist.Hist.new
+        .Reg(x_axis[0],x_axis[1],x_axis[2], name='x', label=x_label)
+        .Reg(y_axis[0],y_axis[1],y_axis[2], name='y', label=y_label)
+        .Double()
+        )
+
+    plot.fill(x=x_data,y=y_data)
+    plot.plot2d_full(
+        main_cmap="cividis",
+        top_color="steelblue",
+        top_lw=2,
+        side_lw=2,
+        side_color="steelblue"
+        )
+    plt.savefig('./images/m_mppi/scatter_eff_' + str(np.round(eff,4)) + '.png', dpi=300, facecolor='white')
+    plt.show()
 
 
 # %%
