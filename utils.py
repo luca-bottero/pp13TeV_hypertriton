@@ -79,7 +79,7 @@ def train_xgboost_model(signal, background, data, training_variables='', testsiz
 
     data.apply_model_handler(model_hdl)
 
-    return train_test_data, y_pred_test, data
+    return train_test_data, y_pred_test, data, model_hdl
 
 def data_exploration(data):
     '''
@@ -126,7 +126,6 @@ def bdt_feature_importance(train_test_data, model_handler):
     feat_imp_1.savefig('./images/model/feature_importance_HIPE4ML_violin.png',dpi=300,facecolor='white')
     feat_imp_2.savefig('./images/model/feature_importance_HIPE4ML_bar.png',dpi=300,facecolor='white')
 
-
 # %%
 
 def scatter_with_hist(x_data,y_data,x_axis,y_axis,x_label='',y_label='',eff = 0.):
@@ -142,13 +141,15 @@ def scatter_with_hist(x_data,y_data,x_axis,y_axis,x_label='',y_label='',eff = 0.
         )
 
     plot.fill(x=x_data,y=y_data)
-    plot.plot2d_full(
+    ax = plot.plot2d_full(
         main_cmap="cividis",
         top_color="steelblue",
         top_lw=2,
         side_lw=2,
         side_color="steelblue"
         )
+
+    
     plt.savefig('./images/m_mppi/scatter_eff_' + str(np.round(eff,4)) + '.png', dpi=300, facecolor='white')
     plt.show()
 
