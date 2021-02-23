@@ -77,23 +77,37 @@ def data_ls_comp_plots(data, ls, scores, efficiencies):
         root_hist_data.SetTitle('Counts as a function of mass;m [GeV/c^{2}];Counts')
 
         canvas = ROOT.TCanvas('Efficiency ' + str(np.round(efficiency,4)))
+
+        leg = ROOT.TLegend(.7,.8,.9,.9)
+        leg.AddEntry(root_hist_data, 'Data', 'L')
+        leg.AddEntry(root_hist_ls, 'Background LS', 'L')
+        leg.SetTextSize(0.032)
+
         root_hist_ls.SetLineColor(ROOT.kRed)
         root_hist_ls.SetMarkerColor(ROOT.kRed)
+        root_hist_ls.SetMarkerStyle(7)
+        root_hist_data.SetMarkerStyle(7)
+
         root_hist_data.Draw('PE')
         root_hist_ls.Draw('PE SAME')
+        leg.Draw()
+        
+        ROOT.gStyle.SetOptStat(0)
+        ROOT.gStyle.SetOptFit(0)
+
         canvas.Write()
+
+        import os
+        from ROOT import gROOT
+        #gROOT.SetBatch(True)
+        gROOT.LoadMacro("combinedFit.C")
+        from ROOT import combinedFit
+
+        combinedFit(root_hist_data, root_hist_ls, 'Fit_eff_' + str(efficiency))
 
         #canvas.SaveAs('./images/results/mass_distr_LS/LS_hist_eff_' + str(np.round(efficiency,4)) + '.png')
 
     ff.Close()
-
-
-    
-
-
-
-
-
 
 
 def systematic_estimate(data,scores,efficiencies):

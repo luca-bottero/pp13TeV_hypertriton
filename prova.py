@@ -14,7 +14,6 @@ from hipe4ml.model_handler import ModelHandler
 from hipe4ml.tree_handler import TreeHandler
 from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
-#%%
 
 a = TreeHandler(os.path.abspath(os.getcwd()) + '/data/SignalTable_pp13TeV_mtexp.root',"SignalTable")
 backgorund_ls = utils.get_large_data(a, os.path.abspath(os.getcwd()) + '/data/OLD_DataTable_pp_LS.root', "DataTable")
@@ -33,18 +32,19 @@ training_variables = ["pt", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls
 min_eff = 0.5
 max_eff = 0.9
 step = 0.01
-#%%
-import imp
-imp.reload(utils)
-imp.reload(mass_fit)
+
 
 # %%
 data.get_var_names()
 data.get_data_frame().describe()
 #%%
+model_hdl = ModelHandler().load_model_handler('./model/model_hdl')
+
+#%%
 
 train_test_data, y_pred_test, data, model_hdl = utils.train_xgboost_model(mc_signal, backgorund_ls, data, training_variables)
-
+#%%
+model_hdl.dump_model_handler('./model/model_hdl')
 # %%
 
 utils.mass_spectrum_efficiency(train_test_data, y_pred_test, data, min_eff=min_eff, max_eff=max_eff,step=step)
@@ -67,12 +67,18 @@ backgorund_ls.apply_model_handler(model_hdl)
 
 backgorund_ls.get_data_frame().head()
 
-utils.mass_spectrum_efficiency(train_test_data, y_pred_test, backgorund_ls)
+#utils.mass_spectrum_efficiency(train_test_data, y_pred_test, backgorund_ls)
 
 # %%
 
 mass_fit.data_ls_comp_plots(data,backgorund_ls,
                             score_from_efficiency_array(train_test_data[3],y_pred_test,np.arange(min_eff,max_eff,step)),
                             np.arange(min_eff,max_eff,step))
+
+
+#%%
+import imp
+imp.reload(utils)
+imp.reload(mass_fit)
 
 # %%
