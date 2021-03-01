@@ -128,7 +128,7 @@ def bdt_feature_importance(train_test_data, model_handler):
 
 # %%
 
-def scatter_with_hist(x_data,y_data,x_axis,y_axis,x_label='',y_label='',eff = 0.):
+def scatter_with_hist(x_data,y_data,x_axis,y_axis,x_label='',y_label='',eff = 0.,name=''):
     '''
     Plots a scatterplot with histograms of the distributions
     '''
@@ -141,6 +141,7 @@ def scatter_with_hist(x_data,y_data,x_axis,y_axis,x_label='',y_label='',eff = 0.
         )
 
     plot.fill(x=x_data,y=y_data)
+
     ax = plot.plot2d_full(
         main_cmap="cividis",
         top_color="steelblue",
@@ -149,8 +150,9 @@ def scatter_with_hist(x_data,y_data,x_axis,y_axis,x_label='',y_label='',eff = 0.
         side_color="steelblue"
         )
 
+
     
-    plt.savefig('./images/m_mppi/scatter_eff_' + str(np.round(eff,4)) + '.png', dpi=300, facecolor='white')
+    plt.savefig('./images/' + name + str(np.round(eff,4)) + '.png', dpi=300, facecolor='white')
     plt.show()
 
 

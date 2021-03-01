@@ -11,6 +11,11 @@ import ROOT
 from hipe4ml.model_handler import ModelHandler
 from hipe4ml import plot_utils
 from array import array
+import os
+from ROOT import gROOT
+gROOT.SetBatch(True)
+gROOT.LoadMacro("combinedFit.C")
+from ROOT import combinedFit
 
 def mass_fitter(hist,score,efficiency):
     aghast_hist = aghast.from_numpy(hist)
@@ -58,6 +63,7 @@ def mass_fitter(hist,score,efficiency):
 
 
 def data_ls_comp_plots(data, ls, scores, efficiencies):
+   
 
     ff = ROOT.TFile('./images/results/data_ls.root','recreate')
     
@@ -97,13 +103,7 @@ def data_ls_comp_plots(data, ls, scores, efficiencies):
 
         canvas.Write()
 
-        import os
-        from ROOT import gROOT
-        #gROOT.SetBatch(True)
-        gROOT.LoadMacro("combinedFit.C")
-        from ROOT import combinedFit
-
-        combinedFit(root_hist_data, root_hist_ls, 'Fit_eff_' + str(efficiency))
+        combinedFit(root_hist_ls,root_hist_data, 'Fit_erf_eff_' + str(efficiency))
 
         #canvas.SaveAs('./images/results/mass_distr_LS/LS_hist_eff_' + str(np.round(efficiency,4)) + '.png')
 

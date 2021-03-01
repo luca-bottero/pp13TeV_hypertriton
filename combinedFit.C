@@ -48,12 +48,12 @@ void combinedFit(TH1D * hB, TH1D * hSB, string name) {
    TF1 * fB = new TF1("fB","expo",2.96,3.04);
    fB->SetParameters(1,-0.05);
  
-   TF1 * fS = new TF1("fS","gaus",2.96,3.04);
+   TF1 * fS = new TF1("fS","gausn",2.96,3.04);
    fS->SetParameters(1,30,5);
  
    // perform now global fit
  
-   TF1 * fSB = new TF1("fSB","expo + gaus(2)",2.96,3.04); 
+   TF1 * fSB = new TF1("fSB","expo + gausn(2)",2.96,3.04); 
  
    ROOT::Math::WrappedMultiTF1 wfB(*fB,1);
    ROOT::Math::WrappedMultiTF1 wfSB(*fSB,1);
@@ -78,16 +78,15 @@ void combinedFit(TH1D * hB, TH1D * hSB, string name) {
    ROOT::Fit::Fitter fitter;
  
    const int Npar = 6;
-   double par0[Npar] = { 5,5,-0.1,100, 30,10};
+   double par0[Npar] = { 5, 5, 0.1, 20, 2.991, 0.0032};
  
    // create before the parameter settings in order to fix or set range on them
    fitter.Config().SetParamsSettings(6,par0);
-   // fix 5-th parameter
-   fitter.Config().ParSettings(4).Fix();
    // set limits on the third and 4-th parameter
-   fitter.Config().ParSettings(2).SetLimits(-10,-1.E-4);
-   fitter.Config().ParSettings(3).SetLimits(0,10000);
-   fitter.Config().ParSettings(3).SetStepSize(5);
+   fitter.Config().ParSettings(2).SetLimits(-10,10);
+   fitter.Config().ParSettings(3).SetLimits(0,100);
+   fitter.Config().ParSettings(4).SetLimits(2.991 - 0.0032, 2.991 + 0.0032);
+   fitter.Config().ParSettings(5).SetLimits(0.001, 0.01);
  
    fitter.Config().MinimizerOptions().SetPrintLevel(0);
    fitter.Config().SetMinimizer("Minuit2","Migrad");
@@ -108,14 +107,14 @@ void combinedFit(TH1D * hB, TH1D * hSB, string name) {
    fB->SetRange(rangeB().first, rangeB().second);
    fB->SetLineColor(kBlue);
    hB->GetListOfFunctions()->Add(fB);
-   hB->Draw();
+   hB->Draw("PE");
  
    c1->cd(2);
    fSB->SetFitResult( result, iparSB);
    fSB->SetRange(rangeSB().first, rangeSB().second);
    fSB->SetLineColor(kRed);
    hSB->GetListOfFunctions()->Add(fSB);
-   hSB->Draw();
+   hSB->Draw("PE");
 
    c1->Write();
 }
