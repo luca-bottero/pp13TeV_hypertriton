@@ -63,26 +63,20 @@ for score, i in zip(scores, eff_array):
 
 #%%
 
-plt.scatter(sel['mppi'], sel['mdpi'])
-
-
-
-#%%
-
 
 #with sqrt: [34,2.01,2.09]
 #without sqrt: [34,4.04,4.37]
 
-sel_m = 
+sel_m = data.get_data_frame().query('m > 2.989 & m < 2.993')
 
 for score,i in zip(scores,eff_array):
-    sel = data.get_data_frame().query('model_output > ' + str(score) + '& m > 2.989 & m < 2.993')
+    sel = sel_m.query('model_output > ' + str(score))
     utils.scatter_with_hist(sel['mppi'], sel['mdpi'],
                                 [50,1.16,1.26],[50,4.07,4.22], name = '/mppi_mdpi/dalitz_eff_',
                                 x_label='$p - \pi$ mass [GeV/$c^2$]',
                                 y_label='$d - \pi$ mass [GeV/$c^2$]', eff=i)
 
-
+del sel_m
 #%%
 
 background_ls.apply_model_handler(model_hdl)
@@ -103,13 +97,6 @@ mass_fit.data_ls_comp_plots(data,background_ls,
 import imp
 imp.reload(utils)
 imp.reload(mass_fit)
-
-# %%
-
-from ROOT import gROOT
-gROOT.LoadMacro('combinedFit.C')
-
-from ROOT import combinedFit
 
 
 # %%

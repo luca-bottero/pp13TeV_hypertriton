@@ -43,7 +43,7 @@ struct GlobalChi2 {
    const  ROOT::Math::IMultiGenFunction * fChi2_2;
 };
 
-void combinedFit(TH1D * hB, TH1D * hSB, string name) {
+void cmb_fit_exp(TH1D * hB, TH1D * hSB, string name) {
  
    TF1 * fB = new TF1("fB","expo",2.96,3.04);
    fB->SetParameters(1,-0.05);
