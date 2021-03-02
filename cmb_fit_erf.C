@@ -47,7 +47,7 @@ struct GlobalChi2 {
 
 void cmb_fit_erf(TH1D * hB, TH1D * hSB, string name) {
  
-   TF1 * fB = new TF1("fB","[0]*Erf([1]*x + [2])",2.96,3.04);
+   TF1 * fB = new TF1("fB","[0]*TMath::Erf([1]*x + [2])",2.96,3.04);
    fB->SetParameters(10,1,3);
  
    TF1 * fS = new TF1("fS","gausn",2.96,3.04);
@@ -55,7 +55,7 @@ void cmb_fit_erf(TH1D * hB, TH1D * hSB, string name) {
  
    // perform now global fit
  
-   TF1 * fSB = new TF1("fSB","expo + gausn(3)",2.96,3.04); 
+   TF1 * fSB = new TF1("fSB","[0]*TMath::Erf([1]*x + [2]) + gausn(3)",2.96,3.04); 
  
    ROOT::Math::WrappedMultiTF1 wfB(*fB,1);
    ROOT::Math::WrappedMultiTF1 wfSB(*fSB,1);
