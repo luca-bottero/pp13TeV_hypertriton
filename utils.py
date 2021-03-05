@@ -80,9 +80,9 @@ def train_xgboost_model(signal, background, data, training_variables='', testsiz
 
     efficiency_score_conversion(train_test_data, y_pred_test)
 
-    data.apply_model_handler(model_hdl)
+    #data.apply_model_handler(model_hdl)
 
-    return train_test_data, y_pred_test, data, model_hdl
+    return train_test_data, y_pred_test, model_hdl
 
 def data_exploration(data):
     '''

@@ -85,19 +85,20 @@ void cmb_fit_erf(TH1D * hB, TH1D * hSB, string name) {
 
    const int Npar = 9;     // CHNG
    //double par0[Npar] = { 10*binwidth, 10*binwidth, 5, -3, 10, 10, 20*binwidth, 2.991, 0.0032};
-   double par0[Npar] = { 2, 2, 50, -3, 3, 10, 20*binwidth, 2.991, 0.0032};
+   double par0[Npar] = { 2, 2, 50, -3, 10, 10, 0.2, 2.991, 0.0032};
+   //norm bckg_ls, norm bckg, slope_bckg, mean_bckg, offset_bckg_ls, offset_bckg, norm_gau, mean_gaus, sigma_gaus
 
    // create before the parameter settings in order to fix or set range on them
    fitter.Config().SetParamsSettings(9,par0);      // CHNG
    // set limits on the third and 4-th parameter
    
-   fitter.Config().ParSettings(0).SetLimits(0,100*binwidth);
-   fitter.Config().ParSettings(1).SetLimits(0,100*binwidth);
+   fitter.Config().ParSettings(0).SetLimits(0,5);
+   fitter.Config().ParSettings(1).SetLimits(0,5);
    fitter.Config().ParSettings(2).SetLimits(-100,100);
    fitter.Config().ParSettings(3).SetLimits(-4,-2);
-   fitter.Config().ParSettings(4).SetLimits(0,40);
-   fitter.Config().ParSettings(5).SetLimits(0,40);
-   fitter.Config().ParSettings(6).SetLimits(0,100*binwidth);
+   fitter.Config().ParSettings(4).SetLimits(0,20);
+   fitter.Config().ParSettings(5).SetLimits(0,20);
+   fitter.Config().ParSettings(6).SetLimits(0.2,1);
    fitter.Config().ParSettings(7).SetLimits(2.991 - 0.0032, 2.991 + 0.0032);
    fitter.Config().ParSettings(8).SetLimits(0.001, 0.01);
  
