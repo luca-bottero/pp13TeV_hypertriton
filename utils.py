@@ -15,6 +15,9 @@ from hipe4ml.model_handler import ModelHandler
 from hipe4ml.tree_handler import TreeHandler
 from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
+import matplotlib
+
+matplotlib.use('pdf')
 #%%
 
 def get_large_data(hndl,data_path, table, query = ''):

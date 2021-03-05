@@ -79,10 +79,11 @@ def data_ls_comp_plots(data, ls, scores, efficiencies):
 
         aghast_hist = aghast.from_numpy(hist_data)
         root_hist_data = aghast.to_root(aghast_hist,'Efficiency ' + str(np.round(efficiency,4)))
+        root_hist_data_erf = aghast.to_root(aghast_hist,'Efficiency_erf ' + str(np.round(efficiency,4)))
 
         aghast_hist = aghast.from_numpy(hist_ls)
         root_hist_ls = aghast.to_root(aghast_hist, 'Efficiency_ls ' +str(np.round(efficiency,4)))
-
+        root_hist_ls_erf = aghast.to_root(aghast_hist, 'Efficiency_ls_erf ' +str(np.round(efficiency,4)))
         root_hist_data.SetTitle('Counts as a function of mass;m [GeV/c^{2}];Counts')
 
         canvas = ROOT.TCanvas('Efficiency ' + str(np.round(efficiency,4)))
@@ -107,7 +108,7 @@ def data_ls_comp_plots(data, ls, scores, efficiencies):
         canvas.Write()
 
         cmb_fit_exp(root_hist_ls,root_hist_data, 'Fit_exp_eff_' + str(np.round(efficiency,4)))
-        cmb_fit_erf(root_hist_ls,root_hist_data, 'Fit_erf_eff_' + str(np.round(efficiency,4)))
+        cmb_fit_erf(root_hist_ls_erf,root_hist_data_erf, 'Fit_erf_eff_' + str(np.round(efficiency,4)))
 
         #canvas.SaveAs('./images/results/mass_distr_LS/LS_hist_eff_' + str(np.round(efficiency,4)) + '.png')
 

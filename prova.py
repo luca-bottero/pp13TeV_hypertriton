@@ -93,10 +93,6 @@ mass_fit.data_ls_comp_plots(data,background_ls,
                             np.arange(min_eff,max_eff,step))
 
 
-#%%
-import imp
-imp.reload(utils)
-imp.reload(mass_fit)
 
 
 # %%
