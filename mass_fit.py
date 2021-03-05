@@ -71,8 +71,8 @@ def data_ls_comp_plots(data, ls, scores, efficiencies):
     ff = ROOT.TFile('./images/results/data_ls.root','recreate')
     
     for efficiency, score in zip(efficiencies,scores):
-        selected_data = data.get_subset('model_output > ' + str(score)).get_data_frame()
-        selected_ls = ls.get_subset('model_output > ' + str(score)).get_data_frame()
+        selected_data = data.query('model_output > ' + str(score))
+        selected_ls = ls.query('model_output > ' + str(score))
 
         hist_data = np.histogram(selected_data['m'],bins=34,range=(2.96,3.04))
         hist_ls = np.histogram(selected_ls['m'],bins=34,range=(2.96,3.04))
