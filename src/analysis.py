@@ -1,5 +1,5 @@
 import utils
-import training as train
+import training_ml as train
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -16,7 +16,7 @@ from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 
 #Config
-train_model = False
+train_model = True
 print_m_mppivert = False
 print_mppi_mdpi = False
 
@@ -25,11 +25,11 @@ if train_model:
     train.train_model()
 
 model_hdl = ModelHandler()
-model_hdl.load_model_handler('./model/model_hdl')
+model_hdl.load_model_handler('../training/model/model_hdl')
 print('Model loaded\n')
 
-data = train.load_data_with_scores('./data/data_scores.csv')                #pd dataframe already processed
-background_ls = train.load_data_with_scores('./data/bckg_ls_scores.csv')
+data = train.load_data_with_scores('../data/data_scores.csv')                #pd dataframe already processed
+background_ls = train.load_data_with_scores('../data/bckg_ls_scores.csv')
 
 eff_array, scores = train.load_eff_scores()
 print('Datas loaded\n')

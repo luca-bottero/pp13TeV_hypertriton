@@ -58,7 +58,7 @@ def mass_fitter(hist,score,efficiency):
     #root_hist.Fit('total', 'R+', '',2.96,3.04)
 
     ROOT.gStyle.SetOptFit(1111)
-    canvas.SaveAs('./images/results/mass_distr_LS/LS_hist_eff_' + str(np.round(efficiency,4)) + '.png')
+    canvas.SaveAs('../analysis/images/mass_distr_LS/LS_hist_eff_' + str(np.round(efficiency,4)) + '.png')
 
     count = total.GetParameters()[2]
     error = total.GetParError(2)
@@ -68,7 +68,7 @@ def mass_fitter(hist,score,efficiency):
 def data_ls_comp_plots(data, ls, scores, efficiencies):
    
 
-    ff = ROOT.TFile('./images/results/data_ls.root','recreate')
+    ff = ROOT.TFile('../analysis/images/data_ls.root','recreate')
     
     for efficiency, score in zip(efficiencies,scores):
         selected_data = data.query('model_output > ' + str(score))
@@ -110,7 +110,7 @@ def data_ls_comp_plots(data, ls, scores, efficiencies):
         cmb_fit_exp(root_hist_ls,root_hist_data, 'Fit_exp_eff_' + str(np.round(efficiency,4)))
         cmb_fit_erf(root_hist_ls_erf,root_hist_data_erf, 'Fit_erf_eff_' + str(np.round(efficiency,4)))
 
-        #canvas.SaveAs('./images/results/mass_distr_LS/LS_hist_eff_' + str(np.round(efficiency,4)) + '.png')
+        #canvas.SaveAs('../analysis/images/mass_distr_LS/LS_hist_eff_' + str(np.round(efficiency,4)) + '.png')
 
     ff.Close()
 
@@ -135,7 +135,7 @@ def systematic_estimate(data,scores,efficiencies):
     plt.xlabel('Efficiency')
     plt.ylabel('Counts')
     plt.annotate('Mean: ' + str(np.round(np.mean(count),4)) + "\n$\sigma$: " + str(np.round(np.std(count),4)) ,xy=(0.68,23))
-    #plt.savefig('./images/results/fit_count_eff.png',dpi=300,facecolor = 'white')
+    plt.savefig('../analysis/images/mass_distr/fit_count_eff.png',dpi=300,facecolor = 'white')
     plt.show()
 
     plt.plot(efficiencies,np.round(count))
@@ -145,6 +145,6 @@ def systematic_estimate(data,scores,efficiencies):
     plt.xlabel('Efficiency')
     plt.ylabel('Count')
     plt.annotate('Mean: ' + str(np.round(np.mean(count),4)) + "\n$\sigma$: " + str(np.round(np.std(count),4)) ,xy=(0.68,23))
-    #plt.savefig('./images/results/fit_count_eff_rect.png',dpi=300,facecolor = 'white')
+    plt.savefig('../analysis/images/mass_distr/fit_count_eff_rect.png',dpi=300,facecolor = 'white')
 
 #%%
