@@ -15,9 +15,9 @@ import os
 from ROOT import gROOT
 
 gROOT.SetBatch(True)
-gROOT.LoadMacro("cmb_fit_exp.C")
+gROOT.LoadMacro(os.path.abspath(os.getcwd()) + "cmb_fit_exp.C")
 from ROOT import cmb_fit_exp
-gROOT.LoadMacro("cmb_fit_erf.C")
+gROOT.LoadMacro(os.path.abspath(os.getcwd()) + "cmb_fit_erf.C")
 from ROOT import cmb_fit_erf
 
 def mass_fitter(hist,score,efficiency):
