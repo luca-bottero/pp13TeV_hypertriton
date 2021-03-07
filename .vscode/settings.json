@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "covariance.C": "cpp",
-        "CombinedFit.C": "cpp",
-        "cmb_fit_erf.C": "cpp",
-        "cmb_fit_exp.C": "cpp"
-    }
-}

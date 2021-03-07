@@ -1,4 +1,0 @@
-DataTable_pp.root
-DataTable_pp_LS.root
-SignalTable_pp13TeV_mtexp.root
-SignalTable_pp13TeV_tofPID_mtexp.root
