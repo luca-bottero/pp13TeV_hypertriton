@@ -25,7 +25,7 @@ if train_model:
     train.train_model()
 
 model_hdl = ModelHandler()
-model_hdl.load_model_handler('../training/model/model_hdl')
+model_hdl.load_model_handler('../model/model_hdl')
 print('Model loaded\n')
 
 data = train.load_data_with_scores('../data/data_scores.csv')                #pd dataframe already processed

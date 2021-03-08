@@ -13,14 +13,16 @@ using std::string;
 
 // definition of shared parameter
 // background function
-int iparB_erf[4] = { 0,      // exp amplitude in B histo
+int iparB_erf[5] = { 0,      // exp amplitude in B histo
+                 1,
                  2,
                  3,
-                 4    // exp common parameter
+                 4   // exp common parameter
 };
 // signal + background function
-int iparSB_erf[7] = { 1, // exp amplitude in S+B histo
-                  2, // exp common parameter
+int iparSB_erf[8] = { 0, // exp amplitude in S+B histo
+                  1, // exp common parameter
+                  2,
                   3,  
                   5,
                   6,
@@ -36,10 +38,10 @@ struct GlobalChi2_erf {
    // parameter vector is first background (in common 1 and 2)
    // and then is signal (only in 2)
    double operator() (const double *par) const {      // CHNG
-      double p1[4];
-      for (int i = 0; i < 3; ++i) p1[i] = par[iparB_erf[i] ];
-      double p2[7];
-      for (int i = 0; i < 6; ++i) p2[i] = par[iparSB_erf[i] ];
+      double p1[5];
+      for (int i = 0; i < 5; ++i) p1[i] = par[iparB_erf[i] ];
+      double p2[8];
+      for (int i = 0; i < 8; ++i) p2[i] = par[iparSB_erf[i] ];
       return (*fChi2_1)(p1) + (*fChi2_2)(p2);
    }
 
@@ -49,7 +51,7 @@ struct GlobalChi2_erf {
 
 void cmb_fit_erf(TH1D * hB, TH1D * hSB, string name) {
  
-   TF1 * fB = new TF1("fB","[0]*TMath::Erf([1]*(x + [2])) + [3]",2.96,3.04);
+   TF1 * fB = new TF1("fB","[0]*TMath::Erf([1]*(x + [2])) + [4] + [3]*x",2.96,3.04);
    fB->SetParameters(10,5,-3);
  
    TF1 * fS = new TF1("fS","gausn",2.96,3.04);
@@ -57,7 +59,7 @@ void cmb_fit_erf(TH1D * hB, TH1D * hSB, string name) {
  
    // perform now global fit
  
-   TF1 * fSB = new TF1("fSB","[0]*TMath::Erf([1]*(x + [2])) + [3] + gausn(4)",2.96,3.04); 
+   TF1 * fSB = new TF1("fSB","[0]*TMath::Erf([1]*(x + [2])) + [3]*x + [4] + gausn(5)",2.96,3.04); 
  
    ROOT::Math::WrappedMultiTF1 wfB(*fB,1);
    ROOT::Math::WrappedMultiTF1 wfSB(*fSB,1);
@@ -85,20 +87,20 @@ void cmb_fit_erf(TH1D * hB, TH1D * hSB, string name) {
 
    const int Npar = 9;     // CHNG
    //double par0[Npar] = { 10*binwidth, 10*binwidth, 5, -3, 10, 10, 20*binwidth, 2.991, 0.0032};
-   double par0[Npar] = { 2, 2, 50, -3, 10, 10, 0.2, 2.991, 0.0032};
+   double par0[Npar] = { 2, 50, -3, 2, 2, 2, 0.2, 2.991, 0.0032};
    //norm bckg_ls, norm bckg, slope_bckg, mean_bckg, offset_bckg_ls, offset_bckg, norm_gau, mean_gaus, sigma_gaus
 
    // create before the parameter settings in order to fix or set range on them
    fitter.Config().SetParamsSettings(9,par0);      // CHNG
    // set limits on the third and 4-th parameter
    
-   fitter.Config().ParSettings(0).SetLimits(0,5);
-   fitter.Config().ParSettings(1).SetLimits(0,5);
-   fitter.Config().ParSettings(2).SetLimits(-100,100);
-   fitter.Config().ParSettings(3).SetLimits(-4,-2);
-   fitter.Config().ParSettings(4).SetLimits(0,20);
-   fitter.Config().ParSettings(5).SetLimits(0,20);
-   fitter.Config().ParSettings(6).SetLimits(0.2,1);
+   fitter.Config().ParSettings(0).SetLimits(0,3);
+   fitter.Config().ParSettings(1).SetLimits(-100,100);
+   fitter.Config().ParSettings(2).SetLimits(-3.02,-2.98);
+   fitter.Config().ParSettings(3).SetLimits(0,4);
+   fitter.Config().ParSettings(4).SetLimits(0,4);
+   fitter.Config().ParSettings(5).SetLimits(0,4);
+   fitter.Config().ParSettings(6).SetLimits(0, 0.8);
    fitter.Config().ParSettings(7).SetLimits(2.991 - 0.0032, 2.991 + 0.0032);
    fitter.Config().ParSettings(8).SetLimits(0.001, 0.01);
  

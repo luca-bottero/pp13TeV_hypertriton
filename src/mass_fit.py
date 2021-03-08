@@ -15,9 +15,10 @@ import os
 from ROOT import gROOT
 
 gROOT.SetBatch(True)
-gROOT.LoadMacro(os.path.abspath(os.getcwd()) + "cmb_fit_exp.C")
+gROOT.LoadMacro(os.path.abspath(os.getcwd()) + "/cmb_fit_exp.C")
+
 from ROOT import cmb_fit_exp
-gROOT.LoadMacro(os.path.abspath(os.getcwd()) + "cmb_fit_erf.C")
+gROOT.LoadMacro(os.path.abspath(os.getcwd()) + "/cmb_fit_erf.C")
 from ROOT import cmb_fit_erf
 
 def mass_fitter(hist,score,efficiency):
@@ -67,8 +68,11 @@ def mass_fitter(hist,score,efficiency):
 
 def data_ls_comp_plots(data, ls, scores, efficiencies):
    
+    results_path = "../results"
+    if not os.path.exists(results_path):
+        os.makedirs(results_path)
 
-    ff = ROOT.TFile('../analysis/images/data_ls.root','recreate')
+    ff = ROOT.TFile(results_path + '/data_ls.root','recreate')
     
     for efficiency, score in zip(efficiencies,scores):
         selected_data = data.query('model_output > ' + str(score))
