@@ -27,7 +27,7 @@ centrality: in p-Pb o Pb-Pb => overlap
             percentili di centralità (su estremi di molteplicità) (nucleoni spettatori, tanti = poca centralità e viceversa in Pb)
             [centrality] 
 
-            cut: < 0.17 - 17% più centrali
+            cut: < 0.17 - 17% più centrali 
 
 pt: cut > 1.5 GeV/c, ci aspettiamo disomogeneità tra dati e LS
     efficienza per questo taglio !!!!!!!!
