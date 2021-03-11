@@ -20,37 +20,72 @@ train_model = True
 print_m_mppivert = False
 print_mppi_mdpi = False
 
+'''
+taglio centralità:
+centrality: in p-Pb o Pb-Pb => overlap
+            p-p => molteplicità di particelle cariche
+            percentili di centralità (su estremi di molteplicità) (nucleoni spettatori, tanti = poca centralità e viceversa in Pb)
+            [centrality] 
+
+            cut: < 0.17 - 17% più centrali
+
+pt: cut > 1.5 GeV/c, ci aspettiamo disomogeneità tra dati e LS
+    efficienza per questo taglio !!!!!!!!
+
+cut sia bckg sia signal e poi ai dati
+
+downscaling bckg: 4-5 volte il segnale
+
+hyperparam di francesco
+
+poi ottimizzazione
+
+'''
+
 
 if train_model:
+    print('Starting model training & application\n')
     train.train_model()
+    print('Model training & application complete\n')
+
+print('\nHypertriton pp 3-body 13 Tev\n')
 
 model_hdl = ModelHandler()
 model_hdl.load_model_handler('../model/model_hdl')
 print('Model loaded\n')
 
-data = train.load_data_with_scores('../data/data_scores.csv')                #pd dataframe already processed
-background_ls = train.load_data_with_scores('../data/bckg_ls_scores.csv')
-
 eff_array, scores = train.load_eff_scores()
-print('Datas loaded\n')
+
+data = train.load_data_with_scores('../data/data_scores.csv')                #pd dataframe already processed
+print('Data loaded\n')
+
+data.query('model_output > -5', inplace = True)         ## PARAM!!!!!
+print('Query on data applied\n')
+
+background_ls = train.load_data_with_scores('../data/bckg_ls_scores.csv')
+print('Background LS loaded\n')
+
+#background_ls.query('model_output > -5', inplace = True)            ## PARAM!!!!!
+#print('Query on background LS applied\n')
+
 
 if print_m_mppivert:
-    print('Plotting scatter plot for m vs. mppi_vert')
+    print('Plotting scatter plot for m vs. mppi_vert\n')
 
     for score, i in zip(scores, eff_array):
         sel = data.query('model_output > ' + str(score))
         utils.scatter_with_hist(sel['m'],sel['mppi_vert'],[34,2.96,3.04],[34,1.08,1.13],
                                 x_label='Hypertriton mass [GeV/c$^2$]',
-                                y_label='$p - \pi$ mass [GeV/c$^2$]', eff = i,name = '/m_mppi/dalitz_eff_')
+                                y_label='$p - \pi$ mass [GeV/c$^2$]', eff = i,path = 'm_mppi/', name = 'dalitz_eff_')
     
 if print_mppi_mdpi:
-    print('Plotting Dalitz plot: mppi vs. mdpi')
+    print('Plotting Dalitz plot: mppi vs. mdpi\n')
 
     sel_m = data.query('m > 2.989 & m < 2.993')
     for score,i in zip(scores,eff_array):
         sel = sel_m.query('model_output > ' + str(score))
         utils.scatter_with_hist(sel['mppi'], sel['mdpi'],
-                                    [50,1.16,1.26],[50,4.07,4.22], name = '/mppi_mdpi/dalitz_eff_',
+                                    [50,1.16,1.26],[50,4.07,4.22], path = 'mppi_mdpi/', name = 'dalitz_eff_',
                                     x_label='$p - \pi$ mass [GeV/c$^2$]',
                                     y_label='$d - \pi$ mass [GeV/c$^2$]', eff=i)
 
