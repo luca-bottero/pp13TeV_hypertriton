@@ -17,6 +17,7 @@ from hipe4ml import plot_utils
 
 #Config
 train_model = True
+optimize_bayes = True
 print_m_mppivert = False
 print_mppi_mdpi = False
 
@@ -45,7 +46,7 @@ poi ottimizzazione
 
 if train_model:
     print('Starting model training & application\n')
-    train.train_model()
+    train.train_model(optimize_bayes)
     print('Model training & application complete\n')
 
 print('\nHypertriton pp 3-body 13 Tev\n')

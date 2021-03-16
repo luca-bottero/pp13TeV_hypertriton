@@ -17,12 +17,14 @@ from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 import matplotlib
 
-#matplotlib.use('pdf')
+matplotlib.use('pdf')
 
-def train_xgboost_model(signal, background, training_variables='', testsize = 0.5):
+def train_xgboost_model(signal, background, training_variables='', testsize = 0.5, optimize_bayes = False):
     '''
     Trains an XGBOOST model using hipe4ml and plot output distribution and feature importance
     '''
+    
+    print('Training XGBOOST model')
 
     params = {'n_jobs' : 8,  
                 'seed': 42,
@@ -37,6 +39,16 @@ def train_xgboost_model(signal, background, training_variables='', testsize = 0.
                 'subsample': 0.7447,
                 'colsample_bytree': 0.5727,
                 }
+    
+    params_range = {
+    "max_depth": (8, 18),
+    "learning_rate": (0.07,0.15),
+    "n_estimators": (150, 250),
+    "gamma": (0.3,0.5),
+    "min_child_weight": (3,8),
+    "subsample": (0.5,1),
+    "colsample_bytree": (0.3,1),
+    }
 
     train_test_data = train_test_generator([signal, background], [1,0], test_size=testsize)
 
@@ -47,6 +59,10 @@ def train_xgboost_model(signal, background, training_variables='', testsize = 0.
     model_hdl = ModelHandler(model_clf, training_variables)
     model_hdl.set_model_params(params)
     model_hdl.train_test_model(train_test_data, )     
+
+    if optimize_bayes:
+        print('Doing Bayes optimization of hyperparameters\n')
+        model_hdl.optimize_params_bayes(train_test_data, params_range,' roc_auc',njobs=-1)
 
     y_pred_train = model_hdl.predict(train_test_data[0], True)
     y_pred_test = model_hdl.predict(train_test_data[2], True)       #used to evaluate model performance
@@ -62,13 +78,13 @@ def train_xgboost_model(signal, background, training_variables='', testsize = 0.
         os.makedirs(training_fig_path)
 
     plt.savefig(training_fig_path + '/output_train_test.png',dpi=300,facecolor='white')
-    #plt.show()
+    plt.show()
     plt.close()
 
     roc_train_test_fig = plot_utils.plot_roc_train_test(train_test_data[3], y_pred_test,
                                                         train_test_data[1], y_pred_train, None, leg_labels) #ROC AUC plot
     plt.savefig(training_fig_path + '/ROC_AUC_train_test.png',dpi=300,facecolor='white')
-    #plt.show()
+    plt.show()
     plt.close()
 
     efficiency_score_conversion(train_test_data, y_pred_test)
@@ -76,7 +92,7 @@ def train_xgboost_model(signal, background, training_variables='', testsize = 0.
     feat_imp_1, feat_imp_2 = plot_utils.plot_feature_imp(train_test_data[2],train_test_data[3],model_hdl,approximate=False)
     feat_imp_1.savefig(training_fig_path + '/feature_importance_HIPE4ML_violin.png',dpi=300,facecolor='white')
     feat_imp_2.savefig(training_fig_path + '/feature_importance_HIPE4ML_bar.png',dpi=300,facecolor='white')
-    #plt.show()
+    plt.show()
     plt.close()
 
     return train_test_data, y_pred_test, model_hdl  
@@ -104,7 +120,7 @@ def efficiency_score_conversion(train_test_data, y_pred_test):
     plt.xlabel('BDT output')
     plt.ylabel('Efficiency')
     plt.savefig(training_fig_path + '/bdt_eff_bdt_out.png',dpi=300,facecolor='white')
-    #plt.show()
+    plt.show()
     plt.close()    
 
     score_from_eff = score_from_efficiency_array(train_test_data[3],y_pred_test,np.arange(1E-6,1-1E-6,0.001))
@@ -114,7 +130,7 @@ def efficiency_score_conversion(train_test_data, y_pred_test):
     plt.xlabel('Efficiency')
     plt.ylabel('BDT output')
     plt.savefig(training_fig_path + '/bdt_out_dbt_eff.png',dpi=300,facecolor='white')
-    #plt.show()
+    plt.show()
     plt.close()
     
 
@@ -156,7 +172,7 @@ def scatter_with_hist(x_data,y_data,x_axis,y_axis,x_label='',y_label='',eff = 0.
 
     
     plt.savefig('../results/images/' +path + name + str(np.round(eff,4)) + '.png', dpi=300, facecolor='white')
-    #plt.show()
+    plt.show()
     plt.close()
     
 

@@ -36,9 +36,8 @@ def load_eff_scores():
 
     return eff_array, scores
 
-def train_model():
+def train_model(optimize_bayes = False):
     
-
     data = TreeHandler()
     data.get_handler_from_large_file(file_name = '../data/DataTable_pp_Test.root',tree_name= "DataTable",
                                         preselection='centrality < 0.17 and pt > 1.5')
