@@ -58,11 +58,12 @@ def train_xgboost_model(signal, background, training_variables='', testsize = 0.
     model_clf = xgb.XGBClassifier()
     model_hdl = ModelHandler(model_clf, training_variables)
     model_hdl.set_model_params(params)
-    model_hdl.train_test_model(train_test_data, )     
 
     if optimize_bayes:
         print('Doing Bayes optimization of hyperparameters\n')
-        model_hdl.optimize_params_bayes(train_test_data, params_range,' roc_auc',njobs=-1)
+        model_hdl.optimize_params_bayes(train_test_data, params_range,'roc_auc',njobs=-1)
+    
+    model_hdl.train_test_model(train_test_data, )     
 
     y_pred_train = model_hdl.predict(train_test_data[0], True)
     y_pred_test = model_hdl.predict(train_test_data[2], True)       #used to evaluate model performance

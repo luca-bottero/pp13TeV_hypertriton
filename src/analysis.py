@@ -16,6 +16,7 @@ from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 
 #Config
+test_run = True             #if _Test trees as used
 train_model = True
 optimize_bayes = True
 print_m_mppivert = False
@@ -46,29 +47,41 @@ poi ottimizzazione
 
 if train_model:
     print('Starting model training & application\n')
-    train.train_model(optimize_bayes)
+    train.train_model(optimize_bayes, test_run)
     print('Model training & application complete\n')
 
 print('\nHypertriton pp 3-body 13 Tev\n')
 
 model_hdl = ModelHandler()
-model_hdl.load_model_handler('../model/model_hdl')
+if test_run:
+    model_hdl.load_model_handler('../model/model_hdl_Test')
+else:
+    model_hdl.load_model_handler('../model/model_hdl')
+
+
 print('Model loaded\n')
 
 eff_array, scores = train.load_eff_scores()
 
-data = train.load_data_with_scores('../data/data_scores.csv')                #pd dataframe already processed
-print('Data loaded\n')
-
-data.query('model_output > -5', inplace = True)         ## PARAM!!!!!
-print('Query on data applied\n')
-
-background_ls = train.load_data_with_scores('../data/bckg_ls_scores.csv')
-print('Background LS loaded\n')
-
-#background_ls.query('model_output > -5', inplace = True)            ## PARAM!!!!!
-#print('Query on background LS applied\n')
-
+if test_run:
+    data = train.load_data_with_scores('../data/data_scores_Test.csv')                #pd dataframe already processed
+    print('Data loaded\n')
+    #data.query('model_output > -5', inplace = True)         ## PARAM!!!!!
+    #print('Query on data applied\n')
+    background_ls = train.load_data_with_scores('../data/bckg_ls_scores_Test.csv')
+    print('Background LS loaded\n')
+    #background_ls.query('model_output > -5', inplace = True)            ## PARAM!!!!!
+    #print('Query on background LS applied\n')
+else:
+    data = train.load_data_with_scores('../data/data_scores.csv')                #pd dataframe already processed
+    print('Data loaded\n')
+    #data.query('model_output > -5', inplace = True)         ## PARAM!!!!!
+    #print('Query on data applied\n')
+    background_ls = train.load_data_with_scores('../data/bckg_ls_scores.csv')
+    print('Background LS loaded\n')
+    #background_ls.query('model_output > -5', inplace = True)            ## PARAM!!!!!
+    #print('Query on background LS applied\n')
+    
 
 if print_m_mppivert:
     print('Plotting scatter plot for m vs. mppi_vert\n')
