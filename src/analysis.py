@@ -18,9 +18,9 @@ from hipe4ml import plot_utils
 #Config
 test_run = True             #if _Test trees as used
 train_model = True
-optimize_bayes = True
-print_m_mppivert = False
-print_mppi_mdpi = False
+optimize_bayes = False
+print_m_mppivert = True
+print_mppi_mdpi = True
 
 '''
 taglio centralità:
@@ -44,13 +44,12 @@ poi ottimizzazione
 
 '''
 
+print('\nHypertriton pp 3-body 13 Tev\n')
 
 if train_model:
     print('Starting model training & application\n')
     train.train_model(optimize_bayes, test_run)
     print('Model training & application complete\n')
-
-print('\nHypertriton pp 3-body 13 Tev\n')
 
 model_hdl = ModelHandler()
 if test_run:
