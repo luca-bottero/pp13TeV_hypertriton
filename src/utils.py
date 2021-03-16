@@ -41,13 +41,13 @@ def train_xgboost_model(signal, background, training_variables='', testsize = 0.
                 }
     
     params_range = {
-    "max_depth": (8, 18),
-    "learning_rate": (0.07,0.15),
-    "n_estimators": (150, 250),
-    "gamma": (0.3,0.5),
-    "min_child_weight": (3,8),
-    "subsample": (0.5,1),
-    "colsample_bytree": (0.3,1),
+    "max_depth": (5, 20),           # defines the maximum depth of a single tree (regularization)
+    "learning_rate": (0.01, 0.3),   # learning rate
+    "n_estimators": (50, 500),      # number of boosting trees
+    "gamma": (0.3, 1.1),            # specifies the minimum loss reduction required to make a split
+    "min_child_weight": (1, 12),
+    "subsample": (0.5, 0.9),        # denotes the fraction of observations to be randomly samples for each tree
+    "colsample_bytree": (0.5, 0.9),
     }
 
     train_test_data = train_test_generator([signal, background], [1,0], test_size=testsize)
@@ -153,6 +153,8 @@ def scatter_with_hist(x_data,y_data,x_axis,y_axis,x_label='',y_label='',eff = 0.
     '''
     Plots a scatterplot with histograms of the distributions
     '''
+
+    plt.close()
     
     plot = (
         hist.Hist.new
@@ -182,5 +184,16 @@ def scatter_with_hist(x_data,y_data,x_axis,y_axis,x_label='',y_label='',eff = 0.
     plt.show()
     plt.close()
     
+def plot_efficiency(data_col, data_col_with_cut, x_label, title, name, path = '../results/images/'):
+    plt.figure()
+    hist_rec, bin_edges = np.histogram(data_col, bins=100, density=False)
+    hist_gen, bin_edges = np.histogram(data_col_with_cut, bins=bin_edges, density=False)
+    plt.bar((bin_edges[1:] + bin_edges[:-1]) * .5, (hist_rec/hist_gen),width=(bin_edges[1] - bin_edges[0]), color="blue")
+    plt.title(title, fontsize=15)
+    plt.xlabel(x_label, fontsize=12)
+    plt.ylabel('efficiency', fontsize=12)
+    plt.savefig(path + name,dpi = 300, facecolor = 'white')
+    plt.show()
+    plt.close()
 
 

@@ -16,31 +16,15 @@ from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 
 #Config
-test_run = False             #if _Test trees as used
+test_run = False             #if _Test trees are used
 train_model = True
-optimize_bayes = False
-print_m_mppivert = True
-print_mppi_mdpi = True
+optimize_bayes = True
+print_m_mppivert = False
+print_mppi_mdpi = False
 
 '''
-taglio centralità:
-centrality: in p-Pb o Pb-Pb => overlap
-            p-p => molteplicità di particelle cariche
-            percentili di centralità (su estremi di molteplicità) (nucleoni spettatori, tanti = poca centralità e viceversa in Pb)
-            [centrality] 
-
-            cut: < 0.17 - 17% più centrali 
-
 pt: cut > 1.5 GeV/c, ci aspettiamo disomogeneità tra dati e LS
     efficienza per questo taglio !!!!!!!!
-
-cut sia bckg sia signal e poi ai dati
-
-downscaling bckg: 4-5 volte il segnale
-
-hyperparam di francesco
-
-poi ottimizzazione
 
 '''
 
@@ -107,6 +91,4 @@ if print_mppi_mdpi:
 
 
 mass_fit.data_ls_comp_plots(data,background_ls,scores,eff_array)
-
-
 

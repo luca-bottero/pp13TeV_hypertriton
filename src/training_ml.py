@@ -1,12 +1,14 @@
 import utils, mass_fit, os
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from hipe4ml.model_handler import ModelHandler
 from hipe4ml.tree_handler import TreeHandler
 from hipe4ml.analysis_utils import score_from_efficiency_array
 
 
 def save_data_with_scores(tree_handler, filename):
+    print('Saving file: ' + filename + '\n')
     tree_handler.get_data_frame().to_csv(filename)
 
 def load_data_with_scores(filename):
@@ -81,8 +83,30 @@ def train_model(optimize_bayes = False, test = False):
         background_ls.shuffle_data_frame(size = min(background_ls.get_n_cand(), mc_signal.get_n_cand() * 4))
         print('Background LS loaded\n')
 
+    '''
+    for var in ['dca_pr', 'dca_pi', 'dca_de']:
+        plt.figure()
+        plt.hist(data[var],bins=100)
+        plt.title(var + ' - Data', fontsize=15)
+        plt.xlabel(var, fontsize=12)
+        plt.ylabel('Count',fontsize=12)
+        plt.savefig("../images/data_" + var + ".png",dpi = 300, facecolor = 'white')
+        plt.show()
+        plt.close()
+        
+        plt.figure()
+        plt.hist(mc_signal[var],bins=100)
+        plt.title(var + ' - MC', fontsize=15)
+        plt.xlabel(var, fontsize=12)
+        plt.ylabel('Count',fontsize=12)
+        plt.savefig("../images/MC_" + var + ".png",dpi = 300, facecolor = 'white')
+        plt.show()
+        plt.close()
+    '''
+
     training_variables = ["ct", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr",
-                            "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2"]
+                            "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2",
+                            'dca_pr', 'dca_pi', 'dca_de']
     min_eff = 0.5
     max_eff = 0.9
     step = 0.01
