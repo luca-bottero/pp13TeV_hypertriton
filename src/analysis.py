@@ -16,7 +16,7 @@ from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 
 #Config
-test_run = True             #if _Test trees as used
+test_run = False             #if _Test trees as used
 train_model = True
 optimize_bayes = False
 print_m_mppivert = True

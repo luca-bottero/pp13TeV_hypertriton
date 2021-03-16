@@ -51,30 +51,35 @@ def train_model(optimize_bayes = False, test = False):
         data = TreeHandler()
         data.get_handler_from_large_file(file_name = '../data/DataTable_pp_Test.root',tree_name= "DataTable",
                                             preselection='centrality < 0.17 and pt > 1.5')
+        print('Data loaded\n')
 
         mc_signal = TreeHandler()
         mc_signal.get_handler_from_large_file(file_name = '../data/SignalTable_pp13TeV_mtexp_Test.root',tree_name= "SignalTable",
                                                 preselection='rej_accept > 0 and pt > 1.5')
+        print('MC signal loaded\n')
 
         background_ls = TreeHandler()
         background_ls.get_handler_from_large_file(file_name = '../data/DataTable_pp_LS_Test.root',tree_name= "DataTable",
                                                     preselection='centrality < 0.17 and pt > 1.5')
         background_ls.shuffle_data_frame(size = min(background_ls.get_n_cand(), mc_signal.get_n_cand() * 4))
+        print('Background LS loaded\n')
 
     else:
         data = TreeHandler()
         data.get_handler_from_large_file(file_name = '../data/DataTable_pp.root',tree_name= "DataTable",
                                             preselection='centrality < 0.17 and pt > 1.5')
+        print('Data loaded\n')
 
         mc_signal = TreeHandler()
         mc_signal.get_handler_from_large_file(file_name = '../data/SignalTable_pp13TeV_mtexp.root',tree_name= "SignalTable",
                                                 preselection='rej_accept > 0 and pt > 1.5')
+        print('MC signal loaded\n')
 
         background_ls = TreeHandler()
         background_ls.get_handler_from_large_file(file_name = '../data/DataTable_pp_LS.root',tree_name= "DataTable",
                                                     preselection='centrality < 0.17 and pt > 1.5')
         background_ls.shuffle_data_frame(size = min(background_ls.get_n_cand(), mc_signal.get_n_cand() * 4))
-
+        print('Background LS loaded\n')
 
     training_variables = ["ct", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr",
                             "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2"]
