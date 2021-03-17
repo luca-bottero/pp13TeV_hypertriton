@@ -17,10 +17,10 @@ from hipe4ml import plot_utils
 
 #Config
 test_run = False             #if _Test trees are used
-train_model = True
+train_model = False
 optimize_bayes = True
-print_m_mppivert = False
-print_mppi_mdpi = False
+print_m_mppivert = True
+print_mppi_mdpi = True
 
 '''
 pt: cut > 1.5 GeV/c, ci aspettiamo disomogeneità tra dati e LS
