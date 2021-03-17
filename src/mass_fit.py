@@ -1,18 +1,8 @@
 #%%
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
-import uproot
-import os
-import xgboost as xgb
-import aghast
 import ROOT
-from hipe4ml.model_handler import ModelHandler
-from hipe4ml import plot_utils
-from array import array
-import os
 from ROOT import gROOT
+import os
+
 
 gROOT.SetBatch(True)
 gROOT.LoadMacro(os.path.abspath(os.getcwd()) + "/cmb_fit_exp.C")
@@ -20,6 +10,19 @@ gROOT.LoadMacro(os.path.abspath(os.getcwd()) + "/cmb_fit_exp.C")
 from ROOT import cmb_fit_exp
 gROOT.LoadMacro(os.path.abspath(os.getcwd()) + "/cmb_fit_erf.C")
 from ROOT import cmb_fit_erf
+
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+import uproot
+import xgboost as xgb
+import aghast
+from hipe4ml.model_handler import ModelHandler
+from hipe4ml import plot_utils
+from array import array
+
+
 
 def mass_fitter(hist,score,efficiency):
     aghast_hist = aghast.from_numpy(hist)

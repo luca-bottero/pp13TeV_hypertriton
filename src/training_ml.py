@@ -9,10 +9,10 @@ from hipe4ml.analysis_utils import score_from_efficiency_array
 
 def save_data_with_scores(tree_handler, filename):
     print('Saving file: ' + filename + '\n')
-    tree_handler.get_data_frame().to_csv(filename)
+    tree_handler.write_df_to_parquet_files(filename)      #to_parquet, get_handler_from_large_data, get_data_frame
 
 def load_data_with_scores(filename):
-    return pd.read_csv(filename)
+    return pd.read_parquet(filename)
 
 def save_eff_scores(eff_array, scores, test):
     
@@ -50,11 +50,6 @@ def load_eff_scores():
 def train_model(optimize_bayes = False, test = False):
     
     if test:
-        data = TreeHandler()
-        data.get_handler_from_large_file(file_name = '../data/DataTable_pp_Test.root',tree_name= "DataTable",
-                                            preselection='centrality < 0.17 and pt > 1.5')
-        print('Data loaded\n')
-
         mc_signal = TreeHandler()
         mc_signal.get_handler_from_large_file(file_name = '../data/SignalTable_pp13TeV_mtexp_Test.root',tree_name= "SignalTable",
                                                 preselection='rej_accept > 0 and pt > 1.5')
@@ -67,11 +62,6 @@ def train_model(optimize_bayes = False, test = False):
         print('Background LS loaded\n')
 
     else:
-        data = TreeHandler()
-        data.get_handler_from_large_file(file_name = '../data/DataTable_pp.root',tree_name= "DataTable",
-                                            preselection='centrality < 0.17 and pt > 1.5')
-        print('Data loaded\n')
-
         mc_signal = TreeHandler()
         mc_signal.get_handler_from_large_file(file_name = '../data/SignalTable_pp13TeV_mtexp.root',tree_name= "SignalTable",
                                                 preselection='rej_accept > 0 and pt > 1.5')
@@ -104,9 +94,8 @@ def train_model(optimize_bayes = False, test = False):
         plt.close()
     '''
 
-    training_variables = ["ct", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr",
-                            "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2",
-                            'dca_pr', 'dca_pi', 'dca_de']
+    training_variables = ["pt", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr",
+                            "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2"] #,'dca_pr', 'dca_pi', 'dca_de'
     min_eff = 0.5
     max_eff = 0.9
     step = 0.01
@@ -126,16 +115,38 @@ def train_model(optimize_bayes = False, test = False):
 
     scores = score_from_efficiency_array(train_test_data[3],y_pred_test,np.arange(min_eff,max_eff,step))
 
-
-    background_ls.apply_model_handler(model_hdl)
-    data.apply_model_handler(model_hdl)
+    del background_ls
 
     if test:
-        save_data_with_scores(background_ls, '../data/bckg_ls_scores_Test.csv')
-        save_data_with_scores(data, '../data/data_scores_Test.csv')
+        data = TreeHandler()
+        data.get_handler_from_large_file(file_name = '../data/DataTable_pp_Test.root',tree_name= "DataTable",
+                                            preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)
+        print('Data loaded\n')
+        background_ls = TreeHandler()
+        background_ls.get_handler_from_large_file(file_name = '../data/DataTable_pp_LS_Test.root',tree_name= "DataTable",
+                                            preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)
+        print('Background loaded\n')
     else:
-        save_data_with_scores(background_ls, '../data/bckg_ls_scores.csv')
-        save_data_with_scores(data, '../data/data_scores.csv')
+        data = TreeHandler()
+        data.get_handler_from_large_file(file_name = '../data/DataTable_pp.root',tree_name= "DataTable",
+                                            preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)
+        print('Data loaded\n')
+        background_ls = TreeHandler()
+        background_ls.get_handler_from_large_file(file_name = '../data/DataTable_pp_LS.root',tree_name= "DataTable",
+                                            preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)
+        print('Background loaded\n')
+
+    #background_ls.apply_model_handler(model_hdl)
+    #data.apply_model_handler(model_hdl)
+
+    print(background_ls)
+
+    if test:
+        save_data_with_scores(background_ls, '../data/bckg_ls_scores_Test')
+        save_data_with_scores(data, '../data/data_scores_Test')
+    else:
+        save_data_with_scores(background_ls, '../data/bckg_ls_scores')
+        save_data_with_scores(data, '../data/data_scores')
 
     save_eff_scores(eff_array, scores, test)
 

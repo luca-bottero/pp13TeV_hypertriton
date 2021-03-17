@@ -1,4 +1,5 @@
 #%%
+import ROOT
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -6,7 +7,6 @@ import uproot
 import os
 import xgboost as xgb
 import mass_fit
-import ROOT
 import hist
 import seaborn as sns
 from concurrent.futures import ThreadPoolExecutor

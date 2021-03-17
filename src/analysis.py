@@ -1,3 +1,4 @@
+import ROOT
 import utils
 import training_ml as train
 import numpy as np
@@ -7,7 +8,6 @@ import uproot
 import os
 import xgboost as xgb
 import mass_fit
-import ROOT
 from concurrent.futures import ThreadPoolExecutor
 from sklearn.model_selection import train_test_split
 from hipe4ml.model_handler import ModelHandler
@@ -16,9 +16,9 @@ from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 
 #Config
-test_run = False             #if _Test trees are used
-train_model = False
-optimize_bayes = True
+test_run = True             #if _Test trees are used
+train_model = True
+optimize_bayes = False
 print_m_mppivert = True
 print_mppi_mdpi = True
 
@@ -47,20 +47,20 @@ print('Model loaded\n')
 eff_array, scores = train.load_eff_scores()
 
 if test_run:
-    data = train.load_data_with_scores('../data/data_scores_Test.csv')                #pd dataframe already processed
+    data = train.load_data_with_scores('../data/data_scores_Test.parquet.gzip')                #pd dataframe already processed
     print('Data loaded\n')
     #data.query('model_output > -5', inplace = True)         ## PARAM!!!!!
     #print('Query on data applied\n')
-    background_ls = train.load_data_with_scores('../data/bckg_ls_scores_Test.csv')
+    background_ls = train.load_data_with_scores('../data/bckg_ls_scores_Test.parquet.gzip')
     print('Background LS loaded\n')
     #background_ls.query('model_output > -5', inplace = True)            ## PARAM!!!!!
     #print('Query on background LS applied\n')
 else:
-    data = train.load_data_with_scores('../data/data_scores.csv')                #pd dataframe already processed
+    data = train.load_data_with_scores('../data/data_scores.parquet.gzip')                #pd dataframe already processed
     print('Data loaded\n')
     #data.query('model_output > -5', inplace = True)         ## PARAM!!!!!
     #print('Query on data applied\n')
-    background_ls = train.load_data_with_scores('../data/bckg_ls_scores.csv')
+    background_ls = train.load_data_with_scores('../data/bckg_ls_scores.parquet.gzip')
     print('Background LS loaded\n')
     #background_ls.query('model_output > -5', inplace = True)            ## PARAM!!!!!
     #print('Query on background LS applied\n')
@@ -87,7 +87,6 @@ if print_mppi_mdpi:
                                     y_label='$d - \pi$ mass [GeV/c$^2$]', eff=i)
 
     del sel_m
-
 
 
 mass_fit.data_ls_comp_plots(data,background_ls,scores,eff_array)
