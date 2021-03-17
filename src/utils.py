@@ -80,14 +80,14 @@ def train_xgboost_model(signal, background, training_variables='', testsize = 0.
                                                 True, leg_labels, True, density=False)
 
     plt.savefig(training_fig_path + '/output_train_test.png',dpi=300,facecolor='white')
-    plt.show()
+    
     plt.close()
 
     plt.figure()
     roc_train_test_fig = plot_utils.plot_roc_train_test(train_test_data[3], y_pred_test,
                                                         train_test_data[1], y_pred_train, None, leg_labels) #ROC AUC plot
     plt.savefig(training_fig_path + '/ROC_AUC_train_test.png',dpi=300,facecolor='white')
-    plt.show()
+    
     plt.close()
 
 
@@ -95,7 +95,7 @@ def train_xgboost_model(signal, background, training_variables='', testsize = 0.
     feat_imp_1, feat_imp_2 = plot_utils.plot_feature_imp(train_test_data[2],train_test_data[3],model_hdl,approximate=False)
     feat_imp_1.savefig(training_fig_path + '/feature_importance_HIPE4ML_violin.png',dpi=300,facecolor='white')
     feat_imp_2.savefig(training_fig_path + '/feature_importance_HIPE4ML_bar.png',dpi=300,facecolor='white')
-    plt.show()
+    
     plt.close()
 
     efficiency_score_conversion(train_test_data, y_pred_test)
@@ -126,7 +126,7 @@ def efficiency_score_conversion(train_test_data, y_pred_test):
     plt.xlabel('BDT output')
     plt.ylabel('Efficiency')
     plt.savefig(training_fig_path + '/bdt_eff_bdt_out.png',dpi=300,facecolor='white')
-    plt.show()
+    
     plt.close()    
 
     plt.figure()
@@ -137,7 +137,7 @@ def efficiency_score_conversion(train_test_data, y_pred_test):
     plt.xlabel('Efficiency')
     plt.ylabel('BDT output')
     plt.savefig(training_fig_path + '/bdt_out_dbt_eff.png',dpi=300,facecolor='white')
-    plt.show()
+    
     plt.close()
     
 
@@ -181,7 +181,7 @@ def scatter_with_hist(x_data,y_data,x_axis,y_axis,x_label='',y_label='',eff = 0.
 
     
     plt.savefig('../results/images/' +path + name + str(np.round(eff,4)) + '.png', dpi=300, facecolor='white')
-    plt.show()
+    
     plt.close()
     
 def plot_efficiency(data_col, data_col_with_cut, x_label, title, name, path = '../results/images/'):
@@ -193,7 +193,7 @@ def plot_efficiency(data_col, data_col_with_cut, x_label, title, name, path = '.
     plt.xlabel(x_label, fontsize=12)
     plt.ylabel('efficiency', fontsize=12)
     plt.savefig(path + name,dpi = 300, facecolor = 'white')
-    plt.show()
+    
     plt.close()
 
 

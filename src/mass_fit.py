@@ -1,16 +1,8 @@
 #%%
 import ROOT
-from ROOT import gROOT
+ROOT.gROOT.SetBatch(True)
+
 import os
-
-
-gROOT.SetBatch(True)
-gROOT.LoadMacro(os.path.abspath(os.getcwd()) + "/cmb_fit_exp.C")
-
-from ROOT import cmb_fit_exp
-gROOT.LoadMacro(os.path.abspath(os.getcwd()) + "/cmb_fit_erf.C")
-from ROOT import cmb_fit_erf
-
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -70,6 +62,9 @@ def mass_fitter(hist,score,efficiency):
 
 
 def data_ls_comp_plots(data, ls, scores, efficiencies):
+    ROOT.gROOT.LoadMacro("cmb_fit_exp.C")
+    ROOT.gROOT.LoadMacro("cmb_fit_erf.C")
+    from ROOT import cmb_fit_exp, cmb_fit_erf
    
     results_path = "../results"
     if not os.path.exists(results_path):

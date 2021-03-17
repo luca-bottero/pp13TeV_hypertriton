@@ -1,5 +1,6 @@
 import ROOT
 import utils
+import mass_fit
 import training_ml as train
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,7 +8,6 @@ import pandas as pd
 import uproot
 import os
 import xgboost as xgb
-import mass_fit
 from concurrent.futures import ThreadPoolExecutor
 from sklearn.model_selection import train_test_split
 from hipe4ml.model_handler import ModelHandler
@@ -16,7 +16,7 @@ from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 
 #Config
-test_run = True             #if _Test trees are used
+test_run = False             #if _Test trees are used
 train_model = True
 optimize_bayes = False
 print_m_mppivert = True
@@ -87,7 +87,6 @@ if print_mppi_mdpi:
                                     y_label='$d - \pi$ mass [GeV/c$^2$]', eff=i)
 
     del sel_m
-
 
 mass_fit.data_ls_comp_plots(data,background_ls,scores,eff_array)
 
