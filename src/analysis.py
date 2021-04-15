@@ -16,11 +16,13 @@ from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 
 #Config
-test_run = False             #if _Test trees are used
-train_model = True
-optimize_bayes = False
-print_m_mppivert = True
-print_mppi_mdpi = True
+is_test_run      = True             #if _Test trees are used
+train_model      = True
+optimize_bayes   = False
+print_m_mppivert = False
+print_mppi_mdpi  = False
+
+data_path = '../data/'
 
 '''
 pt: cut > 1.5 GeV/c, ci aspettiamo disomogeneità tra dati e LS
@@ -32,11 +34,11 @@ print('\nHypertriton pp 3-body 13 Tev\n')
 
 if train_model:
     print('Starting model training & application\n')
-    train.train_model(optimize_bayes, test_run)
+    train.train_model(optimize_bayes, is_test_run, data_path)
     print('Model training & application complete\n')
 
 model_hdl = ModelHandler()
-if test_run:
+if is_test_run:
     model_hdl.load_model_handler('../model/model_hdl_Test')
 else:
     model_hdl.load_model_handler('../model/model_hdl')
@@ -44,23 +46,23 @@ else:
 
 print('Model loaded\n')
 
-eff_array, scores = train.load_eff_scores()
+eff_array, scores = train.load_eff_scores(data_path)
 
-if test_run:
-    data = train.load_data_with_scores('../data/data_scores_Test.parquet.gzip')                #pd dataframe already processed
+if is_test_run:
+    data = train.load_data_with_scores(data_path + '/data_scores_Test.parquet.gzip')                #pd dataframe already processed
     print('Data loaded\n')
     #data.query('model_output > -5', inplace = True)         ## PARAM!!!!!
     #print('Query on data applied\n')
-    background_ls = train.load_data_with_scores('../data/bckg_ls_scores_Test.parquet.gzip')
+    background_ls = train.load_data_with_scores(data_path + './bckg_ls_scores_Test.parquet.gzip')
     print('Background LS loaded\n')
     #background_ls.query('model_output > -5', inplace = True)            ## PARAM!!!!!
     #print('Query on background LS applied\n')
 else:
-    data = train.load_data_with_scores('../data/data_scores.parquet.gzip')                #pd dataframe already processed
+    data = train.load_data_with_scores(data_path + './data_scores.parquet.gzip')                #pd dataframe already processed
     print('Data loaded\n')
     #data.query('model_output > -5', inplace = True)         ## PARAM!!!!!
     #print('Query on data applied\n')
-    background_ls = train.load_data_with_scores('../data/bckg_ls_scores.parquet.gzip')
+    background_ls = train.load_data_with_scores(data_path + './bckg_ls_scores.parquet.gzip')
     print('Background LS loaded\n')
     #background_ls.query('model_output > -5', inplace = True)            ## PARAM!!!!!
     #print('Query on background LS applied\n')
