@@ -54,12 +54,12 @@ def train_model(optimize_bayes = False, is_test_run = False, data_path = '../dat
     
     if is_test_run:
         mc_signal = TreeHandler()
-        mc_signal.get_handler_from_large_file(file_name = data_path + 'SignalTable_pp13TeV_mtexp_Test.root',tree_name= "SignalTable",
+        mc_signal.get_handler_from_large_file(file_name = data_path + 'SignalTable_pp13TeV_mtexp.root',tree_name= "SignalTable",
                                                 preselection='rej_accept > 0 and pt > 1.5')
         print('MC signal loaded\n')
 
         background_ls = TreeHandler()
-        background_ls.get_handler_from_large_file(file_name = data_path + 'DataTable_pp_LS_Test.root',tree_name= "DataTable",
+        background_ls.get_handler_from_large_file(file_name = data_path + 'DataTable_pp_LS_OLD.root',tree_name= "DataTable",
                                                     preselection='centrality < 0.17 and pt > 1.5')
         background_ls.shuffle_data_frame(size = min(background_ls.get_n_cand(), mc_signal.get_n_cand() * 4))
         print('Background LS loaded\n')
@@ -122,11 +122,11 @@ def train_model(optimize_bayes = False, is_test_run = False, data_path = '../dat
 
     if is_test_run:
         data = TreeHandler()
-        data.get_handler_from_large_file(file_name = data_path + '/DataTable_pp_Test.root',tree_name= "DataTable",
+        data.get_handler_from_large_file(file_name = data_path + '/DataTable_pp_OLD.root',tree_name= "DataTable",
                                             preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)
         print('Data loaded\n')
         background_ls = TreeHandler()
-        background_ls.get_handler_from_large_file(file_name = data_path + '/DataTable_pp_LS_Test.root',tree_name= "DataTable",
+        background_ls.get_handler_from_large_file(file_name = data_path + '/DataTable_pp_LS_OLD.root',tree_name= "DataTable",
                                             preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)
         print('Background loaded\n')
     else:
