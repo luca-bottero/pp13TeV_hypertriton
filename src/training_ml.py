@@ -104,13 +104,13 @@ def train_model(filename_dict, optimize_bayes = False, is_test_run = False):
                                                                             optimize_bayes = optimize_bayes)
         
     print('Saving model handler')
-    model_hdl.dump_model_handler(analysis_path + '/model')
-    print('Model handler saved')
+    model_hdl.dump_model_handler(analysis_path + '/model/model_hdl')
+    print('Model handler saved\n')
 
     scores = score_from_efficiency_array(train_test_data[3],y_pred_test,np.arange(min_eff,max_eff,step))
 
     del background_ls
-    print('Deleted background data')
+    print('Deleted background data\n')
 
     print('Loading experimental data')
     data = TreeHandler()

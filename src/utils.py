@@ -80,25 +80,25 @@ def train_xgboost_model(signal, background, filename_dict, training_variables=''
     plt.figure()
     ml_out_fig = plot_utils.plot_output_train_test(model_hdl, train_test_data, 100, 
                                                 True, leg_labels, True, density=False)
-    plt.savefig(training_fig_path + '/output_train_test.png',dpi=300,facecolor='white')
-    print('Done')
-    
+    plt.savefig(training_fig_path + '/output_train_test.png',dpi=300,facecolor='white')    
     plt.close()
+    print('Done\n')
 
+    print('Saving ROC AUC plot')
     plt.figure()
     roc_train_test_fig = plot_utils.plot_roc_train_test(train_test_data[3], y_pred_test,
                                                         train_test_data[1], y_pred_train, None, leg_labels) #ROC AUC plot
     plt.savefig(training_fig_path + '/ROC_AUC_train_test.png',dpi=300,facecolor='white')
-    
     plt.close()
+    print('Done\n')
 
-
+    print('Saving feature importance plots')
     plt.figure()
     feat_imp_1, feat_imp_2 = plot_utils.plot_feature_imp(train_test_data[2],train_test_data[3],model_hdl,approximate=False)
     feat_imp_1.savefig(training_fig_path + '/feature_importance_HIPE4ML_violin.png',dpi=300,facecolor='white')
     feat_imp_2.savefig(training_fig_path + '/feature_importance_HIPE4ML_bar.png',dpi=300,facecolor='white')
-    
     plt.close()
+    print('Done\n')
 
     efficiency_score_conversion(train_test_data, y_pred_test, filename_dict)
 
