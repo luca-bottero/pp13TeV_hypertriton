@@ -23,7 +23,7 @@ print_m_mppivert = True
 print_mppi_mdpi  = True
 
 data_path           = '../data/'
-analysis_name       = 'name'
+analysis_name       = 'TEST_2'
 MC_signal_filename  = 'SignalTable_pp13TeV_mtexp.root'
 background_filename = 'DataTable_pp_LS_OLD.root'
 data_filename       = 'DataTable_pp.root'
@@ -37,6 +37,8 @@ pt: cut > 1.5 GeV/c, ci aspettiamo disomogeneità tra dati e LS
 '''
 
 print('\nHypertriton pp 3-body 13 Tev\n')
+
+folder_setup(analysis_name = analysis_name)
 
 if train_model:
     print('Starting model training & application\n')
