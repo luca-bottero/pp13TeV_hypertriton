@@ -12,17 +12,21 @@ def save_data_with_scores(tree_handler, filename):
     tree_handler.write_df_to_parquet_files(filename)      #to_parquet, get_handler_from_large_data, get_data_frame
 
 def load_data_with_scores(filename):
+    print('Loadind file: ' + filename + '\n')
     return pd.read_parquet(filename)
 
-def save_eff_scores(eff_array, scores, is_test_run, data_path):
+def save_eff_scores(eff_array, scores, is_test_run, data_path = '../data/'):
+
+    if data_path[-1] != '/':
+        data_path += '/'
     
     if is_test_run:
-        eff_name =  data_path + '/eff_array_Test.csv'
-        scores_name =  data_path + '/scores_Test.csv'
+        eff_name =  data_path + 'eff_array_Test.csv'
+        scores_name =  data_path + 'scores_Test.csv'
     
     else: 
-        eff_name =  data_path + '/eff_array.csv'
-        scores_name =  data_path + '/scores.csv'
+        eff_name =  data_path + 'eff_array.csv'
+        scores_name =  data_path + 'scores.csv'
 
     with open(eff_name,'w') as f:
         for val in eff_array:
@@ -37,11 +41,14 @@ def save_eff_scores(eff_array, scores, is_test_run, data_path):
     f.close()
 
 def load_eff_scores(data_path = '../data/'):
-    with open(data_path + '/eff_array.csv') as f:
+    if data_path[-1] != '/':
+        data_path += '/'
+
+    with open(data_path + 'eff_array_Test.csv') as f:
         eff_array = np.array(f.read().splitlines()).astype(np.float)
     f.close()
 
-    with open(data_path + '/scores.csv') as f:
+    with open(data_path + 'scores_Test.csv') as f:
         scores = np.array(f.read().splitlines()).astype(np.float)
     f.close()
 
@@ -110,30 +117,38 @@ def train_model(optimize_bayes = False, is_test_run = False, data_path = '../dat
     if not os.path.exists(model_path):
         os.makedirs(model_path)
     
+    print('Saving model handler')
     if is_test_run:
         model_hdl.dump_model_handler(model_path + '/model_hdl_Test')
     else:
         model_hdl.dump_model_handler(model_path + '/model_hdl')
-
+    print('Model handler saved')
 
     scores = score_from_efficiency_array(train_test_data[3],y_pred_test,np.arange(min_eff,max_eff,step))
 
     del background_ls
+    print('Deleted background data')
 
     if is_test_run:
+        print('Loading experimental data')
         data = TreeHandler()
         data.get_handler_from_large_file(file_name = data_path + '/DataTable_pp_OLD.root',tree_name= "DataTable",
                                             preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)
         print('Data loaded\n')
+
+        print('Loading background data')
         background_ls = TreeHandler()
         background_ls.get_handler_from_large_file(file_name = data_path + '/DataTable_pp_LS_OLD.root',tree_name= "DataTable",
                                             preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)
         print('Background loaded\n')
     else:
+        print('Loading experimental data')
         data = TreeHandler()
         data.get_handler_from_large_file(file_name = data_path + '/DataTable_pp.root',tree_name= "DataTable",
                                             preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)
         print('Data loaded\n')
+
+        print('Loading background data')
         background_ls = TreeHandler()
         background_ls.get_handler_from_large_file(file_name = data_path + '/DataTable_pp_LS.root',tree_name= "DataTable",
                                             preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)

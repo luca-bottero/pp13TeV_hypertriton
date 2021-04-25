@@ -196,4 +196,16 @@ def plot_efficiency(data_col, data_col_with_cut, x_label, title, name, path = '.
     
     plt.close()
 
+def folder_setup(analysis_name = 'TEST', overwrite = True):
 
+    if analysis_name[-1] != '/':
+        analysis_name += '/'
+
+    if not os.path.exists(analysis_name):
+        os.makedirs(analysis_name)
+        os-makedirs(analysis_name)
+    else:
+        print('An analysis with the same name already exists. Previous results will be overwritten')
+
+    
+        

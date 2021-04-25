@@ -22,11 +22,11 @@ optimize_bayes   = False
 print_m_mppivert = False
 print_mppi_mdpi  = False
 
-data_path = '../data/'
-analysis_name = 'name'
-MC_signal_filename = 'SignalTable_pp13TeV_mtexp.root'
+data_path           = '../data/'
+analysis_name       = 'name'
+MC_signal_filename  = 'SignalTable_pp13TeV_mtexp.root'
 background_filename = 'DataTable_pp_LS_OLD.root'
-data_filename = 'DataTable_pp.root'
+data_filename       = 'DataTable_pp.root'
 
 
 '''
