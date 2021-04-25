@@ -43,7 +43,7 @@ utils.folder_setup(analysis_name = analysis_name)
 
 if train_model:
     print('Starting model training & application\n')
-    train.train_model(optimize_bayes, is_test_run, data_path, analysis_name)
+    train.train_model(optimize_bayes, is_test_run, filename_dict)
     print('Model training & application complete\n')
 
 if train_model:
