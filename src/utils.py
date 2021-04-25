@@ -200,11 +200,9 @@ def plot_efficiency(data_col, data_col_with_cut, x_label, title, name, path = '.
     plt.close()
 
 def folder_setup(analysis_name = 'TEST'):    
-    
+
     if not os.path.exists('../analysis_results'):
         os.makedirs('../analysis_results')
-
-    analysis_name = '../analysis_results/' + analysis_name
     
     if analysis_name[-1] != '/':
         analysis_name += '/'
@@ -217,7 +215,10 @@ def folder_setup(analysis_name = 'TEST'):
         os.makedirs(analysis_name + '/results/images/mppi_mdpi')
 
         os.makedirs(analysis_name + '/images/training')
+
         os.makedirs(analysis_name + '/model')
+
+        os.makedirs(analysis_name + '/output_data')
     else:
         print('An analysis with the same name already exists. Previous results will be overwritten')
 

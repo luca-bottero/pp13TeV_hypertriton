@@ -38,11 +38,19 @@ pt: cut > 1.5 GeV/c, ci aspettiamo disomogeneità tra dati e LS
 
 print('\nHypertriton pp 3-body 13 Tev\n')
 
-folder_setup(analysis_name = analysis_name)
+
+
+analysis_name = '../analysis_results/' + analysis_name
+utils.folder_setup(analysis_name = analysis_name)
 
 if train_model:
     print('Starting model training & application\n')
-    train.train_model(optimize_bayes, is_test_run, data_path)
+    train.train_model(optimize_bayes, is_test_run, data_path, analysis_name)
+    print('Model training & application complete\n')
+
+if train_model:
+    print('Starting model training & application\n')
+    train.train_model(optimize_bayes, is_test_run, data_path, analysis_name)
     print('Model training & application complete\n')
 
 model_hdl = ModelHandler()
