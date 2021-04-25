@@ -74,15 +74,14 @@ def train_xgboost_model(signal, background, filename_dict, training_variables=''
     plt.rcParams["figure.figsize"] = (10, 7)
     leg_labels = ['background', 'signal']
 
-    training_fig_path = filename_dict + "/images/training"
-    if not os.path.exists(training_fig_path):
-        os.makedirs(training_fig_path)
+    training_fig_path = filename_dict['analysis_name'] + "/images/training"
 
+    print('Saving Output comparison plot')
     plt.figure()
     ml_out_fig = plot_utils.plot_output_train_test(model_hdl, train_test_data, 100, 
                                                 True, leg_labels, True, density=False)
-
     plt.savefig(training_fig_path + '/output_train_test.png',dpi=300,facecolor='white')
+    print('Done')
     
     plt.close()
 
@@ -117,9 +116,7 @@ def efficiency_score_conversion(train_test_data, y_pred_test, filename_dict):
     Plots the efficiency as a function of the score and its inverse
     '''
 
-    training_fig_path = filename_dict + "/images/training"
-    if not os.path.exists(training_fig_path):
-        os.makedirs(training_fig_path)
+    training_fig_path = filename_dict['analysis_name'] + "/images/training"
 
     bdt_efficiency = bdt_efficiency_array(train_test_data[3],y_pred_test)
 

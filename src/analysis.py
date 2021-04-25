@@ -30,7 +30,6 @@ data_filename       = 'DataTable_pp.root'
 
 
 #CONFIG SETUP
-
 analysis_name = '../analysis_results/' + analysis_name
 
 if data_path[-1] != '/':
@@ -40,24 +39,24 @@ utils.folder_setup(analysis_name = analysis_name)
 
 filename_dict  =  {'analysis_name' : analysis_name,
                     'MC_signal_filename' : MC_signal_filename,
-                    'backgorund_filename' : background_filename,
+                    'background_filename' : background_filename,
                     'data_filename' : data_filename,
                     'data_path' : data_path}
 
+'''
+TO DO
+
+Quando si caricano i file senza con il modello applicato non si carica dalla cartella con i dati di output ma dalla cartella dei dati
+Stessa cosa con le liste delle efficienze e degli score
+'''
 
 print('\nHypertriton pp 3-body 13 Tev\n')
 
-
-
 if train_model:
     print('Starting model training & application\n')
-    train.train_model(optimize_bayes, is_test_run, filename_dict)
+    train.train_model(filename_dict, optimize_bayes, is_test_run)
     print('Model training & application complete\n')
 
-if train_model:
-    print('Starting model training & application\n')
-    train.train_model(optimize_bayes, is_test_run, data_path, analysis_name)
-    print('Model training & application complete\n')
 
 model_hdl = ModelHandler()
 if is_test_run:
