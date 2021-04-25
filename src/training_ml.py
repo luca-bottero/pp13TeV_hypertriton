@@ -100,7 +100,8 @@ def train_model(filename_dict, optimize_bayes = False, is_test_run = False):
     step = 0.01
     eff_array = np.arange(min_eff, max_eff, step)
 
-    train_test_data, y_pred_test, model_hdl = utils.train_xgboost_model(mc_signal, background_ls, training_variables, optimize_bayes = optimize_bayes)
+    train_test_data, y_pred_test, model_hdl = utils.train_xgboost_model(mc_signal, background_ls, training_variables, 
+                                                                            optimize_bayes = optimize_bayes, filename_dict = filename_dict)
         
     print('Saving model handler')
     model_hdl.dump_model_handler(analysis_path + '/model')

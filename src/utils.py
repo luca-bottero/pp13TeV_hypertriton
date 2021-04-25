@@ -19,7 +19,7 @@ import matplotlib
 
 matplotlib.use('pdf')
 
-def train_xgboost_model(signal, background, training_variables='', testsize = 0.5, optimize_bayes = False):
+def train_xgboost_model(signal, background, filename_dict, training_variables='', testsize = 0.5, optimize_bayes = False):
     '''
     Trains an XGBOOST model using hipe4ml and plot output distribution and feature importance
     '''
@@ -74,7 +74,7 @@ def train_xgboost_model(signal, background, training_variables='', testsize = 0.
     plt.rcParams["figure.figsize"] = (10, 7)
     leg_labels = ['background', 'signal']
 
-    training_fig_path = "../images/training"
+    training_fig_path = filename_dict + "/images/training"
     if not os.path.exists(training_fig_path):
         os.makedirs(training_fig_path)
 
@@ -101,7 +101,7 @@ def train_xgboost_model(signal, background, training_variables='', testsize = 0.
     
     plt.close()
 
-    efficiency_score_conversion(train_test_data, y_pred_test)
+    efficiency_score_conversion(train_test_data, y_pred_test, filename_dict)
 
     return train_test_data, y_pred_test, model_hdl  
 
@@ -112,12 +112,12 @@ def data_exploration(data):
 
     pass
 
-def efficiency_score_conversion(train_test_data, y_pred_test):
+def efficiency_score_conversion(train_test_data, y_pred_test, filename_dict):
     '''
     Plots the efficiency as a function of the score and its inverse
     '''
 
-    training_fig_path = "../images/training"
+    training_fig_path = filename_dict + "/images/training"
     if not os.path.exists(training_fig_path):
         os.makedirs(training_fig_path)
 

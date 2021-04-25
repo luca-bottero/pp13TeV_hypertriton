@@ -15,7 +15,7 @@ from hipe4ml.tree_handler import TreeHandler
 from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 
-#Config
+#CONFIG PARAMETERS
 is_test_run      = True             #if _Test trees are used
 train_model      = True
 optimize_bayes   = False
@@ -28,6 +28,16 @@ MC_signal_filename  = 'SignalTable_pp13TeV_mtexp.root'
 background_filename = 'DataTable_pp_LS_OLD.root'
 data_filename       = 'DataTable_pp.root'
 
+
+#CONFIG SETUP
+
+analysis_name = '../analysis_results/' + analysis_name
+
+if data_path[-1] != '/':
+        data_path += '/'
+
+utils.folder_setup(analysis_name = analysis_name)
+
 filename_dict  =  {'analysis_name' : analysis_name,
                     'MC_signal_filename' : MC_signal_filename,
                     'backgorund_filename' : background_filename,
@@ -38,8 +48,6 @@ filename_dict  =  {'analysis_name' : analysis_name,
 print('\nHypertriton pp 3-body 13 Tev\n')
 
 
-analysis_name = '../analysis_results/' + analysis_name
-utils.folder_setup(analysis_name = analysis_name)
 
 if train_model:
     print('Starting model training & application\n')
