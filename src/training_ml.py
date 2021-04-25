@@ -54,35 +54,23 @@ def load_eff_scores(data_path = '../data/'):
 
     return eff_array, scores
 
-def train_model(optimize_bayes = False, is_test_run = False, filename_dict):
+def train_model(filename_dict, optimize_bayes = False, is_test_run = False):
     
     data_path = filename_dict['data_path']
+    analysis_path = filename_dict['analysis_name']
 
-    if is_test_run:
-        print('Loading MC signal')
-        mc_signal = TreeHandler()
-        mc_signal.get_handler_from_large_file(file_name = data_path + filename_dict['MC_signal_filename'],tree_name= "SignalTable",
-                                                preselection='rej_accept > 0 and pt > 1.5')
-        print('MC signal loaded\n')
+    print('Loading MC signal')
+    mc_signal = TreeHandler()
+    mc_signal.get_handler_from_large_file(file_name = data_path + filename_dict['MC_signal_filename'],tree_name= "SignalTable",
+                                            preselection='rej_accept > 0 and pt > 1.5')
+    print('MC signal loaded\n')
 
-        print('Loading background data')
-        background_ls = TreeHandler()
-        background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['background_filename'],tree_name= "DataTable",
-                                                    preselection='centrality < 0.17 and pt > 1.5')
-        background_ls.shuffle_data_frame(size = min(background_ls.get_n_cand(), mc_signal.get_n_cand() * 4))
-        print('Background data loaded\n')
-
-    else:
-        mc_signal = TreeHandler()
-        mc_signal.get_handler_from_large_file(file_name = data_path + 'SignalTable_pp13TeV_mtexp.root',tree_name= "SignalTable",
-                                                preselection='rej_accept > 0 and pt > 1.5')
-        print('MC signal loaded\n')
-
-        background_ls = TreeHandler()
-        background_ls.get_handler_from_large_file(file_name = data_path + 'DataTable_pp_LS.root',tree_name= "DataTable",
-                                                    preselection='centrality < 0.17 and pt > 1.5')
-        background_ls.shuffle_data_frame(size = min(background_ls.get_n_cand(), mc_signal.get_n_cand() * 4))
-        print('Background LS loaded\n')
+    print('Loading background data')
+    background_ls = TreeHandler()
+    background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['background_filename'],tree_name= "DataTable",
+                                                preselection='centrality < 0.17 and pt > 1.5')
+    background_ls.shuffle_data_frame(size = min(background_ls.get_n_cand(), mc_signal.get_n_cand() * 4))
+    print('Background data loaded\n')
 
     '''
     for var in ['dca_pr', 'dca_pi', 'dca_de']:
@@ -113,16 +101,9 @@ def train_model(optimize_bayes = False, is_test_run = False, filename_dict):
     eff_array = np.arange(min_eff, max_eff, step)
 
     train_test_data, y_pred_test, model_hdl = utils.train_xgboost_model(mc_signal, background_ls, training_variables, optimize_bayes = optimize_bayes)
-    
-    model_path = "../model"
-    if not os.path.exists(model_path):
-        os.makedirs(model_path)
-    
+        
     print('Saving model handler')
-    if is_test_run:
-        model_hdl.dump_model_handler(model_path + '/model_hdl_Test')
-    else:
-        model_hdl.dump_model_handler(model_path + '/model_hdl')
+    model_hdl.dump_model_handler(analysis_path + '/model')
     print('Model handler saved')
 
     scores = score_from_efficiency_array(train_test_data[3],y_pred_test,np.arange(min_eff,max_eff,step))
@@ -130,44 +111,29 @@ def train_model(optimize_bayes = False, is_test_run = False, filename_dict):
     del background_ls
     print('Deleted background data')
 
-    if is_test_run:
-        print('Loading experimental data')
-        data = TreeHandler()
-        data.get_handler_from_large_file(file_name = data_path + '/DataTable_pp_OLD.root',tree_name= "DataTable",
-                                            preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)
-        print('Data loaded\n')
+    print('Loading experimental data')
+    data = TreeHandler()
+    data.get_handler_from_large_file(file_name = data_path + filename_dict['data_filename'],tree_name= "DataTable",
+                                        preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)
+    print('Data loaded\n')
 
-        print('Loading background data')
-        background_ls = TreeHandler()
-        background_ls.get_handler_from_large_file(file_name = data_path + '/DataTable_pp_LS_OLD.root',tree_name= "DataTable",
-                                            preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)
-        print('Background loaded\n')
-    else:
-        print('Loading experimental data')
-        data = TreeHandler()
-        data.get_handler_from_large_file(file_name = data_path + '/DataTable_pp.root',tree_name= "DataTable",
-                                            preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)
-        print('Data loaded\n')
-
-        print('Loading background data')
-        background_ls = TreeHandler()
-        background_ls.get_handler_from_large_file(file_name = data_path + '/DataTable_pp_LS.root',tree_name= "DataTable",
-                                            preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)
-        print('Background loaded\n')
+    print('Loading background data')
+    background_ls = TreeHandler()
+    background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['MC_signal_filename'],tree_name= "DataTable",
+                                        preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)
+    print('Background loaded\n')
+    
 
     #background_ls.apply_model_handler(model_hdl)
     #data.apply_model_handler(model_hdl)
 
     #print(background_ls)
 
-    if is_test_run:
-        save_data_with_scores(background_ls, data_path + '/bckg_ls_scores_Test')
-        save_data_with_scores(data, data_path + '/data_scores_Test')
-    else:
-        save_data_with_scores(background_ls, data_path + '/bckg_ls_scores')
-        save_data_with_scores(data, data_path + '/data_scores')
+    
+    save_data_with_scores(background_ls, analysis_path + 'output_data/bckg_ls_scores')
+    save_data_with_scores(data, analysis_path + 'output_data/data_scores')    
 
-    save_eff_scores(eff_array, scores, is_test_run, data_path)
+    save_eff_scores(eff_array, scores, is_test_run, analysis_path + 'output_data')
 
 
 
