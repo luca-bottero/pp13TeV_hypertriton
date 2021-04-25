@@ -28,16 +28,14 @@ MC_signal_filename  = 'SignalTable_pp13TeV_mtexp.root'
 background_filename = 'DataTable_pp_LS_OLD.root'
 data_filename       = 'DataTable_pp.root'
 
+filename_dict  =  {'analysis_name' : analysis_name,
+                    'MC_signal_filename' : MC_signal_filename,
+                    'backgorund_filename' : background_filename,
+                    'data_filename' : data_filename,
+                    'data_path' : data_path}
 
-
-'''
-pt: cut > 1.5 GeV/c, ci aspettiamo disomogeneità tra dati e LS
-    efficienza per questo taglio !!!!!!!!
-
-'''
 
 print('\nHypertriton pp 3-body 13 Tev\n')
-
 
 
 analysis_name = '../analysis_results/' + analysis_name
