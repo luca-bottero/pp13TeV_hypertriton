@@ -65,8 +65,11 @@ def train_xgboost_model(signal, background, training_variables='', testsize = 0.
     
     model_hdl.train_test_model(train_test_data, )     
 
+
+    print('Predicting values on training and test datas')
     y_pred_train = model_hdl.predict(train_test_data[0], True)
     y_pred_test = model_hdl.predict(train_test_data[2], True)       #used to evaluate model performance
+    print('Prediction done\n')
 
     plt.rcParams["figure.figsize"] = (10, 7)
     leg_labels = ['background', 'signal']
@@ -196,14 +199,25 @@ def plot_efficiency(data_col, data_col_with_cut, x_label, title, name, path = '.
     
     plt.close()
 
-def folder_setup(analysis_name = 'TEST', overwrite = True):
+def folder_setup(analysis_name = 'TEST', overwrite = True):    
+
+    if not os.path.exists('analysis_results'):
+        os.makedirs('analysis_results')
+
+    analysis_name = 'analysis_results/' + analysis_name
+    
 
     if analysis_name[-1] != '/':
         analysis_name += '/'
 
     if not os.path.exists(analysis_name):
         os.makedirs(analysis_name)
-        os-makedirs(analysis_name)
+        os.makedirs(analysis_name + '/results')
+        os.makedirs(analysis_name + '/results/images')
+        os.makedirs(analysis_name + '/results/images/m_mppi')
+        os.makedirs(analysis_name + '/results/images/mppi_mdpi')
+
+        os.makedirs(analysis_name + '/images/training')
     else:
         print('An analysis with the same name already exists. Previous results will be overwritten')
 
