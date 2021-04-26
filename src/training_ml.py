@@ -49,10 +49,10 @@ def load_eff_scores(output_data_path):
 
     return eff_array, scores
 
-def train_model(filename_dict, optimize_bayes = False, is_test_run = False):
+def train_model(filename_dict, optimize_bayes = False):
 
     data_path = filename_dict['data_path']
-    analysis_path = filename_dict['analysis_name']
+    analysis_path = filename_dict['analysis_path']
 
     print('Loading MC signal')
     mc_signal = TreeHandler()

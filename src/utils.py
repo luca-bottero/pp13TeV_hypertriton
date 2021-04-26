@@ -74,7 +74,7 @@ def train_xgboost_model(signal, background, filename_dict, training_variables=''
     plt.rcParams["figure.figsize"] = (10, 7)
     leg_labels = ['background', 'signal']
 
-    training_fig_path = filename_dict['analysis_name'] + "/images/training"
+    training_fig_path = filename_dict['analysis_path'] + "/images/training"
 
     print('Saving Output comparison plot')
     plt.figure()
@@ -116,7 +116,7 @@ def efficiency_score_conversion(train_test_data, y_pred_test, filename_dict):
     Plots the efficiency as a function of the score and its inverse
     '''
 
-    training_fig_path = filename_dict['analysis_name'] + "/images/training"
+    training_fig_path = filename_dict['analysis_path'] + "/images/training"
 
     bdt_efficiency = bdt_efficiency_array(train_test_data[3],y_pred_test)
 
@@ -196,26 +196,26 @@ def plot_efficiency(data_col, data_col_with_cut, x_label, title, name, path = '.
     
     plt.close()
 
-def folder_setup(analysis_name = 'TEST'):    
+def folder_setup(analysis_path = 'TEST'):    
 
     if not os.path.exists('../analysis_results'):
         os.makedirs('../analysis_results')
     
-    if analysis_name[-1] != '/':
-        analysis_name += '/'
+    if analysis_path[-1] != '/':
+        analysis_path += '/'
 
-    if not os.path.exists(analysis_name):
-        os.makedirs(analysis_name)
-        os.makedirs(analysis_name + '/results')
-        os.makedirs(analysis_name + '/results/images')
-        os.makedirs(analysis_name + '/results/images/m_mppi')
-        os.makedirs(analysis_name + '/results/images/mppi_mdpi')
+    if not os.path.exists(analysis_path):
+        os.makedirs(analysis_path)
+        os.makedirs(analysis_path + '/results')
+        os.makedirs(analysis_path + '/results/images')
+        os.makedirs(analysis_path + '/results/images/m_mppi')
+        os.makedirs(analysis_path + '/results/images/mppi_mdpi')
 
-        os.makedirs(analysis_name + '/images/training')
+        os.makedirs(analysis_path + '/images/training')
 
-        os.makedirs(analysis_name + '/model')
+        os.makedirs(analysis_path + '/model')
 
-        os.makedirs(analysis_name + '/output_data')
+        os.makedirs(analysis_path + '/output_data')
     else:
         print('An analysis with the same name already exists. Previous results will be overwritten')
 

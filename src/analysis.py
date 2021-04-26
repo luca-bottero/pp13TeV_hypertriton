@@ -16,7 +16,7 @@ from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 
 #CONFIG PARAMETERS
-train_model      = False
+train_model      = True
 optimize_bayes   = False
 print_m_mppivert = True
 print_mppi_mdpi  = True
@@ -29,14 +29,17 @@ data_filename       = 'DataTable_pp_OLD.root'
 
 
 #CONFIG SETUP
-analysis_name = '../analysis_results/' + analysis_name
+analysis_path = '../analysis_results/' + analysis_name
+
+if analysis_path[-1] != '/':
+        analysis_path += '/'
 
 if data_path[-1] != '/':
         data_path += '/'
 
-utils.folder_setup(analysis_name = analysis_name)
+utils.folder_setup(analysis_path = analysis_path)
 
-filename_dict  =  {'analysis_name' : analysis_name,
+filename_dict  =  {'analysis_path' : analysis_path,
                     'MC_signal_filename' : MC_signal_filename,
                     'background_filename' : background_filename,
                     'data_filename' : data_filename,
@@ -46,24 +49,24 @@ print('\nHypertriton pp 3-body 13 Tev\n')
 
 if train_model:
     print('Starting model training & application\n')
-    train.train_model(filename_dict, optimize_bayes, is_test_run)
+    train.train_model(filename_dict, optimize_bayes)
     print('Model training & application complete\n')
 
 
 model_hdl = ModelHandler()
 
-model_hdl.load_model_handler(analysis_name + '/model/model_hdl')
+model_hdl.load_model_handler(analysis_path + '/model/model_hdl')
 
 
 print('Model loaded\n')
 
-eff_array, scores = train.load_eff_scores(analysis_name + 'output_data/')
+eff_array, scores = train.load_eff_scores(analysis_path + 'output_data/')
 
-data = train.load_data_with_scores(analysis_name + 'output_data/data_scores.parquet.gzip')                #pd dataframe already processed
+data = train.load_data_with_scores(analysis_path + 'output_data/data_scores.parquet.gzip')                #pd dataframe already processed
 print('Data loaded\n')
 #data.query('model_output > -5', inplace = True)         ## PARAM!!!!!
 #print('Query on data applied\n')
-background_ls = train.load_data_with_scores(analysis_name + 'output_data/bckg_ls_scores_Test.parquet.gzip')
+background_ls = train.load_data_with_scores(analysis_path + 'output_data/bckg_ls_scores.parquet.gzip')
 print('Background LS loaded\n')
 #background_ls.query('model_output > -5', inplace = True)            ## PARAM!!!!!
 #print('Query on background LS applied\n')
