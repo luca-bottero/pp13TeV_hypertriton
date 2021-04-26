@@ -16,7 +16,7 @@ from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 
 #CONFIG PARAMETERS
-train_model      = True
+train_model      = False
 optimize_bayes   = False
 print_m_mppivert = True
 print_mppi_mdpi  = True
