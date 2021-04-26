@@ -15,18 +15,13 @@ def load_data_with_scores(filename):
     print('Loadind file: ' + filename + '\n')
     return pd.read_parquet(filename)
 
-def save_eff_scores(eff_array, scores, is_test_run, data_path = '../data/'):
+def save_eff_scores(eff_array, scores, output_data_path):
 
-    if data_path[-1] != '/':
-        data_path += '/'
+    if output_data_path[-1] != '/':
+        output_data_path += '/'
     
-    if is_test_run:
-        eff_name =  data_path + 'eff_array_Test.csv'
-        scores_name =  data_path + 'scores_Test.csv'
-    
-    else: 
-        eff_name =  data_path + 'eff_array.csv'
-        scores_name =  data_path + 'scores.csv'
+    eff_name =  output_data_path + 'eff_array.csv'
+    scores_name =  output_data_path + 'scores.csv'
 
     with open(eff_name,'w') as f:
         for val in eff_array:
@@ -40,15 +35,15 @@ def save_eff_scores(eff_array, scores, is_test_run, data_path = '../data/'):
             f.write('\n')
     f.close()
 
-def load_eff_scores(data_path = '../data/'):
-    if data_path[-1] != '/':
-        data_path += '/'
+def load_eff_scores(output_data_path):
+    if output_data_path[-1] != '/':
+        output_data_path += '/'
 
-    with open(data_path + 'eff_array_Test.csv') as f:
+    with open(output_data_path + 'eff_array.csv') as f:
         eff_array = np.array(f.read().splitlines()).astype(np.float)
     f.close()
 
-    with open(data_path + 'scores_Test.csv') as f:
+    with open(output_data_path + 'scores.csv') as f:
         scores = np.array(f.read().splitlines()).astype(np.float)
     f.close()
 
@@ -120,7 +115,7 @@ def train_model(filename_dict, optimize_bayes = False, is_test_run = False):
 
     print('Loading background data')
     background_ls = TreeHandler()
-    background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['MC_signal_filename'],tree_name= "DataTable",
+    background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['MC_signal_filename'],tree_name= "SignalTable",
                                         preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)
     print('Background loaded\n')
     
@@ -131,10 +126,10 @@ def train_model(filename_dict, optimize_bayes = False, is_test_run = False):
     #print(background_ls)
 
     
-    save_data_with_scores(background_ls, analysis_path + 'output_data/bckg_ls_scores')
-    save_data_with_scores(data, analysis_path + 'output_data/data_scores')    
+    save_data_with_scores(background_ls, analysis_path + '/output_data/bckg_ls_scores')
+    save_data_with_scores(data, analysis_path + '/output_data/data_scores')    
 
-    save_eff_scores(eff_array, scores, is_test_run, analysis_path + 'output_data')
+    save_eff_scores(eff_array, scores, analysis_path + '/output_data')
 
 
 
