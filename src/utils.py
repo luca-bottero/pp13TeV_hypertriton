@@ -149,7 +149,7 @@ def mass_spectrum_efficiency(data, scores, eff_array):
 
     mass_fit.systematic_estimate(data,scores,eff_array)
 
-def scatter_with_hist(x_data,y_data,x_axis,y_axis,x_label='',y_label='',eff = 0.,path = '',name=''):
+def scatter_with_hist(x_data,y_data,x_axis,y_axis,filename_dict,x_label='',y_label='',eff = 0.,path = '',name=''):
     '''
     Plots a scatterplot with histograms of the distributions
     '''
@@ -173,14 +173,10 @@ def scatter_with_hist(x_data,y_data,x_axis,y_axis,x_label='',y_label='',eff = 0.
         side_color="steelblue"
         )
 
-    if not os.path.exists('../results/images/'):
-        os.makedirs('../results/images/')
+    if not os.path.exists(filename_dict['analysis_path'] + 'images/' + path):
+        os.makedirs(filename_dict['analysis_path'] + 'images/' + path)
 
-    if not os.path.exists('../results/images/' + path):
-        os.makedirs('../results/images/' + path)
-
-    
-    plt.savefig('../results/images/' +path + name + str(np.round(eff,4)) + '.png', dpi=300, facecolor='white')
+    plt.savefig(filename_dict['analysis_path'] + 'images/' + path + name + str(np.round(eff,4)) + '.png', dpi=300, facecolor='white')
     
     plt.close()
     

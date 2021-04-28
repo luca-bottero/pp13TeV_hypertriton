@@ -16,13 +16,13 @@ from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 
 #CONFIG PARAMETERS
-train_model      = True
+train_model      = False
 optimize_bayes   = False
 print_m_mppivert = True
 print_mppi_mdpi  = True
 
 data_path           = '../data/'
-analysis_name       = 'TEST'
+analysis_name       = 'OLD'
 MC_signal_filename  = 'SignalTable_pp13TeV_mtexp.root'
 background_filename = 'DataTable_pp_LS_OLD.root'
 data_filename       = 'DataTable_pp_OLD.root'
@@ -79,7 +79,8 @@ if print_m_mppivert:
         sel = data.query('model_output > ' + str(score))
         utils.scatter_with_hist(sel['m'],sel['mppi_vert'],[34,2.96,3.04],[34,1.08,1.13],
                                 x_label='Hypertriton mass [GeV/c$^2$]',
-                                y_label='$p - \pi$ mass [GeV/c$^2$]', eff = i,path = 'm_mppi/', name = 'dalitz_eff_')
+                                y_label='$p - \pi$ mass [GeV/c$^2$]', eff = i,
+                                path = 'm_mppi/', name = 'dalitz_eff_', filename_dict = filename_dict)
     
 if print_mppi_mdpi:
     print('Plotting Dalitz plot: mppi vs. mdpi\n')
@@ -89,6 +90,7 @@ if print_mppi_mdpi:
         sel = sel_m.query('model_output > ' + str(score))
         utils.scatter_with_hist(sel['mppi'], sel['mdpi'],
                                     [50,1.16,1.26],[50,4.07,4.22], path = 'mppi_mdpi/', name = 'dalitz_eff_',
+                                    filename_dict = filename_dict,
                                     x_label='$p - \pi$ mass [GeV/c$^2$]',
                                     y_label='$d - \pi$ mass [GeV/c$^2$]', eff=i)
 
