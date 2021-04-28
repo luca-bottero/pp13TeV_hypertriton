@@ -16,13 +16,13 @@ from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 
 #CONFIG PARAMETERS
-train_model      = False
+train_model      = True
 optimize_bayes   = False
 print_m_mppivert = True
 print_mppi_mdpi  = True
 
 data_path           = '../data/'
-analysis_name       = 'OLD'
+analysis_name       = 'OLD_trees_with_cut'
 MC_signal_filename  = 'SignalTable_pp13TeV_mtexp.root'
 background_filename = 'DataTable_pp_LS_OLD.root'
 data_filename       = 'DataTable_pp_OLD.root'
@@ -96,5 +96,5 @@ if print_mppi_mdpi:
 
     del sel_m
 
-mass_fit.data_ls_comp_plots(data,background_ls,scores,eff_array)
+mass_fit.data_ls_comp_plots(data,background_ls,scores,eff_array, filename_dict)
 

@@ -61,16 +61,12 @@ def mass_fitter(hist,score,efficiency):
     return count, error
 
 
-def data_ls_comp_plots(data, ls, scores, efficiencies):
+def data_ls_comp_plots(data, ls, scores, efficiencies, filename_dict):
     ROOT.gROOT.LoadMacro("cmb_fit_exp.C")
     ROOT.gROOT.LoadMacro("cmb_fit_erf.C")
     from ROOT import cmb_fit_exp, cmb_fit_erf
-   
-    results_path = "../results"
-    if not os.path.exists(results_path):
-        os.makedirs(results_path)
 
-    ff = ROOT.TFile(results_path + '/data_ls.root','recreate')
+    ff = ROOT.TFile(filename_dict['analysis_path'] + 'results/data_ls.root','recreate')
     
     for efficiency, score in zip(efficiencies,scores):
         selected_data = data.query('model_output > ' + str(score))
