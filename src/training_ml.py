@@ -89,7 +89,8 @@ def train_model(filename_dict, optimize_bayes = False):
     '''
 
     training_variables = ["pt", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr",
-                            "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2"] #,'dca_pr', 'dca_pi', 'dca_de'
+                            "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2"] 
+                            #,'dca_pr', 'dca_pi', 'dca_de'
     min_eff = 0.5
     max_eff = 0.9
     step = 0.01
