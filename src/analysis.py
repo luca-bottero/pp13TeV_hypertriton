@@ -9,6 +9,7 @@ import uproot
 import os
 import xgboost as xgb
 import yaml
+from shutil import copyfile
 from concurrent.futures import ThreadPoolExecutor
 from sklearn.model_selection import train_test_split
 from hipe4ml.model_handler import ModelHandler
@@ -16,9 +17,13 @@ from hipe4ml.tree_handler import TreeHandler
 from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 
-#CONFIG PARAMETERS
+#CONFIG
 
-with open('./config/NEW_trees.yaml') as f:
+config_filename = 'NEW_trees.yaml'
+
+
+
+with open('./config/' + config_filename) as f:
     
     config_params = yaml.load(f, Loader=yaml.FullLoader)
     print(config_params)
@@ -35,10 +40,6 @@ background_filename = config_params['background_filename']
 data_filename       = config_params['data_filename']   
 
 
-
-
-
-
 #CONFIG SETUP
 analysis_path = '../analysis_results/' + analysis_name
 
@@ -49,12 +50,15 @@ if data_path[-1] != '/':
         data_path += '/'
 
 utils.folder_setup(analysis_path = analysis_path)
+copyfile('./config/' + config_filename, analysis_path + config_filename)
 
 filename_dict  =  {'analysis_path' : analysis_path,
                     'MC_signal_filename' : MC_signal_filename,
                     'background_filename' : background_filename,
                     'data_filename' : data_filename,
                     'data_path' : data_path}
+
+##########################################################################
 
 print('\nHypertriton pp 3-body 13 Tev\n')
 
@@ -65,9 +69,7 @@ if train_model:
 
 
 model_hdl = ModelHandler()
-
 model_hdl.load_model_handler(analysis_path + '/model/model_hdl')
-
 
 print('Model loaded\n')
 
