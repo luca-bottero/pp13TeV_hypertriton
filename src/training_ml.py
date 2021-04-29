@@ -60,6 +60,8 @@ def train_model(filename_dict, presel_dict, optimize_bayes = False):
                                             preselection = presel_dict['MC_presel'])
     print('MC signal loaded\n')
 
+    utils.save_data_description(filename_dict, mc_signal.get_data_frame(), append = False)
+
     print('Loading background data')
     background_ls = TreeHandler()
     background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['background_filename'],tree_name= "DataTable",
@@ -114,11 +116,15 @@ def train_model(filename_dict, presel_dict, optimize_bayes = False):
                                         preselection = presel_dict['data_presel'], model_handler = model_hdl)
     print('Data loaded\n')
 
+    utils.save_data_description(filename_dict, data.get_data_frame())
+
     print('Loading background data')
     background_ls = TreeHandler()
-    background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['MC_signal_filename'],tree_name= "SignalTable",
+    background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['background_filename'],tree_name= "DataTable",
                                         preselection = presel_dict['background_presel'], model_handler = model_hdl)
     print('Background loaded\n')
+
+    utils.save_data_description(filename_dict, background_ls.get_data_frame())
     
 
     #background_ls.apply_model_handler(model_hdl)

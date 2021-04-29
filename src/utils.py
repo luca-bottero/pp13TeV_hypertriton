@@ -111,6 +111,15 @@ def data_exploration(data):
 
     pass
 
+def save_data_description(filename_dict, dataframe, append = True, name = ''):
+    header = '\n\ncentrality - ' + name
+
+    if append:
+        dataframe['centrality'].describe().to_csv(filename_dict['analysis_path'] + filename_dict['analysis_name'], mode = 'a', header = header)
+    else:
+        dataframe['centrality'].describe().to_csv(filename_dict['analysis_path'] + filename_dict['analysis_name'], header = header)
+
+
 def efficiency_score_conversion(train_test_data, y_pred_test, filename_dict):
     '''
     Plots the efficiency as a function of the score and its inverse

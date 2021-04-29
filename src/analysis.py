@@ -53,6 +53,7 @@ utils.folder_setup(analysis_path = analysis_path)
 copyfile('./config/' + config_filename, analysis_path + config_filename)
 
 filename_dict  =  {'analysis_path' : analysis_path,
+                    'analysis_name' : analysis_name,
                     'MC_signal_filename' : MC_signal_filename,
                     'background_filename' : background_filename,
                     'data_filename' : data_filename,
