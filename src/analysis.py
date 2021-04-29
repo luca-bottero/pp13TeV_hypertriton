@@ -38,6 +38,7 @@ MC_signal_filename  = config_params['MC_signal_filename']
 background_filename = config_params['background_filename']   
 data_filename       = config_params['data_filename']   
 
+presel_dict = config_params['presel_dict']
 
 #CONFIG SETUP
 analysis_path = '../analysis_results/' + analysis_name
@@ -63,7 +64,7 @@ print('\nHypertriton 3-body - pp @ 13 Tev\n')
 
 if train_model:
     print('Starting model training & application\n')
-    train.train_model(filename_dict, optimize_bayes)
+    train.train_model(filename_dict, presel_dict, optimize_bayes)
     print('Model training & application complete\n')
 
 

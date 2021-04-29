@@ -9,6 +9,7 @@ MC_signal_filename  : 'SignalTable_pp13TeV_mtexp.root'
 background_filename : 'DataTable_pp_LS.root'
 data_filename       : 'DataTable_pp.root'
 
-MC_presel           : 'rej_accept > 0 and pt > 1.5'
-background_presel   : 'centrality < 0.17 and pt > 1.5'
-data_presel         : 'centrality < 0.17 and pt > 1.5'
+presel_dict :
+  MC_presel           : 'rej_accept > 0 and pt > 1.5'
+  background_presel   : 'centrality < 0.17 and pt > 1.5'
+  data_presel         : 'centrality < 0.17 and pt > 1.5'

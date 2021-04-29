@@ -49,7 +49,7 @@ def load_eff_scores(output_data_path):
 
     return eff_array, scores
 
-def train_model(filename_dict, optimize_bayes = False):
+def train_model(filename_dict, presel_dict, optimize_bayes = False):
 
     data_path = filename_dict['data_path']
     analysis_path = filename_dict['analysis_path']
@@ -57,13 +57,13 @@ def train_model(filename_dict, optimize_bayes = False):
     print('Loading MC signal')
     mc_signal = TreeHandler()
     mc_signal.get_handler_from_large_file(file_name = data_path + filename_dict['MC_signal_filename'],tree_name= "SignalTable",
-                                            preselection='rej_accept > 0 and pt > 1.5')
+                                            preselection = presel_dict['MC_presel'])
     print('MC signal loaded\n')
 
     print('Loading background data')
     background_ls = TreeHandler()
     background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['background_filename'],tree_name= "DataTable",
-                                                preselection='centrality < 0.17 and pt > 1.5')
+                                                preselection = presel_dict['background_presel'])
     background_ls.shuffle_data_frame(size = min(background_ls.get_n_cand(), mc_signal.get_n_cand() * 4))
     print('Background data loaded\n')
 
@@ -111,13 +111,13 @@ def train_model(filename_dict, optimize_bayes = False):
     print('Loading experimental data')
     data = TreeHandler()
     data.get_handler_from_large_file(file_name = data_path + filename_dict['data_filename'],tree_name= "DataTable",
-                                        preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)
+                                        preselection = presel_dict['data_presel'], model_handler = model_hdl)
     print('Data loaded\n')
 
     print('Loading background data')
     background_ls = TreeHandler()
     background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['MC_signal_filename'],tree_name= "SignalTable",
-                                        preselection='centrality < 0.17 and pt > 1.5', model_handler = model_hdl)
+                                        preselection = presel_dict['background_presel'], model_handler = model_hdl)
     print('Background loaded\n')
     
 
