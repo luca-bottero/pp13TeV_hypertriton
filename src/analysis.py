@@ -16,16 +16,55 @@ from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 
 #CONFIG PARAMETERS
-train_model      = True
+train_model      = False
 optimize_bayes   = False
 print_m_mppivert = True
 print_mppi_mdpi  = True
 
 data_path           = '../data/'
-analysis_name       = 'OLD_trees_with_cut'
+analysis_name       = 'NEW_trees'
 MC_signal_filename  = 'SignalTable_pp13TeV_mtexp.root'
-background_filename = 'DataTable_pp_LS_OLD.root'
-data_filename       = 'DataTable_pp_OLD.root'
+background_filename = 'DataTable_pp_LS.root'
+data_filename       = 'DataTable_pp.root'
+
+
+
+'''
+
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('config', help='Path to the YAML configuration file')
+parser.add_argument('-syst', '--syst', help='Compute systematic uncertainties', action='store_true')
+parser.add_argument('-s', '--significance', help='Use the BDT efficiency selection from the significance scan', action='store_true')
+args = parser.parse_args()
+
+with open(os.path.expandvars(args.config), 'r') as stream:
+    try:
+        params = yaml.full_load(stream)
+    except yaml.YAMLError as exc:
+        print(exc)
+
+SYSTEMATICS = args.syst
+SIGNIFICANCE_SCAN = args.significance
+
+# TRAINING_DIR = params["TRAINING_DIR"]
+TRAINING_DIR = params["TRAINING_DIR"]
+CENT_CLASS = params['CENTRALITY_CLASS'][0]
+PT_BINS = params['PT_BINS']
+CT_BINS = params['CT_BINS']
+EFF_MIN, EFF_MAX, EFF_STEP = params['BDT_EFFICIENCY']
+EFF_ARRAY = np.around(np.arange(EFF_MIN, EFF_MAX, EFF_STEP), 2)
+FIX_EFF = 0.6 if not SIGNIFICANCE_SCAN else 0
+SYSTEMATICS_COUNTS = 100000
+
+
+'''
+
+
+
+
+
 
 
 #CONFIG SETUP

@@ -12,7 +12,7 @@ def save_data_with_scores(tree_handler, filename):
     tree_handler.write_df_to_parquet_files(filename)      #to_parquet, get_handler_from_large_data, get_data_frame
 
 def load_data_with_scores(filename):
-    print('Loadind file: ' + filename + '\n')
+    print('Loading file: ' + filename + '\n')
     return pd.read_parquet(filename)
 
 def save_eff_scores(eff_array, scores, output_data_path):

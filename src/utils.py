@@ -181,6 +181,7 @@ def scatter_with_hist(x_data,y_data,x_axis,y_axis,filename_dict,x_label='',y_lab
     plt.close()
     
 def plot_efficiency(data_col, data_col_with_cut, x_label, title, name, path = '../results/images/'):
+    
     plt.figure()
     hist_rec, bin_edges = np.histogram(data_col, bins=100, density=False)
     hist_gen, bin_edges = np.histogram(data_col_with_cut, bins=bin_edges, density=False)
