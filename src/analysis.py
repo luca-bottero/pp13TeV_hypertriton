@@ -8,6 +8,7 @@ import pandas as pd
 import uproot
 import os
 import xgboost as xgb
+import yaml
 from concurrent.futures import ThreadPoolExecutor
 from sklearn.model_selection import train_test_split
 from hipe4ml.model_handler import ModelHandler
@@ -16,51 +17,22 @@ from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 
 #CONFIG PARAMETERS
-train_model      = False
-optimize_bayes   = False
-print_m_mppivert = True
-print_mppi_mdpi  = True
 
-data_path           = '../data/'
-analysis_name       = 'NEW_trees'
-MC_signal_filename  = 'SignalTable_pp13TeV_mtexp.root'
-background_filename = 'DataTable_pp_LS.root'
-data_filename       = 'DataTable_pp.root'
+with open('./config/NEW_trees.yaml') as f:
+    
+    config_params = yaml.load(f, Loader=yaml.FullLoader)
+    print(config_params)
 
+train_model      = config_params['train_model'] 
+optimize_bayes   = config_params['optimize_bayes']   
+print_m_mppivert = config_params['print_m_mppivert']   
+print_mppi_mdpi  = config_params['print_mppi_mdpi']   
 
-
-'''
-
-
-
-parser = argparse.ArgumentParser()
-parser.add_argument('config', help='Path to the YAML configuration file')
-parser.add_argument('-syst', '--syst', help='Compute systematic uncertainties', action='store_true')
-parser.add_argument('-s', '--significance', help='Use the BDT efficiency selection from the significance scan', action='store_true')
-args = parser.parse_args()
-
-with open(os.path.expandvars(args.config), 'r') as stream:
-    try:
-        params = yaml.full_load(stream)
-    except yaml.YAMLError as exc:
-        print(exc)
-
-SYSTEMATICS = args.syst
-SIGNIFICANCE_SCAN = args.significance
-
-# TRAINING_DIR = params["TRAINING_DIR"]
-TRAINING_DIR = params["TRAINING_DIR"]
-CENT_CLASS = params['CENTRALITY_CLASS'][0]
-PT_BINS = params['PT_BINS']
-CT_BINS = params['CT_BINS']
-EFF_MIN, EFF_MAX, EFF_STEP = params['BDT_EFFICIENCY']
-EFF_ARRAY = np.around(np.arange(EFF_MIN, EFF_MAX, EFF_STEP), 2)
-FIX_EFF = 0.6 if not SIGNIFICANCE_SCAN else 0
-SYSTEMATICS_COUNTS = 100000
-
-
-'''
-
+data_path           = config_params['data_path']   
+analysis_name       = config_params['analysis_name']   
+MC_signal_filename  = config_params['MC_signal_filename']   
+background_filename = config_params['background_filename']   
+data_filename       = config_params['data_filename']   
 
 
 
