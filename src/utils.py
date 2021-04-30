@@ -214,13 +214,27 @@ def plot_efficiency(data_col, data_col_with_cut, x_label, title, name, filename_
     plt.close()
 
 def plot_distributions(tree_hdl, filename_dict, name, vars = None):
+    """Plot the distribution of the variables in the tree handler
+
+    Args:
+        tree_hdl (hipe4ml.tree_handler): the tree with the data
+        filename_dict (dictionary): dictionary of the filenames
+        name (string): name of the plot
+        vars (list, optional): the variables to plot. None for all variables. Defaults to None.
+    """    
 
     plots = plot_utils.plot_distr(tree_hdl, column = vars, figsize = ((20,20)))
     plt.savefig(filename_dict['analysis_path'] + 'images/var_distribution/' + name + '.png',dpi = 500, facecolor = 'white')
+    plt.close()
 
 
 
-def folder_setup(analysis_path = 'TEST'):    
+def folder_setup(analysis_path = 'TEST'):   
+    """creates all the needed folders for the analysis
+
+    Args:
+        analysis_path (str, optional): the name of the analysis folder. Defaults to 'TEST'.
+    """     
 
     if not os.path.exists('../analysis_results'):
         os.makedirs('../analysis_results')
@@ -235,8 +249,6 @@ def folder_setup(analysis_path = 'TEST'):
 
         os.makedirs(analysis_path + '/images/training')
         os.makedirs(analysis_path + '/images/presel_eff')
-        os.makedirs(analysis_path + '/images/presel_eff/background_presel')
-        os.makedirs(analysis_path + '/images/presel_eff/data_presel')
         os.makedirs(analysis_path + '/images/var_distribution')
         os.makedirs(analysis_path + '/images/var_distribution/data')
         os.makedirs(analysis_path + '/images/var_distribution/background_data')

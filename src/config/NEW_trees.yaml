@@ -1,5 +1,5 @@
 flag_dict :
-  train_model      : True
+  train_model      : False
   optimize_bayes   : False
   plot_m_mppivert  : True
   plot_mppi_mdpi   : True

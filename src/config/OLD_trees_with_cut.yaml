@@ -1,7 +1,8 @@
-train_model      : True
-optimize_bayes   : False
-plot_m_mppivert  : False
-plot_mppi_mdpi   : False
+flag_dict :
+  train_model      : True
+  optimize_bayes   : False
+  plot_m_mppivert  : False
+  plot_mppi_mdpi   : False
 
 data_path           : '../data/'
 analysis_name       : 'OLD_trees_with_cut'
