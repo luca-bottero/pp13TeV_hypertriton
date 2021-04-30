@@ -21,9 +21,9 @@ from hipe4ml import plot_utils
 
 configs = ['OLD_centrality_1_perc.yaml', 'OLD_trees_with_cut.yaml', 'NEW_trees.yaml']
 
-config_filename = 'OLD_centrality_0dot1_perc.yaml'
+#config_filename = 'OLD_centrality_0dot1_perc.yaml'
 
-for config_filename in configs
+for config_filename in configs:
 
     with open('./config/' + config_filename) as f:
         
