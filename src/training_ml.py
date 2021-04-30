@@ -125,6 +125,7 @@ def train_model(filename_dict, presel_dict, flag_dict):
             var, presel_dict['data_presel'], var, filename_dict, path = 'images/presel_eff/data_presel/')
 
     data.apply_preselections(presel_dict['data_presel'])
+    utils.plot_distributions(data, filename_dict, 'data_distr')
     print('Data loaded\n')
 
     utils.save_data_description(filename_dict, data.get_data_frame(), name = 'Data')

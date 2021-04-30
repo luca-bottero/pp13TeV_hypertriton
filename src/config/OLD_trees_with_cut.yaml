@@ -13,3 +13,5 @@ presel_dict :
   MC_presel           : 'rej_accept > 0 and pt > 1.5'
   background_presel   : 'centrality < 0.17 and pt > 1.5'
   data_presel         : 'centrality < 0.17 and pt > 1.5'
+  bckg_presel_vars    : ['ct', 'pt']
+  data_presel_vars    : ['ct', 'pt']

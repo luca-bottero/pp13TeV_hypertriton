@@ -214,11 +214,9 @@ def plot_efficiency(data_col, data_col_with_cut, x_label, title, name, filename_
     plt.close()
 
 def plot_distributions(tree_hdl, filename_dict, name, vars = None):
-    if vars == None:
-        vars = tree_hdl.get_var_names()
 
     plots = plot_utils.plot_distr(tree_hdl, column = vars, figsize = ((20,20)))
-    plt.savefig(filename_dict['analysis_path'] + 'images/var_distribution/' + name + '.png',dpi = 300, facecolor = 'white')
+    plt.savefig(filename_dict['analysis_path'] + 'images/var_distribution/' + name + '.png',dpi = 500, facecolor = 'white')
 
 
 
