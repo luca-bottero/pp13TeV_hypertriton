@@ -94,7 +94,7 @@ def train_xgboost_model(signal, background, filename_dict, training_variables=''
 
     print('Saving feature importance plots')
     plt.figure()
-    feat_imp_1, feat_imp_2 = plot_utils.plot_feature_imp(train_test_data[2],train_test_data[3],model_hdl,approximate=False)
+    feat_imp_1, feat_imp_2 = plot_utils.plot_feature_imp(train_test_data[2],train_test_data[3],model_hdl,approximate=True)
     feat_imp_1.savefig(training_fig_path + '/feature_importance_HIPE4ML_violin.png',dpi=300,facecolor='white')
     feat_imp_2.savefig(training_fig_path + '/feature_importance_HIPE4ML_bar.png',dpi=300,facecolor='white')
     plt.close()
@@ -203,15 +203,24 @@ def plot_efficiency(data_col, data_col_with_cut, x_label, title, name, filename_
     """    
     
     plt.figure()
-    hist_rec, bin_edges = np.histogram(data_col, bins=100, density=False)
-    hist_gen, bin_edges = np.histogram(data_col_with_cut, bins=bin_edges, density=False)
-    plt.bar((bin_edges[1:] + bin_edges[:-1]) * .5, (hist_rec/hist_gen),width=(bin_edges[1] - bin_edges[0]), color="blue")
+    hist, bin_edges = np.histogram(data_col, bins=100, density=False)
+    hist_cut, bin_edges = np.histogram(data_col_with_cut, bins=bin_edges, density=False)
+    plt.bar((bin_edges[1:] + bin_edges[:-1]) * .5, (hist_cut/hist),width=(bin_edges[1] - bin_edges[0]), color="blue")
     plt.title(title, fontsize=15)
     plt.xlabel(x_label, fontsize=12)
     plt.ylabel('efficiency', fontsize=12)
-    plt.savefig(filename_dict['analysis_path'] + path + name,dpi = 300, facecolor = 'white')
+    plt.savefig(filename_dict['analysis_path'] + path + name + '.png',dpi = 300, facecolor = 'white')
     
     plt.close()
+
+def plot_distributions(tree_hdl, filename_dict, name, vars = None):
+    if vars == None:
+        vars = tree_hdl.get_var_names()
+
+    plots = plot_utils.plot_distr(tree_hdl, column = vars, figsize = ((20,20)))
+    plt.savefig(filename_dict['analysis_path'] + 'images/var_distribution/' + name + '.png',dpi = 300, facecolor = 'white')
+
+
 
 def folder_setup(analysis_path = 'TEST'):    
 
@@ -225,10 +234,14 @@ def folder_setup(analysis_path = 'TEST'):
         os.makedirs(analysis_path)
         os.makedirs(analysis_path + '/results')
         os.makedirs(analysis_path + '/results/images')
-        os.makedirs(analysis_path + '/results/images/m_mppi')
-        os.makedirs(analysis_path + '/results/images/mppi_mdpi')
 
         os.makedirs(analysis_path + '/images/training')
+        os.makedirs(analysis_path + '/images/presel_eff')
+        os.makedirs(analysis_path + '/images/presel_eff/background_presel')
+        os.makedirs(analysis_path + '/images/presel_eff/data_presel')
+        os.makedirs(analysis_path + '/images/var_distribution')
+        os.makedirs(analysis_path + '/images/var_distribution/data')
+        os.makedirs(analysis_path + '/images/var_distribution/background_data')
 
         os.makedirs(analysis_path + '/model')
 

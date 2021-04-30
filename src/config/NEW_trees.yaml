@@ -1,7 +1,9 @@
-train_model      : True
-optimize_bayes   : False
-plot_m_mppivert  : True
-plot_mppi_mdpi   : True
+flag_dict :
+  train_model      : True
+  optimize_bayes   : False
+  plot_m_mppivert  : True
+  plot_mppi_mdpi   : True
+  plot_presel_eff  : True
 
 data_path           : '../data/'
 analysis_name       : 'NEW_trees'

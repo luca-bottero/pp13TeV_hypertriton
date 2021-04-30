@@ -19,7 +19,7 @@ from hipe4ml import plot_utils
 
 #CONFIG
 
-config_filename = 'NEW_trees.yaml'
+config_filename = 'OLD_centrality_0dot1_perc.yaml'
 
 
 with open('./config/' + config_filename) as f:
@@ -27,10 +27,7 @@ with open('./config/' + config_filename) as f:
     config_params = yaml.load(f, Loader=yaml.FullLoader)
     print(config_params)
 
-train_model      = config_params['train_model'] 
-optimize_bayes   = config_params['optimize_bayes']   
-plot_m_mppivert  = config_params['plot_m_mppivert']   
-plot_mppi_mdpi   = config_params['plot_mppi_mdpi']   
+flag_dict = config_params['flag_dict']
 
 data_path           = config_params['data_path']   
 analysis_name       = config_params['analysis_name']   
@@ -63,9 +60,9 @@ filename_dict  =  {'analysis_path' : analysis_path,
 
 print('\nHypertriton 3-body - pp @ 13 Tev\n')
 
-if train_model:
+if flag_dict['train_model']:
     print('Starting model training & application\n')
-    train.train_model(filename_dict, presel_dict, optimize_bayes)
+    train.train_model(filename_dict, presel_dict, flag_dict)
     print('Model training & application complete\n')
 
 
@@ -86,7 +83,7 @@ print('Background LS loaded\n')
 #print('Query on background LS applied\n')
     
 
-if plot_m_mppivert:
+if flag_dict['plot_m_mppivert']:
     print('Plotting scatter plot for m vs. mppi_vert\n')
 
     for score, i in zip(scores, eff_array):
@@ -96,7 +93,7 @@ if plot_m_mppivert:
                                 y_label='$p - \pi$ mass [GeV/c$^2$]', eff = i,
                                 path = 'm_mppi/', name = 'dalitz_eff_', filename_dict = filename_dict)
     
-if plot_mppi_mdpi:
+if flag_dict['plot_mppi_mdpi']:
     print('Plotting Dalitz plot: mppi vs. mdpi\n')
 
     sel_m = data.query('m > 2.989 & m < 2.993')

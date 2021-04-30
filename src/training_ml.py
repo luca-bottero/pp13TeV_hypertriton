@@ -49,7 +49,7 @@ def load_eff_scores(output_data_path):
 
     return eff_array, scores
 
-def train_model(filename_dict, presel_dict, optimize_bayes = False):
+def train_model(filename_dict, presel_dict, flag_dict):
 
     data_path = filename_dict['data_path']
     analysis_path = filename_dict['analysis_path']
@@ -57,15 +57,21 @@ def train_model(filename_dict, presel_dict, optimize_bayes = False):
     print('Loading MC signal')
     mc_signal = TreeHandler()
     mc_signal.get_handler_from_large_file(file_name = data_path + filename_dict['MC_signal_filename'],tree_name= "SignalTable",
-                                            preselection = presel_dict['MC_presel'])
+                                            preselection = presel_dict['MC_presel'])        
     print('MC signal loaded\n')
 
     utils.save_data_description(filename_dict, mc_signal.get_data_frame(), append = False, name = 'MC signal')
 
     print('Loading background data')
     background_ls = TreeHandler()
-    background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['background_filename'],tree_name= "DataTable",
-                                                preselection = presel_dict['background_presel'])
+    background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['background_filename'],tree_name= "DataTable")
+
+    for var in presel_dict['bckg_presel_vars']:
+        utils.plot_efficiency(background_ls.get_data_frame()[var], background_ls.get_data_frame().query(presel_dict['background_presel'])[var],
+            var, presel_dict['background_presel'], var, filename_dict, path = 'images/presel_eff/background_presel/')
+
+    background_ls.apply_preselections(presel_dict['background_presel'])
+    utils.plot_distributions(background_ls, filename_dict, 'background_distr')
     background_ls.shuffle_data_frame(size = min(background_ls.get_n_cand(), mc_signal.get_n_cand() * 4))
     print('Background data loaded\n')
 
@@ -99,7 +105,7 @@ def train_model(filename_dict, presel_dict, optimize_bayes = False):
     eff_array = np.arange(min_eff, max_eff, step)
 
     train_test_data, y_pred_test, model_hdl = utils.train_xgboost_model(mc_signal, background_ls, filename_dict, training_variables, 
-                                                                            optimize_bayes = optimize_bayes)
+                                                                            optimize_bayes = flag_dict['optimize_bayes'])
         
     print('Saving model handler')
     model_hdl.dump_model_handler(analysis_path + '/model/model_hdl')
@@ -113,7 +119,12 @@ def train_model(filename_dict, presel_dict, optimize_bayes = False):
     print('Loading experimental data')
     data = TreeHandler()
     data.get_handler_from_large_file(file_name = data_path + filename_dict['data_filename'],tree_name= "DataTable",
-                                        preselection = presel_dict['data_presel'], model_handler = model_hdl)
+                                         model_handler = model_hdl)
+    for var in presel_dict['data_presel_vars']:
+        utils.plot_efficiency(data.get_data_frame()[var], data.get_data_frame().query(presel_dict['data_presel'])[var],
+            var, presel_dict['data_presel'], var, filename_dict, path = 'images/presel_eff/data_presel/')
+
+    data.apply_preselections(presel_dict['data_presel'])
     print('Data loaded\n')
 
     utils.save_data_description(filename_dict, data.get_data_frame(), name = 'Data')
