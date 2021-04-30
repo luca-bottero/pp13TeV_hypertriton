@@ -159,10 +159,22 @@ def mass_spectrum_efficiency(data, scores, eff_array):
     mass_fit.systematic_estimate(data,scores,eff_array)
 
 def scatter_with_hist(x_data,y_data,x_axis,y_axis,filename_dict,x_label='',y_label='',eff = 0.,path = '',name=''):
-    '''
-    Plots a scatterplot with histograms of the distributions
-    '''
+    """Plots a scatter heatmap with the distribution histogram on the axis. Usually used to make Dalitz Plot or similar
 
+    Args:
+        x_data (np.array): data on the x axis
+        y_data (np.array): data on the y axis
+        x_axis (list): defines the x axis dimensions. a list composed of: number of bin, min value, max value
+        y_axis (list): defines the y axis dimensions. A list composed of: number of bin, min value, max value
+        filename_dict (dictionary): dictionary of the filenames
+        x_label (str, optional): label of the x axis. Defaults to ''.
+        y_label (str, optional): label of the y axis. Defaults to ''.
+        eff ([type], optional): efficiency. Used for saving the plot. Defaults to 0..
+        path (str, optional): the path in which the plot will be stored. Defaults to ''.
+        name (str, optional): the name of the saved plot. Defaults to ''.
+    """    
+
+   
     plt.close()
     
     plot = (
