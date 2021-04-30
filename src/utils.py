@@ -112,7 +112,7 @@ def data_exploration(data):
     pass
 
 def save_data_description(filename_dict, dataframe, append = True, name = ''):
-    header = '\n\ncentrality - ' + name
+    header = ['\n\ncentrality - ' + name]
 
     if append:
         dataframe['centrality'].describe().to_csv(filename_dict['analysis_path'] + filename_dict['analysis_name'], mode = 'a', header = header)
@@ -189,7 +189,18 @@ def scatter_with_hist(x_data,y_data,x_axis,y_axis,filename_dict,x_label='',y_lab
     
     plt.close()
     
-def plot_efficiency(data_col, data_col_with_cut, x_label, title, name, path = '../results/images/'):
+def plot_efficiency(data_col, data_col_with_cut, x_label, title, name, filename_dict, path = '../images/presel_efficiencies'):
+    """Plot the efficiency of the applied selections and save the results
+
+    Args:
+        data_col (np.array): the data before the selection
+        data_col_with_cut (np.array): the data after the selection
+        x_label (string): label of the x axis
+        title (string): title of the plot
+        name (string): name of the saved plot WITHOUT EXTENSION (eg wihtout '.png')
+        filename_dict (dictionary): dictionary of the file names
+        path (str, optional): path of the saved plot inside analysis results' folder. Defaults to '../images/presel_efficiencies'.
+    """    
     
     plt.figure()
     hist_rec, bin_edges = np.histogram(data_col, bins=100, density=False)
@@ -198,7 +209,7 @@ def plot_efficiency(data_col, data_col_with_cut, x_label, title, name, path = '.
     plt.title(title, fontsize=15)
     plt.xlabel(x_label, fontsize=12)
     plt.ylabel('efficiency', fontsize=12)
-    plt.savefig(path + name,dpi = 300, facecolor = 'white')
+    plt.savefig(filename_dict['analysis_path'] + path + name,dpi = 300, facecolor = 'white')
     
     plt.close()
 

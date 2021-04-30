@@ -60,7 +60,7 @@ def train_model(filename_dict, presel_dict, optimize_bayes = False):
                                             preselection = presel_dict['MC_presel'])
     print('MC signal loaded\n')
 
-    utils.save_data_description(filename_dict, mc_signal.get_data_frame(), append = False)
+    utils.save_data_description(filename_dict, mc_signal.get_data_frame(), append = False, name = 'MC signal')
 
     print('Loading background data')
     background_ls = TreeHandler()
@@ -90,7 +90,7 @@ def train_model(filename_dict, presel_dict, optimize_bayes = False):
         plt.close()
     '''
 
-    training_variables = ["pt", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr",
+    training_variables = ["ct", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr",
                             "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2"] 
                             #,'dca_pr', 'dca_pi', 'dca_de'
     min_eff = 0.5
@@ -116,7 +116,7 @@ def train_model(filename_dict, presel_dict, optimize_bayes = False):
                                         preselection = presel_dict['data_presel'], model_handler = model_hdl)
     print('Data loaded\n')
 
-    utils.save_data_description(filename_dict, data.get_data_frame())
+    utils.save_data_description(filename_dict, data.get_data_frame(), name = 'Data')
 
     print('Loading background data')
     background_ls = TreeHandler()
@@ -124,7 +124,7 @@ def train_model(filename_dict, presel_dict, optimize_bayes = False):
                                         preselection = presel_dict['background_presel'], model_handler = model_hdl)
     print('Background loaded\n')
 
-    utils.save_data_description(filename_dict, background_ls.get_data_frame())
+    utils.save_data_description(filename_dict, background_ls.get_data_frame(), name = 'Background')
     
 
     #background_ls.apply_model_handler(model_hdl)

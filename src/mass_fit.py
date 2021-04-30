@@ -96,8 +96,9 @@ def data_ls_comp_plots(data, ls, scores, efficiencies, filename_dict):
         root_hist_ls.SetMarkerStyle(7)
         root_hist_data.SetMarkerStyle(7)
 
-        root_hist_data.Draw('PE')
-        root_hist_ls.Draw('PE SAME')
+        root_hist_ls.Draw('PE')
+        root_hist_data.Draw('PE SAME')
+        
         leg.Draw()
         
         ROOT.gStyle.SetOptStat(0)

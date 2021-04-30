@@ -19,7 +19,7 @@ from hipe4ml import plot_utils
 
 #CONFIG
 
-config_filename = 'OLD_trees_with_cut.yaml'
+config_filename = 'NEW_trees.yaml'
 
 
 with open('./config/' + config_filename) as f:
