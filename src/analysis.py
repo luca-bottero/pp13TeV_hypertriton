@@ -19,7 +19,7 @@ from hipe4ml import plot_utils
 
 #CONFIG
 
-configs = ['OLD_centrality_1_perc.yaml', 'OLD_trees_with_cut.yaml', 'NEW_trees.yaml']
+configs = ['OLD_centrality_1_perc.yaml', 'OLD_centrality_0dot1_perc', 'OLD_trees_with_cut.yaml', 'NEW_trees.yaml']
 
 #config_filename = 'OLD_centrality_0dot1_perc.yaml'
 

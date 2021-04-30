@@ -5,7 +5,7 @@ flag_dict :
   plot_mppi_mdpi   : False
 
 data_path           : '../data/'
-analysis_name       : 'OLD_centrality_0dot1_perc'
+analysis_name       : 'OLD_centrality_1_perc'
 MC_signal_filename  : 'SignalTable_pp13TeV_mtexp.root'
 background_filename : 'DataTable_pp_LS_OLD.root'
 data_filename       : 'DataTable_pp_OLD.root'
