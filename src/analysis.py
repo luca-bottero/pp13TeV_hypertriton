@@ -28,7 +28,7 @@ for config_filename in configs:
     with open('./config/' + config_filename) as f:
         
         config_params = yaml.load(f, Loader=yaml.FullLoader)
-        print(config_params)
+        #print(config_params)
 
     flag_dict = config_params['flag_dict']
 
@@ -111,5 +111,20 @@ for config_filename in configs:
 
         del sel_m
 
-    mass_fit.data_ls_comp_plots(data,background_ls,scores,eff_array, filename_dict)
+    if flag_dict['plot_mppi_mdpi_fine']:
+        print('Plotting fine Dalitz plot: mppi vs. mdpi\n')
+
+        sel_m = data.query('m > 2.989 & m < 2.993')
+        for score,i in zip(scores,eff_array):
+            sel = sel_m.query('model_output > ' + str(score))
+            utils.scatter_with_hist(sel['mppi'], sel['mdpi'],
+                                        [10,1.235,1.25],[20,4.15,4.21], path = 'mppi_mdpi_fine/', name = 'dalitz_eff_',
+                                        filename_dict = filename_dict,
+                                        x_label='$p - \pi$ mass [GeV/c$^2$]',
+                                        y_label='$d - \pi$ mass [GeV/c$^2$]', eff=i)
+
+        del sel_m
+
+    if flag_dict['root_plots']:
+        mass_fit.data_ls_comp_plots(data,background_ls,scores,eff_array, filename_dict)
 

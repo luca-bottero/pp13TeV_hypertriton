@@ -1,9 +1,11 @@
 flag_dict :
-  train_model      : False
-  optimize_bayes   : False
-  plot_m_mppivert  : True
-  plot_mppi_mdpi   : True
-  plot_presel_eff  : True
+  train_model         : False
+  optimize_bayes      : False
+  plot_m_mppivert     : False
+  plot_mppi_mdpi      : False
+  plot_mppi_mdpi_fine : True
+  plot_presel_eff     : False
+  root_plots          : False
 
 data_path           : '../data/'
 analysis_name       : 'NEW_trees'

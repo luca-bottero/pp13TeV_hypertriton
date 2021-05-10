@@ -257,7 +257,6 @@ def folder_setup(analysis_path = 'TEST'):
     if not os.path.exists(analysis_path):
         os.makedirs(analysis_path)
         os.makedirs(analysis_path + '/results')
-        os.makedirs(analysis_path + '/results/images')
 
         os.makedirs(analysis_path + '/images/training')
         os.makedirs(analysis_path + '/images/presel_eff')

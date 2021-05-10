@@ -31,7 +31,7 @@ def mass_fitter(hist,score,efficiency):
     total = ROOT.TF1('total','pol1(0) + gaus(2)',2.96,3.04)
     total.SetParameter(3, 2.992)
     total.SetParLimits(3, 2.99, 2.995)
-    total.SetParameter(2, 26)
+    total.SetParameter(2, 100)  #26
     total.SetParameter(4, 0.0032)
     total.SetParLimits(4, 0.001, 0.01)
     '''
@@ -72,8 +72,8 @@ def data_ls_comp_plots(data, ls, scores, efficiencies, filename_dict):
         selected_data = data.query('model_output > ' + str(score))
         selected_ls = ls.query('model_output > ' + str(score))
 
-        hist_data = np.histogram(selected_data['m'],bins=34,range=(2.96,3.04))
-        hist_ls = np.histogram(selected_ls['m'],bins=34,range=(2.96,3.04))
+        hist_data = np.histogram(selected_data['m'],bins=80,range=(2.96,3.04))
+        hist_ls = np.histogram(selected_ls['m'],bins=80,range=(2.96,3.04))
 
         aghast_hist = aghast.from_numpy(hist_data)
         root_hist_data = aghast.to_root(aghast_hist,'Efficiency ' + str(np.round(efficiency,4)))
@@ -86,7 +86,7 @@ def data_ls_comp_plots(data, ls, scores, efficiencies, filename_dict):
 
         canvas = ROOT.TCanvas('Efficiency ' + str(np.round(efficiency,4)))
 
-        leg = ROOT.TLegend(.7,.8,.9,.9)
+        leg = ROOT.TLegend(.6,.8,.8,.9)
         leg.AddEntry(root_hist_data, 'Data', 'L')
         leg.AddEntry(root_hist_ls, 'Background LS', 'L')
         leg.SetTextSize(0.032)
@@ -96,8 +96,8 @@ def data_ls_comp_plots(data, ls, scores, efficiencies, filename_dict):
         root_hist_ls.SetMarkerStyle(7)
         root_hist_data.SetMarkerStyle(7)
 
-        root_hist_ls.Draw('PE')
-        root_hist_data.Draw('PE SAME')
+        root_hist_data.Draw('PE')
+        root_hist_ls.Draw('PE SAME')
         
         leg.Draw()
         
@@ -122,7 +122,7 @@ def systematic_estimate(data,scores,efficiencies):
     for score in scores:
         selected_data_hndl = data.get_subset('model_output > ' + str(score)).get_data_frame()
         #hist = plot_utils.plot_distr(selected_data_hndl, column='m', bins=34, colors='orange', density=False,fill=True, range=[2.96,3.04])
-        hist = np.histogram(selected_data_hndl['m'],bins=34,range=(2.96,3.04))
+        hist = np.histogram(selected_data_hndl['m'],bins=80,range=(2.96,3.04))
         cnt, err = mass_fitter(hist=hist,score=score,efficiency=efficiencies[i])
         count.append(cnt)
         errors.append(err)
