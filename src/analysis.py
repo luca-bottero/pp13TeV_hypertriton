@@ -96,7 +96,7 @@ for config_filename in configs:
             sel = data.query('model_output > ' + str(score))
             utils.scatter_with_hist(sel['m'],sel['mppi_vert'],[34,2.96,3.04],[34,1.08,1.13],
                                     x_label='Hypertriton mass [GeV/c$^2$]',
-                                    y_label='$p - \pi$ mass [(GeV/c$^2$)$^2$]', eff = i,
+                                    y_label='$p - \pi$ mass$^2$ [(GeV/c$^2$)$^2$]', eff = i,
                                     path = 'm_mppi/', name = 'dalitz_eff_', filename_dict = filename_dict)
         
     if flag_dict['plot_mppi_mdpi']:
@@ -108,8 +108,8 @@ for config_filename in configs:
             utils.scatter_with_hist(sel['mppi'], sel['mdpi'],
                                         [50,1.16,1.26],[50,4.07,4.22], path = 'mppi_mdpi/', name = 'dalitz_eff_',
                                         filename_dict = filename_dict,
-                                        x_label='$p - \pi$ mass [(GeV/c$^2$)$^2$]',
-                                        y_label='$d - \pi$ mass [(GeV/c$^2$)$^2$]', eff=i)
+                                        x_label='$p - \pi$ mass$^2$ [(GeV/c$^2$)$^2$]',
+                                        y_label='$d - \pi$ mass$^2$ [(GeV/c$^2$)$^2$]', eff=i)
 
         del sel_m
 
@@ -122,8 +122,8 @@ for config_filename in configs:
             utils.scatter_with_hist(sel['mppi'], sel['mdpi'],
                                         [10,1.235,1.25],[20,4.15,4.21], path = 'mppi_mdpi_fine/', name = 'dalitz_eff_',
                                         filename_dict = filename_dict,
-                                        x_label='$p - \pi$ mass [(GeV/c$^2$)$^2$]',
-                                        y_label='$d - \pi$ mass [(GeV/c$^2$)$^2$]', eff=i)
+                                        x_label='$p - \pi$ mass$^2$ [(GeV/c$^2$)$^2$]',
+                                        y_label='$d - \pi$ mass$^2$ [(GeV/c$^2$)$^2$]', eff=i)
 
         del sel_m
 
