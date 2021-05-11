@@ -144,8 +144,10 @@ def train_model(filename_dict, presel_dict, flag_dict):
     #data.apply_model_handler(model_hdl)
 
     #print(background_ls)
-    utils.plot_distr_comparison(mc_signal.get_data_frame(),background_ls.get_data_frame(),'signal_bckg/',filename_dict)
-    utils.plot_distr_comparison(data.get_data_frame(),background_ls.get_data_frame(),'data_bckg/',filename_dict)
+    utils.plot_distr_comparison(mc_signal.get_data_frame(),background_ls.get_data_frame(),'signal_bckg/', 
+                                filename_dict, 'MC signal', 'Background')
+    utils.plot_distr_comparison(data.get_data_frame(),background_ls.get_data_frame(),'data_bckg/',
+                                filename_dict, 'Data', 'Background')
 
 
     
