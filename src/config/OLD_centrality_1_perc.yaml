@@ -1,11 +1,11 @@
 flag_dict :
-  train_model         : False
+  train_model         : True
   optimize_bayes      : False
   plot_m_mppivert     : False
   plot_mppi_mdpi      : False
-  plot_mppi_mdpi_fine : True
-  plot_presel_eff     : False
-  root_plots          : False
+  plot_mppi_mdpi_fine : False
+  plot_presel_eff     : True
+  root_plots          : True
 
 data_path           : '../data/'
 analysis_name       : 'OLD_centrality_1_perc'

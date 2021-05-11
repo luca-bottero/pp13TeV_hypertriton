@@ -236,9 +236,27 @@ def plot_distributions(tree_hdl, filename_dict, name, vars = None):
     """    
 
     plots = plot_utils.plot_distr(tree_hdl, column = vars, figsize = ((20,20)))
-    plt.savefig(filename_dict['analysis_path'] + 'images/var_distribution/' + name + '.png',dpi = 500, facecolor = 'white')
+    plt.savefig(filename_dict['analysis_path'] + 'images/var_distribution/' + name + '.png', dpi = 500, facecolor = 'white')
     plt.close()
 
+def plot_distr_comparison(df1, df2, name, filename_dict, col_names = None):
+    
+    print('Plotting comparison of variable distributions')
+
+    if col_names == None:
+        col_names = list(df1.columns)
+
+    plt.close()
+
+    for col in col_names:
+        if col in list(df2.columns):
+            df1[col].hist(alpha = 0.5)
+            df2[col].hist(alpha = 0.5)
+            plt.savefig(filename_dict['analysis_path'] + 'images/var_distribution/' + name + str(col) + '.png', facecolor = 'white')
+            plt.close()
+
+    print('\nDone')
+    
 
 
 def folder_setup(analysis_path = 'TEST'):   
@@ -261,8 +279,8 @@ def folder_setup(analysis_path = 'TEST'):
         os.makedirs(analysis_path + '/images/training')
         os.makedirs(analysis_path + '/images/presel_eff')
         os.makedirs(analysis_path + '/images/var_distribution')
-        os.makedirs(analysis_path + '/images/var_distribution/data')
-        os.makedirs(analysis_path + '/images/var_distribution/background_data')
+        os.makedirs(analysis_path + '/images/var_distribution/signal_bckg')
+        os.makedirs(analysis_path + '/images/var_distribution/data_bckg')
 
         os.makedirs(analysis_path + '/model')
 

@@ -65,13 +65,13 @@ def train_model(filename_dict, presel_dict, flag_dict):
     print('Loading background data')
     background_ls = TreeHandler()
     background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['background_filename'],tree_name= "DataTable")
-
+    
+    #Efficiency plots
     for var in presel_dict['bckg_presel_vars']:
         utils.plot_efficiency(background_ls.get_data_frame()[var], background_ls.get_data_frame().query(presel_dict['background_presel'])[var],
             var, presel_dict['background_presel'], var, filename_dict, path = 'images/presel_eff/background_presel/')
 
     background_ls.apply_preselections(presel_dict['background_presel'])
-    utils.plot_distributions(background_ls, filename_dict, 'background_distr')
     background_ls.shuffle_data_frame(size = min(background_ls.get_n_cand(), mc_signal.get_n_cand() * 4))
     print('Background data loaded\n')
 
@@ -99,7 +99,7 @@ def train_model(filename_dict, presel_dict, flag_dict):
     training_variables = ["ct", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr",
                             "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2"] 
                             #,'dca_pr', 'dca_pi', 'dca_de'
-    min_eff = 0.5
+    min_eff = 0.3
     max_eff = 0.9
     step = 0.01
     eff_array = np.arange(min_eff, max_eff, step)
@@ -120,12 +120,13 @@ def train_model(filename_dict, presel_dict, flag_dict):
     data = TreeHandler()
     data.get_handler_from_large_file(file_name = data_path + filename_dict['data_filename'],tree_name= "DataTable",
                                          model_handler = model_hdl)
-    for var in presel_dict['data_presel_vars']:
+    
+    #Efficiency plots
+    for var in presel_dict['data_presel_vars']:             
         utils.plot_efficiency(data.get_data_frame()[var], data.get_data_frame().query(presel_dict['data_presel'])[var],
             var, presel_dict['data_presel'], var, filename_dict, path = 'images/presel_eff/data_presel/')
 
     data.apply_preselections(presel_dict['data_presel'])
-    utils.plot_distributions(data, filename_dict, 'data_distr')
     print('Data loaded\n')
 
     utils.save_data_description(filename_dict, data.get_data_frame(), name = 'Data')
@@ -143,6 +144,9 @@ def train_model(filename_dict, presel_dict, flag_dict):
     #data.apply_model_handler(model_hdl)
 
     #print(background_ls)
+    utils.plot_distr_comparison(mc_signal.get_data_frame(),background_ls.get_data_frame(),'signal_bckg/',filename_dict)
+    utils.plot_distr_comparison(data.get_data_frame(),background_ls.get_data_frame(),'data_bckg/',filename_dict)
+
 
     
     save_data_with_scores(background_ls, analysis_path + '/output_data/bckg_ls_scores')
