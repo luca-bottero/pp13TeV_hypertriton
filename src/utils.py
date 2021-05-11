@@ -214,6 +214,7 @@ def plot_efficiency(data_col, data_col_with_cut, x_label, title, name, filename_
         path (str, optional): path of the saved plot inside analysis results' folder. Defaults to '../images/presel_efficiencies'.
     """    
     
+    plt.close()
     plt.figure()
     hist, bin_edges = np.histogram(data_col, bins=100, density=False)
     hist_cut, bin_edges = np.histogram(data_col_with_cut, bins=bin_edges, density=False)
@@ -257,7 +258,7 @@ def plot_distr_comparison(df1, df2, name, filename_dict,label_1 = 'df1', label_2
             plt.savefig(filename_dict['analysis_path'] + 'images/var_distribution/' + name + str(col) + '.png', facecolor = 'white')
             plt.close()
 
-    print('\nDone')
+    print('Done\n')
     
 
 

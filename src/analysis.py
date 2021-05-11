@@ -40,6 +40,8 @@ for config_filename in configs:
 
     presel_dict = config_params['presel_dict']
 
+    eff_array = np.arange(config_params['eff_array'][0],config_params['eff_array'][1],config_params['eff_array'][2])
+
     #CONFIG SETUP
     analysis_path = '../analysis_results/' + analysis_name
 
@@ -66,7 +68,7 @@ for config_filename in configs:
 
     if flag_dict['train_model']:
         print('Starting model training & application\n')
-        train.train_model(filename_dict, presel_dict, flag_dict)
+        train.train_model(filename_dict, presel_dict, flag_dict, eff_array)
         print('Model training & application complete\n')
 
 
