@@ -66,8 +66,7 @@ for config_filename in configs:
 
     print('\nHypertriton 3-body - pp @ 13 Tev\n')
 
-
-    
+    '''
     data_path = filename_dict['data_path']
     analysis_path = filename_dict['analysis_path']
 
@@ -80,10 +79,10 @@ for config_filename in configs:
     background_ls_ROT.apply_preselections(presel_dict['background_presel'])
 
     #utils.plot_distr_comparison(background_ls_OLD.get_data_frame(),background_ls_ROT.get_data_frame(), 'COMPARISON/', filename_dict, 'OLD', 'Track Rotation')
-    plot_utils.plot_distr([background_ls_OLD, background_ls_ROT], alpha = 0.5,
-                            bins = 100, labels = ['OLD', 'Track rotation'], figsize = ((20,20)), density = True)
+    ''plot_utils.plot_distr([background_ls_OLD, background_ls_ROT], alpha = 0.5,
+                            bins = 100, labels = ['OLD', 'Track rotation'], figsize = ((20,20)), density = True)''
     
-    plt.savefig('comparison.png')
+    plt.savefig('comparison.png')'''
     
 
     if flag_dict['train_model']:
@@ -96,14 +95,6 @@ for config_filename in configs:
     model_hdl.load_model_handler(analysis_path + '/model/model_hdl')
 
     print('Model loaded\n')
-
-
-
-
-
-
-
-
 
     eff_array, scores = train.load_eff_scores(analysis_path + 'output_data/')
 
@@ -156,6 +147,8 @@ for config_filename in configs:
         del sel_m
 
     if flag_dict['root_plots']:
+        #background_ls_OLD = train.load_data_with_scores('/home/lbottero/pp13TeV_hypertriton/analysis_results/ROT_TOF_PID/output_data/bckg_ls_scores.parquet.gzip')
+
         mass_fit.data_ls_comp_plots(data,background_ls,scores,eff_array, filename_dict)
 
    

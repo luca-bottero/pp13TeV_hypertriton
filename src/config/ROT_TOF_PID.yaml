@@ -1,10 +1,10 @@
 flag_dict :
   train_model         : True
   optimize_bayes      : False
-  plot_m_mppivert     : True
-  plot_mppi_mdpi      : True
-  plot_mppi_mdpi_fine : True
-  plot_presel_eff     : True
+  plot_m_mppivert     : False
+  plot_mppi_mdpi      : False
+  plot_mppi_mdpi_fine : False
+  plot_presel_eff     : False
   root_plots          : True
 
 data_path           : '../data/'
