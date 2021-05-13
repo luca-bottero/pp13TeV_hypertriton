@@ -153,7 +153,7 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array):
 
     del background_ls
     del data
-    del mc
+    del mc_signal
 
 
 

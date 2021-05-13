@@ -67,7 +67,7 @@ for config_filename in configs:
     print('\nHypertriton 3-body - pp @ 13 Tev\n')
 
 
-    '''
+    
     data_path = filename_dict['data_path']
     analysis_path = filename_dict['analysis_path']
 
@@ -79,9 +79,12 @@ for config_filename in configs:
     background_ls_ROT.get_handler_from_large_file(file_name = data_path + filename_dict['background_filename'],tree_name= "DataTable")
     background_ls_ROT.apply_preselections(presel_dict['background_presel'])
 
-    utils.plot_distr_comparison(background_ls_OLD.get_data_frame(),background_ls_ROT.get_data_frame(), 'COMPARISON/', filename_dict, 'OLD', 'Track Rotation')
-
-    '''
+    #utils.plot_distr_comparison(background_ls_OLD.get_data_frame(),background_ls_ROT.get_data_frame(), 'COMPARISON/', filename_dict, 'OLD', 'Track Rotation')
+    plot_utils.plot_distr([background_ls_OLD, background_ls_ROT], alpha = 0.5,
+                            bins = 100, labels = ['OLD', 'Track rotation'], figsize = ((20,20)), density = True)
+    
+    plt.savefig('comparison.png')
+    
 
     if flag_dict['train_model']:
         print('Starting model training & application\n')
