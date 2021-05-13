@@ -1,11 +1,11 @@
 flag_dict :
-  train_model         : False
+  train_model         : True
   optimize_bayes      : False
-  plot_m_mppivert     : False
-  plot_mppi_mdpi      : False
+  plot_m_mppivert     : True
+  plot_mppi_mdpi      : True
   plot_mppi_mdpi_fine : True
-  plot_presel_eff     : False
-  root_plots          : False
+  plot_presel_eff     : True
+  root_plots          : True
 
 data_path           : '../data/'
 analysis_name       : 'OLD_trees_with_cut'
@@ -19,3 +19,5 @@ presel_dict :
   data_presel         : 'centrality < 0.17 and pt > 1.5'
   bckg_presel_vars    : ['ct', 'pt']
   data_presel_vars    : ['ct', 'pt']
+
+eff_array  : [0.3,0.9,0.01]       #min, max, step

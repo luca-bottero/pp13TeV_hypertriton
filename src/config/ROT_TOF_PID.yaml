@@ -8,15 +8,15 @@ flag_dict :
   root_plots          : True
 
 data_path           : '../data/'
-analysis_name       : 'OLD_centrality_0dot1_perc'
+analysis_name       : 'ROT_TOF_PID'
 MC_signal_filename  : 'SignalTable_pp13TeV_mtexp.root'
-background_filename : 'DataTable_pp_LS_OLD.root'
-data_filename       : 'DataTable_pp_OLD.root'
+background_filename : 'DataTable_pp_LS_rot.root'
+data_filename       : 'DataTable_pp.root'
 
 presel_dict :
-  MC_presel           : 'rej_accept > 0 and pt > 1.5'   #g_reconstructed = True
-  background_presel   : 'centrality < 0.1 and pt > 1.5'
-  data_presel         : 'centrality < 0.1 and pt > 1.5'
+  MC_presel           : 'rej_accept > 0 and pt > 1.5'
+  background_presel   : 'centrality < 0.17 and pt > 1.5'
+  data_presel         : 'centrality < 0.17 and pt > 1.5'
   bckg_presel_vars    : ['ct', 'pt']
   data_presel_vars    : ['ct', 'pt']
 

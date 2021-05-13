@@ -1,7 +1,7 @@
 images
 data
 model
-results
+analysis_results
 __pycache__
 .ipynb_checkpoints
 .vscode

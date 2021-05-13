@@ -19,3 +19,5 @@ presel_dict :
   data_presel         : 'centrality < 0.17 and pt > 1.5'
   bckg_presel_vars    : ['ct', 'pt']
   data_presel_vars    : ['ct', 'pt']
+
+eff_array  : [0.3,0.9,0.01]       #min, max, step
