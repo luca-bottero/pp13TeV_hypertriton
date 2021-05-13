@@ -19,7 +19,7 @@ from hipe4ml import plot_utils
 
 #CONFIG
 
-configs = ['NEW_trees.yaml']
+configs = ['ROT_TOF_PID.yaml']
 
 #config_filename = 'OLD_centrality_0dot1_perc.yaml'
 
@@ -66,6 +66,23 @@ for config_filename in configs:
 
     print('\nHypertriton 3-body - pp @ 13 Tev\n')
 
+
+    '''
+    data_path = filename_dict['data_path']
+    analysis_path = filename_dict['analysis_path']
+
+    background_ls_OLD = TreeHandler()
+    background_ls_OLD.get_handler_from_large_file(file_name = data_path + 'DataTable_pp_LS_OLD.root',tree_name= "DataTable")
+    background_ls_OLD.apply_preselections(presel_dict['background_presel'])
+
+    background_ls_ROT = TreeHandler()
+    background_ls_ROT.get_handler_from_large_file(file_name = data_path + filename_dict['background_filename'],tree_name= "DataTable")
+    background_ls_ROT.apply_preselections(presel_dict['background_presel'])
+
+    utils.plot_distr_comparison(background_ls_OLD.get_data_frame(),background_ls_ROT.get_data_frame(), 'COMPARISON/', filename_dict, 'OLD', 'Track Rotation')
+
+    '''
+
     if flag_dict['train_model']:
         print('Starting model training & application\n')
         train.train_model(filename_dict, presel_dict, flag_dict, eff_array)
@@ -76,6 +93,14 @@ for config_filename in configs:
     model_hdl.load_model_handler(analysis_path + '/model/model_hdl')
 
     print('Model loaded\n')
+
+
+
+
+
+
+
+
 
     eff_array, scores = train.load_eff_scores(analysis_path + 'output_data/')
 
@@ -129,4 +154,6 @@ for config_filename in configs:
 
     if flag_dict['root_plots']:
         mass_fit.data_ls_comp_plots(data,background_ls,scores,eff_array, filename_dict)
+
+   
 

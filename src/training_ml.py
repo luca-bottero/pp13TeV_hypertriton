@@ -151,6 +151,10 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array):
 
     save_eff_scores(eff_array, scores, analysis_path + '/output_data')
 
+    del background_ls
+    del data
+    del mc
+
 
 
 
