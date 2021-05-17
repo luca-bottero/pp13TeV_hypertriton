@@ -240,14 +240,29 @@ def plot_distributions(tree_hdl, filename_dict, name, vars = None):
     plt.savefig(filename_dict['analysis_path'] + 'images/var_distribution/' + name + '.png', dpi = 500, facecolor = 'white')
     plt.close()
 
-def plot_distr_comparison(df1, df2, name, filename_dict,label_1 = 'df1', label_2 = 'df2', col_names = None, nbins = 100):
+def plot_distr_comparison(hdl1, hdl2, name, filename_dict, label_1 = 'df1', label_2 = 'df2', col_names = None, nbins = 100):
     
     print('Plotting comparison of variable distributions')
 
+    df1 = hdl1.get_data_frame()
+    df2 = hdl2.get_data_frame()
+
     if col_names == None:
         col_names = list(df1.columns)
+    
+    column = []
+
+    for col in col_names:
+        if col in list(df2.columns):
+            column.append(col)
 
     plt.close()
+
+    plot_utils.plot_distr([hdl1, hdl2], alpha = 0.5, bins = 100, labels = [label_1, label_2], figsize = ((20,20)), density = True, column = column)
+    plt.savefig(filename_dict['analysis_path'] + 'images/var_distribution/' + name[:-1] + '.png')
+    plt.close()
+
+    
 
     for col in col_names:
         if col in list(df2.columns):
