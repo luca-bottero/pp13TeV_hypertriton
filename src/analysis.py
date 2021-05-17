@@ -19,7 +19,7 @@ from hipe4ml import plot_utils
 
 #CONFIG
 
-configs = ['ROT_TOF_PID.yaml']
+configs = ['ROT_LS_17_05.yaml']
 
 #config_filename = 'OLD_centrality_0dot1_perc.yaml'
 
