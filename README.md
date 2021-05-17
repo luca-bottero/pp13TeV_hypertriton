@@ -1,4 +1,12 @@
-# pp13TeV_hypertriton
+# 3-body decay of Hypertriton in p-p collision at 13 TeV with ALICE data
+
+## How to run the analysis
+
+- Create a folder named 'data' with the trees in it
+- 'cd src'
+- Create or modify the '.yaml' file in the 'config' folder
+- Modify 'analysis.py' such that 'config = [NAME_OF_CONFIG]'
+- 'python3 analysis.py
 
 **Directories:**
 
