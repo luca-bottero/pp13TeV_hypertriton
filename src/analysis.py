@@ -19,7 +19,7 @@ from hipe4ml import plot_utils
 
 #CONFIG
 
-configs = ['OLD_centrality_1_perc.yaml']
+configs = ['MIX_data_LS.yaml']
 
 #config_filename = 'OLD_centrality_0dot1_perc.yaml'
 
@@ -41,7 +41,7 @@ for config_filename in configs:
     train_vars = config_params['train_vars']
 
     #CONFIG SETUP
-   filename_dict['analysis_path'] = '../analysis_results/' +filename_dict['analysis_name']
+    filename_dict['analysis_path'] = '../analysis_results/' +filename_dict['analysis_name']
 
     if filename_dict['analysis_path'][-1] != '/':
             filename_dict['analysis_path'] += '/'
@@ -49,7 +49,7 @@ for config_filename in configs:
     if filename_dict['data_path'][-1] != '/':
             filename_dict['data_path'] += '/'
 
-    utils.folder_setup(filename_dict['analysis_path'] = filename_dict['analysis_path'])
+    utils.folder_setup(filename_dict['analysis_path'])
 
     copyfile('./config/' + config_filename, filename_dict['analysis_path'] + config_filename)
 
