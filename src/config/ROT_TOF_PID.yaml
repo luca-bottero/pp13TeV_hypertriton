@@ -1,12 +1,13 @@
 flag_dict :
-  train_model         : True
+  train_model         : False
   optimize_bayes      : False
   plot_m_mppivert     : False
   plot_mppi_mdpi      : False
   plot_mppi_mdpi_fine : False
   plot_presel_eff     : False
+  plot_scatter        : True
   root_plots          : True
-
+  
 data_path           : '../data/'
 analysis_name       : 'ROT_TOF_PID'
 MC_signal_filename  : 'SignalTable_pp13TeV_mtexp.root'
@@ -15,8 +16,8 @@ data_filename       : 'DataTable_pp_OLD.root'
 
 presel_dict :
   MC_presel           : 'rej_accept > 0 and pt > 1.5'
-  background_presel   : 'centrality < 0.17 and pt > 1.5'
-  data_presel         : 'centrality < 0.17 and pt > 1.5'
+  background_presel   : 'centrality < 1. and pt > 1.5'
+  data_presel         : 'centrality < 1. and pt > 1.5'
   bckg_presel_vars    : ['ct', 'pt']
   data_presel_vars    : ['ct', 'pt']
 

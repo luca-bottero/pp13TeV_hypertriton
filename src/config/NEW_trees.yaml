@@ -1,10 +1,11 @@
 flag_dict :
-  train_model         : True
+  train_model         : False
   optimize_bayes      : False
-  plot_m_mppivert     : True
-  plot_mppi_mdpi      : True
-  plot_mppi_mdpi_fine : True
-  plot_presel_eff     : True
+  plot_m_mppivert     : False
+  plot_mppi_mdpi      : False
+  plot_mppi_mdpi_fine : False
+  plot_presel_eff     : False
+  plot_scatter        : True
   root_plots          : True
 
 data_path           : '../data/'
@@ -15,9 +16,11 @@ data_filename       : 'DataTable_pp.root'
 
 presel_dict :
   MC_presel           : 'rej_accept > 0 and pt > 1.5'
-  background_presel   : 'centrality < 0.17 and pt > 1.5'
-  data_presel         : 'centrality < 0.17 and pt > 1.5'
+  background_presel   : 'centrality < 1. and pt > 1.5'
+  data_presel         : 'centrality < 1. and pt > 1.5'
   bckg_presel_vars    : ['ct', 'pt']
   data_presel_vars    : ['ct', 'pt']
 
 eff_array  : [0.3,0.9,0.01]       #min, max, step
+train_vars : ["ct", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr",
+                  "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2"]

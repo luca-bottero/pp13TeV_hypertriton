@@ -214,6 +214,7 @@ def plot_efficiency(data_col, data_col_with_cut, x_label, title, name, filename_
         path (str, optional): path of the saved plot inside analysis results' folder. Defaults to '../images/presel_efficiencies'.
     """    
     
+    print('Plotting efficiency')
     plt.close()
     plt.figure()
     hist, bin_edges = np.histogram(data_col, bins=100, density=False)
@@ -225,6 +226,25 @@ def plot_efficiency(data_col, data_col_with_cut, x_label, title, name, filename_
     plt.savefig(filename_dict['analysis_path'] + path + name + '.png',dpi = 300, facecolor = 'white')
     
     plt.close()
+    print('Done\n')
+
+def plot_scatter(hdl, filename_dict, name, vars = None):
+    
+    print('Plotting scatter of variables')
+    plt.close()
+    df = hdl.get_data_frame()
+
+    if vars == None:
+        vars = list(df1.columns)
+
+    scatter_plot = sns.pairplot(df[vars], plot_kws={'alpha': 0.1}, corner = True)
+    scatter_plot.savefig(filename_dict['analysis_path'] + 'images/var_distribution/' + name + '.png',dpi = 300, facecolor = 'white')
+
+    print('Done\n')
+
+    
+
+
 
 def plot_distributions(tree_hdl, filename_dict, name, vars = None):
     """Plot the distribution of the variables in the tree handler
@@ -235,7 +255,7 @@ def plot_distributions(tree_hdl, filename_dict, name, vars = None):
         name (string): name of the plot
         vars (list, optional): the variables to plot. None for all variables. Defaults to None.
     """    
-
+    plt.close()
     plots = plot_utils.plot_distr(tree_hdl, column = vars, figsize = ((20,20)))
     plt.savefig(filename_dict['analysis_path'] + 'images/var_distribution/' + name + '.png', dpi = 500, facecolor = 'white')
     plt.close()
@@ -262,13 +282,11 @@ def plot_distr_comparison(hdl1, hdl2, name, filename_dict, label_1 = 'df1', labe
     plt.savefig(filename_dict['analysis_path'] + 'images/var_distribution/' + name[:-1] + '.png')
     plt.close()
 
-    
-
     for col in col_names:
         if col in list(df2.columns):
             plt.figure()
-            df1[col].hist(alpha = 0.5, bins = nbins, label = label_1)
-            df2[col].hist(alpha = 0.5, bins = nbins, label = label_2)
+            df1[col].hist(alpha = 0.5, bins = nbins, label = label_1, density = True)
+            df2[col].hist(alpha = 0.5, bins = nbins, label = label_2, density = True)
             plt.legend()
             plt.savefig(filename_dict['analysis_path'] + 'images/var_distribution/' + name + str(col) + '.png', facecolor = 'white')
             plt.close()

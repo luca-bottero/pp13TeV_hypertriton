@@ -49,7 +49,7 @@ def load_eff_scores(output_data_path):
 
     return eff_array, scores
 
-def train_model(filename_dict, presel_dict, flag_dict, eff_array):
+def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars):
 
     data_path = filename_dict['data_path']
     analysis_path = filename_dict['analysis_path']
@@ -99,12 +99,11 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array):
         plt.close()
     '''
 
-    training_variables = ["ct", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr",
-                            "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2"] 
+    train_vars =  
                             #,'dca_pr', 'dca_pi', 'dca_de'
     
 
-    train_test_data, y_pred_test, model_hdl = utils.train_xgboost_model(mc_signal, background_ls, filename_dict, training_variables, 
+    train_test_data, y_pred_test, model_hdl = utils.train_xgboost_model(mc_signal, background_ls, filename_dict, train_vars, 
                                                                             optimize_bayes = flag_dict['optimize_bayes'])
         
     print('Saving model handler')

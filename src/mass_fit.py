@@ -122,7 +122,7 @@ def systematic_estimate(data,scores,efficiencies):
     for score in scores:
         selected_data_hndl = data.get_subset('model_output > ' + str(score)).get_data_frame()
         #hist = plot_utils.plot_distr(selected_data_hndl, column='m', bins=34, colors='orange', density=False,fill=True, range=[2.96,3.04])
-        hist = np.histogram(selected_data_hndl['m'],bins=80,range=(2.96,3.04))
+        hist = np.histogram(selected_data_hndl['m'],bins=36,range=(2.96,3.04))
         cnt, err = mass_fitter(hist=hist,score=score,efficiency=efficiencies[i])
         count.append(cnt)
         errors.append(err)

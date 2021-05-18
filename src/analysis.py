@@ -19,7 +19,7 @@ from hipe4ml import plot_utils
 
 #CONFIG
 
-configs = ['ROT_LS_17_05.yaml']
+configs = ['NEW_trees.yaml']
 
 #config_filename = 'OLD_centrality_0dot1_perc.yaml'
 
@@ -40,7 +40,8 @@ for config_filename in configs:
 
     presel_dict = config_params['presel_dict']
 
-    eff_array = np.arange(config_params['eff_array'][0],config_params['eff_array'][1],config_params['eff_array'][2])
+    eff_array  = np.arange(config_params['eff_array'][0],config_params['eff_array'][1],config_params['eff_array'][2])
+    train_vars = config_params['train_vars']
 
     #CONFIG SETUP
     analysis_path = '../analysis_results/' + analysis_name
