@@ -13,6 +13,9 @@ analysis_name       : 'NEW_trees'
 MC_signal_filename  : 'SignalTable_pp13TeV_mtexp.root'
 background_filename : 'DataTable_pp_LS.root'
 data_filename       : 'DataTable_pp.root'
+MC_signal_table     : 'SignalTable'
+background_table    : 'DataTable'
+data_table          : 'DataTable'
 
 presel_dict :
   MC_presel           : 'rej_accept > 0 and pt > 1.5'

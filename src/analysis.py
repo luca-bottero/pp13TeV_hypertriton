@@ -35,7 +35,7 @@ for config_filename in configs:
     data_path           = config_params['data_path']   
     analysis_name       = config_params['analysis_name']   
     MC_signal_filename  = config_params['MC_signal_filename']  
-    MC_Signal_table     = config_params['MC_signal_table'] 
+    MC_signal_table     = config_params['MC_signal_table'] 
     background_filename = config_params['background_filename'] 
     background_table    = config_params['background_table']  
     data_filename       = config_params['data_filename'] 
