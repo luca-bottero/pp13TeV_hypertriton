@@ -15,7 +15,8 @@ appl_bckg_filename  : 'DataTable_pp_LS_rot.root'
 train_bcgk_filename : 'DataTable_pp_data.root'    #train bande laterali dei dati
 data_filename       : 'DataTable_pp_data.root'  
 MC_signal_table     : 'SignalTable'
-background_table    : 'DataTable'
+appl_bckg_table     : 'DataTable'
+train_bckg_table    : 'DataTable'
 data_table          : 'DataTable'
 
 presel_dict :

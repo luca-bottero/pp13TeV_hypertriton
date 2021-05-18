@@ -53,7 +53,6 @@ for config_filename in configs:
 
     copyfile('./config/' + config_filename, filename_dict['analysis_path'] + config_filename)
 
-
     ##########################################################################
 
     print('\nHypertriton 3-body - pp @ 13 Tev\n')
