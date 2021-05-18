@@ -8,18 +8,20 @@ flag_dict :
   plot_scatter        : False
   root_plots          : True
 
-data_path           : '../data/'
+data_path           : '../data/TOF_PID_cut_ROT/'
 analysis_name       : 'MIX_data_LS_chi2'
-MC_signal_filename  : 'DataTable_pp_data.root'
-MC_signal_table     : 'DataTable'
-background_filename : 'DataTable_pp_LS_rot.root'
+MC_signal_filename  : 'SignalTable_pp_mtexp.root'
+appl_bckg_filename  : 'DataTable_pp_LS_rot.root' 
+train_bcgk_filename : 'DataTable_pp_data.root'    #train bande laterali dei dati
+data_filename       : 'DataTable_pp_data.root'  
+MC_signal_table     : 'SignalTable'
 background_table    : 'DataTable'
-data_filename       : 'DataTable_pp_data.root'
 data_table          : 'DataTable'
 
 presel_dict :
-  MC_presel           : 'm < 2.95 and m > 3.01 and pt > 1.5'
-  background_presel   : 'centrality < 1. and pt > 1.5'
+  MC_presel           : 'pt > 1.5'    
+  appl_bckg_presel    : 'centrality < 1. and pt > 1.5'
+  train_bckg_presel   : 'm < 2.95 or m > 3.01 and centrality < 1. and pt > 1.5'
   data_presel         : 'centrality < 1. and pt > 1.5'
   bckg_presel_vars    : ['ct', 'pt']
   data_presel_vars    : ['ct', 'pt']

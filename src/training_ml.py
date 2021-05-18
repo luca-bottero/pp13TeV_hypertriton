@@ -74,12 +74,12 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars):
 
     utils.save_data_description(filename_dict, mc_signal.get_data_frame(), append = False, name = 'MC signal')
 
-    print('Loading background data')
+    print('Loading background data fo training')
     background_ls = TreeHandler()
-    background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['background_filename'],tree_name= filename_dict['background_table'])
-    background_ls.apply_preselections(presel_dict['background_presel'])
+    background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['train_bckg_filename'],tree_name= filename_dict['train_bckg_table'])
+    background_ls.apply_preselections(presel_dict['train_bckg_presel'])
     background_ls.shuffle_data_frame(size = min(background_ls.get_n_cand(), mc_signal.get_n_cand() * 4))
-    print('Background data loaded\n')
+    print('Done\n')
 
     #Scatter plot of background
     if flag_dict['plot_scatter']:
@@ -113,13 +113,12 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars):
 
     print('Loading background data')
     background_ls = TreeHandler()
-    background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['background_filename'],tree_name= "DataTable",
-                                        preselection = presel_dict['background_presel'], model_handler = model_hdl)
+    background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['appl_bckg_presel'],tree_name= filename_dict['appl_bckg_table'],
+                                        preselection = presel_dict['appl_bckg_presel'], model_handler = model_hdl)
     print('Background loaded\n')
 
     utils.save_data_description(filename_dict, background_ls.get_data_frame(), name = 'Background')
     
-
     #background_ls.apply_model_handler(model_hdl)
     #data.apply_model_handler(model_hdl)
 

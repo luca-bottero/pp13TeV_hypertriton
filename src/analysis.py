@@ -19,7 +19,7 @@ from hipe4ml import plot_utils
 
 #CONFIG
 
-configs = ['MIX_data_LS_chi2.yaml']
+configs = ['OLD_centrality_1_perc.yaml']
 
 #config_filename = 'OLD_centrality_0dot1_perc.yaml'
 
@@ -32,42 +32,27 @@ for config_filename in configs:
 
     flag_dict = config_params['flag_dict']
 
-    data_path           = config_params['data_path']   
-    analysis_name       = config_params['analysis_name']   
-    MC_signal_filename  = config_params['MC_signal_filename']  
-    MC_signal_table     = config_params['MC_signal_table'] 
-    background_filename = config_params['background_filename'] 
-    background_table    = config_params['background_table']  
-    data_filename       = config_params['data_filename'] 
-    data_table          = config_params['data_table']  
+    filename_dict = config_params['filename_dict']
 
     presel_dict = config_params['presel_dict']
 
     eff_array  = np.arange(config_params['eff_array'][0],config_params['eff_array'][1],config_params['eff_array'][2])
+
     train_vars = config_params['train_vars']
 
     #CONFIG SETUP
-    analysis_path = '../analysis_results/' + analysis_name
+   filename_dict['analysis_path'] = '../analysis_results/' +filename_dict['analysis_name']
 
-    if analysis_path[-1] != '/':
-            analysis_path += '/'
+    if filename_dict['analysis_path'][-1] != '/':
+            filename_dict['analysis_path'] += '/'
 
-    if data_path[-1] != '/':
-            data_path += '/'
+    if filename_dict['data_path'][-1] != '/':
+            filename_dict['data_path'] += '/'
 
-    utils.folder_setup(analysis_path = analysis_path)
+    utils.folder_setup(filename_dict['analysis_path'] = filename_dict['analysis_path'])
 
-    copyfile('./config/' + config_filename, analysis_path + config_filename)
+    copyfile('./config/' + config_filename, filename_dict['analysis_path'] + config_filename)
 
-    filename_dict  =  {'analysis_path' : analysis_path,
-                        'analysis_name' : analysis_name,
-                        'MC_signal_filename' : MC_signal_filename,
-                        'MC_signal_table' : MC_signal_table,
-                        'background_filename' : background_filename,
-                        'background_table' : background_table,
-                        'data_filename' : data_filename,
-                        'data_table' : data_table,
-                        'data_path' : data_path}
 
     ##########################################################################
 
