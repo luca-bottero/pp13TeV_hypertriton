@@ -18,7 +18,7 @@ data_filename       : 'DataTable_pp_data.root'
 data_table          : 'DataTable'
 
 presel_dict :
-  MC_presel           : 'pt > 1.5'
+  MC_presel           : 'm < 2.95 and m > 3.01 and pt > 1.5'
   background_presel   : 'centrality < 1. and pt > 1.5'
   data_presel         : 'centrality < 1. and pt > 1.5'
   bckg_presel_vars    : ['ct', 'pt']
