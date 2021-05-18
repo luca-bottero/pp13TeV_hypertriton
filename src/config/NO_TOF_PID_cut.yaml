@@ -1,20 +1,20 @@
 flag_dict :
-  train_model         : True
+  train_model         : False
   optimize_bayes      : False
-  plot_m_mppivert     : True
-  plot_mppi_mdpi      : True
-  plot_mppi_mdpi_fine : True
-  plot_presel_eff     : False   #for this analysis it must be False to avoid error
-  plot_scatter        : False
+  plot_m_mppivert     : False
+  plot_mppi_mdpi      : False
+  plot_mppi_mdpi_fine : False
+  plot_presel_eff     : False
+  plot_scatter        : True
   root_plots          : True
 
 filename_dict :
-  data_path           : '../data/TOF_PID_cut_ROT/'
-  analysis_name       : 'MIX_data_LS'
-  MC_signal_filename  : 'SignalTable_pp_mtexp.root'
-  appl_bckg_filename  : 'DataTable_pp_LS_rot.root' 
-  train_bckg_filename : 'DataTable_pp_data.root'    #train bande laterali dei dati
-  data_filename       : 'DataTable_pp_data.root'  
+  data_path           : '../data/NO_TOF_PID_cut/'
+  analysis_name       : 'NO_TOF_PID_cut'
+  MC_signal_filename  : 'SignalTable_pp13TeV_mtexp.root'
+  appl_bckg_filename  : 'DataTable_pp_LS.root'
+  train_bckg_filename : 'DataTable_pp_LS.root'   
+  data_filename       : 'DataTable_pp.root'  
   MC_signal_table     : 'SignalTable'
   appl_bckg_table     : 'DataTable'
   train_bckg_table    : 'DataTable'
@@ -23,11 +23,12 @@ filename_dict :
 presel_dict :
   MC_presel           : 'rej_accept > 0 and pt > 1.5'    
   appl_bckg_presel    : 'centrality < 1. and pt > 1.5'
-  train_bckg_presel   : 'm < 2.75 or m > 3.01 and centrality < 1. and pt > 1.5'
+  train_bckg_presel   : 'centrality < 1. and pt > 1.5'
   data_presel         : 'centrality < 1. and pt > 1.5'
   bckg_presel_vars    : ['ct', 'pt']
   data_presel_vars    : ['ct', 'pt']
 
-eff_array  : [0.5,0.9,0.01]       #min, max, step
+
+eff_array  : [0.3,0.9,0.01]       #min, max, step
 train_vars : ["ct", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr",
                   "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2"]

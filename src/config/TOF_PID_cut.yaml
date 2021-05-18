@@ -1,0 +1,33 @@
+flag_dict :
+  train_model         : True
+  optimize_bayes      : False
+  plot_m_mppivert     : True
+  plot_mppi_mdpi      : True
+  plot_mppi_mdpi_fine : True
+  plot_presel_eff     : True
+  plot_scatter        : False
+  root_plots          : True
+
+filename_dict :
+  data_path           : '../data/TOF_PID_cut/'
+  analysis_name       : 'TOF_PID_cut'
+  MC_signal_filename  : 'SignalTable_pp13TeV_tofPID_mtexp_OLD.root'
+  appl_bckg_filename  : 'DataTable_pp_LS_OLD.root'
+  train_bckg_filename : 'DataTable_pp_LS_OLD.root'   
+  data_filename       : 'DataTable_pp_OLD.root'  
+  MC_signal_table     : 'SignalTable'
+  appl_bckg_table     : 'DataTable'
+  train_bckg_table    : 'DataTable'
+  data_table          : 'DataTable'
+
+
+presel_dict :
+  MC_presel           : 'rej_accept > 0 and pt > 1.5'   #g_reconstructed = True
+  background_presel   : 'centrality < 1 and pt > 1.5'
+  data_presel         : 'centrality < 1 and pt > 1.5'
+  bckg_presel_vars    : ['ct', 'pt']
+  data_presel_vars    : ['ct', 'pt']
+
+eff_array  : [0.3,0.9,0.01]       #min, max, step
+train_vars : ["ct", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr",
+                  "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2"]

@@ -113,7 +113,7 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars):
 
     print('Loading background data')
     background_ls = TreeHandler()
-    background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['appl_bckg_presel'],tree_name= filename_dict['appl_bckg_table'],
+    background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['appl_bckg_filename'],tree_name= filename_dict['appl_bckg_table'],
                                         preselection = presel_dict['appl_bckg_presel'], model_handler = model_hdl)
     print('Background loaded\n')
 

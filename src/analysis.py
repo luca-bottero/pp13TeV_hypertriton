@@ -19,7 +19,7 @@ from hipe4ml import plot_utils
 
 #CONFIG
 
-configs = ['MIX_data_LS.yaml']
+configs = ['TOF_PID_cut.yaml']
 
 #config_filename = 'OLD_centrality_0dot1_perc.yaml'
 
@@ -64,17 +64,17 @@ for config_filename in configs:
 
 
     model_hdl = ModelHandler()
-    model_hdl.load_model_handler(analysis_path + '/model/model_hdl')
+    model_hdl.load_model_handler(filename_dict['analysis_path']+ '/model/model_hdl')
 
     print('Model loaded\n')
 
-    eff_array, scores = train.load_eff_scores(analysis_path + 'output_data/')
+    eff_array, scores = train.load_eff_scores(filename_dict['analysis_path']+ 'output_data/')
 
-    data = train.load_data_with_scores(analysis_path + 'output_data/data_scores.parquet.gzip')                #pd dataframe already processed
+    data = train.load_data_with_scores(filename_dict['analysis_path']+ 'output_data/data_scores.parquet.gzip')                #pd dataframe already processed
     print('Data loaded\n')
     #data.query('model_output > -5', inplace = True)         ## PARAM!!!!!
     #print('Query on data applied\n')
-    background_ls = train.load_data_with_scores(analysis_path + 'output_data/bckg_ls_scores.parquet.gzip')
+    background_ls = train.load_data_with_scores(filename_dict['analysis_path']+ 'output_data/bckg_ls_scores.parquet.gzip')
     print('Background LS loaded\n')
     #background_ls.query('model_output > -5', inplace = True)            ## PARAM!!!!!
     #print('Query on background LS applied\n')
