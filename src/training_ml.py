@@ -60,48 +60,30 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars):
     print('MC signal loaded\n')
 
     #Efficiency plots
-    for var, gvar in zip(['ct','pt'],['gCt','gPt']):             
-        utils.plot_efficiency(mc_signal.get_data_frame().query('rej_accept > 0')[gvar],
-                                 mc_signal.get_data_frame().query('gReconstructed > 0 & ' + presel_dict['MC_presel'])[var],
-                                var, presel_dict['data_presel'], var, filename_dict, path = 'images/presel_eff/')
-
+    if flag_dict['plot_presel_eff']:
+        for var, gvar in zip(['ct','pt'],['gCt','gPt']):             
+            utils.plot_efficiency(mc_signal.get_data_frame().query('rej_accept > 0')[gvar],
+                                    mc_signal.get_data_frame().query('gReconstructed > 0 & ' + presel_dict['MC_presel'])[var],
+                                    var, presel_dict['data_presel'], var, filename_dict, path = 'images/presel_eff/')
+    
     mc_signal.apply_preselections(presel_dict['MC_presel'])
 
-    utils.save_data_description(filename_dict, mc_signal.get_data_frame(), append = False, name = 'MC signal')
+    #Scatter plot of the MC signal
+    if flag_dict['plot_scatter']:
+        utils.plot_scatter(mc_signal, filename_dict, 'signal')
 
+    utils.save_data_description(filename_dict, mc_signal.get_data_frame(), append = False, name = 'MC signal')
 
     print('Loading background data')
     background_ls = TreeHandler()
     background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['background_filename'],tree_name= "DataTable")
-
     background_ls.apply_preselections(presel_dict['background_presel'])
     background_ls.shuffle_data_frame(size = min(background_ls.get_n_cand(), mc_signal.get_n_cand() * 4))
     print('Background data loaded\n')
 
-    '''
-    for var in ['dca_pr', 'dca_pi', 'dca_de']:
-        plt.figure()
-        plt.hist(data[var],bins=100)
-        plt.title(var + ' - Data', fontsize=15)
-        plt.xlabel(var, fontsize=12)
-        plt.ylabel('Count',fontsize=12)
-        plt.savefig("../images/data_" + var + ".png",dpi = 300, facecolor = 'white')
-        plt.show()
-        plt.close()
-        
-        plt.figure()
-        plt.hist(mc_signal[var],bins=100)
-        plt.title(var + ' - MC', fontsize=15)
-        plt.xlabel(var, fontsize=12)
-        plt.ylabel('Count',fontsize=12)
-        plt.savefig("../images/MC_" + var + ".png",dpi = 300, facecolor = 'white')
-        plt.show()
-        plt.close()
-    '''
-
-    train_vars =  
-                            #,'dca_pr', 'dca_pi', 'dca_de'
-    
+    #Scatter plot of background
+    if flag_dict['plot_scatter']:
+        utils.plot_scatter(background_ls, filename_dict, 'bckg')
 
     train_test_data, y_pred_test, model_hdl = utils.train_xgboost_model(mc_signal, background_ls, filename_dict, train_vars, 
                                                                             optimize_bayes = flag_dict['optimize_bayes'])
@@ -122,6 +104,10 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars):
 
     data.apply_preselections(presel_dict['data_presel'])
     print('Data loaded\n')
+
+    #Scatter plot of data
+    if flag_dict['plot_scatter']:
+        utils.plot_scatter(data, filename_dict, 'data')
 
     utils.save_data_description(filename_dict, data.get_data_frame(), name = 'Data')
 

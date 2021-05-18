@@ -230,7 +230,7 @@ def plot_efficiency(data_col, data_col_with_cut, x_label, title, name, filename_
 
 def plot_scatter(hdl, filename_dict, name, vars = None):
     
-    print('Plotting scatter of variables')
+    print('Plotting scatter of variables: ' + name)
     plt.close()
     df = hdl.get_data_frame()
 
@@ -238,7 +238,7 @@ def plot_scatter(hdl, filename_dict, name, vars = None):
         vars = list(df1.columns)
 
     scatter_plot = sns.pairplot(df[vars], plot_kws={'alpha': 0.1}, corner = True)
-    scatter_plot.savefig(filename_dict['analysis_path'] + 'images/var_distribution/' + name + '.png',dpi = 300, facecolor = 'white')
+    scatter_plot.savefig(filename_dict['analysis_path'] + 'images/scatter/' + name + '.png',dpi = 300, facecolor = 'white')
 
     print('Done\n')
 
@@ -314,6 +314,7 @@ def folder_setup(analysis_path = 'TEST'):
 
         os.makedirs(analysis_path + '/images/training')
         os.makedirs(analysis_path + '/images/presel_eff')
+        os.makedirs(analysis_path + '/images/scatter')
         os.makedirs(analysis_path + '/images/var_distribution')
         os.makedirs(analysis_path + '/images/var_distribution/signal_bckg')
         os.makedirs(analysis_path + '/images/var_distribution/data_bckg')

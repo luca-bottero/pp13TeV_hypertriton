@@ -22,3 +22,5 @@ presel_dict :
   data_presel_vars    : ['ct', 'pt']
 
 eff_array  : [0.5,0.9,0.01]       #min, max, step
+train_vars : ["ct", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr",
+                  "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2"]
