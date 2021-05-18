@@ -235,16 +235,12 @@ def plot_scatter(hdl, filename_dict, name, vars = None):
     df = hdl.get_data_frame()
 
     if vars == None:
-        vars = list(df1.columns)
+        vars = list(df.columns)
 
     scatter_plot = sns.pairplot(df[vars], plot_kws={'alpha': 0.1}, corner = True)
     scatter_plot.savefig(filename_dict['analysis_path'] + 'images/scatter/' + name + '.png',dpi = 300, facecolor = 'white')
 
     print('Done\n')
-
-    
-
-
 
 def plot_distributions(tree_hdl, filename_dict, name, vars = None):
     """Plot the distribution of the variables in the tree handler

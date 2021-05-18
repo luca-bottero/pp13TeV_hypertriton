@@ -19,7 +19,7 @@ from hipe4ml import plot_utils
 
 #CONFIG
 
-configs = ['NEW_trees.yaml']
+configs = ['ROT_LS_17_05.yaml']
 
 #config_filename = 'OLD_centrality_0dot1_perc.yaml'
 
@@ -88,7 +88,7 @@ for config_filename in configs:
 
     if flag_dict['train_model']:
         print('Starting model training & application\n')
-        train.train_model(filename_dict, presel_dict, flag_dict, eff_array)
+        train.train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars)
         print('Model training & application complete\n')
 
 
