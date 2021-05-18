@@ -237,6 +237,9 @@ def plot_scatter(hdl, filename_dict, name, vars = None):
     if vars == None:
         vars = list(df.columns)
 
+    if len(df.index) > 1000:    #PARAM
+        df = df.sample(1000)
+
     scatter_plot = sns.pairplot(df[vars], plot_kws={'alpha': 0.1}, corner = True)
     scatter_plot.savefig(filename_dict['analysis_path'] + 'images/scatter/' + name + '.png',dpi = 300, facecolor = 'white')
 

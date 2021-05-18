@@ -70,7 +70,7 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars):
 
     #Scatter plot of the MC signal
     if flag_dict['plot_scatter']:
-        utils.plot_scatter(mc_signal, filename_dict, 'signal')
+        utils.plot_scatter(mc_signal, filename_dict, 'signal', train_vars)
 
     utils.save_data_description(filename_dict, mc_signal.get_data_frame(), append = False, name = 'MC signal')
 
@@ -83,7 +83,7 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars):
 
     #Scatter plot of background
     if flag_dict['plot_scatter']:
-        utils.plot_scatter(background_ls, filename_dict, 'bckg')
+        utils.plot_scatter(background_ls, filename_dict, 'bckg', train_vars)
 
     train_test_data, y_pred_test, model_hdl = utils.train_xgboost_model(mc_signal, background_ls, filename_dict, train_vars, 
                                                                             optimize_bayes = flag_dict['optimize_bayes'])
@@ -107,7 +107,7 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars):
 
     #Scatter plot of data
     if flag_dict['plot_scatter']:
-        utils.plot_scatter(data, filename_dict, 'data')
+        utils.plot_scatter(data, filename_dict, 'data', train_vars)
 
     utils.save_data_description(filename_dict, data.get_data_frame(), name = 'Data')
 
