@@ -76,7 +76,7 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars):
 
     print('Loading background data')
     background_ls = TreeHandler()
-    background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['background_filename'],tree_name= "DataTable")
+    background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['background_filename'],tree_name= filename_dict['background_table'])
     background_ls.apply_preselections(presel_dict['background_presel'])
     background_ls.shuffle_data_frame(size = min(background_ls.get_n_cand(), mc_signal.get_n_cand() * 4))
     print('Background data loaded\n')
@@ -99,7 +99,7 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars):
 
     print('Loading experimental data')
     data = TreeHandler()
-    data.get_handler_from_large_file(file_name = data_path + filename_dict['data_filename'],tree_name= "DataTable",
+    data.get_handler_from_large_file(file_name = data_path + filename_dict['data_filename'],tree_name= filename_dict['data_table'],
                                          model_handler = model_hdl)
 
     data.apply_preselections(presel_dict['data_presel'])
