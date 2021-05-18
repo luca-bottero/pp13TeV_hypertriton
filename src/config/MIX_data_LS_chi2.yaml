@@ -10,12 +10,9 @@ flag_dict :
 
 data_path           : '../data/'
 analysis_name       : 'ROT_LS_17_05'
-MC_signal_filename  : 'SignalTable_pp_mtexp.root'
-MC_signal_table     : 'SignalTable'
+MC_signal_filename  : 'DataTable_pp_data.root'
 background_filename : 'DataTable_pp_LS_rot.root'
-background_table    : 'DataTable'
 data_filename       : 'DataTable_pp_data.root'
-data_table          : 'DataTable'
 
 presel_dict :
   MC_presel           : 'rej_accept > 0 and pt > 1.5'

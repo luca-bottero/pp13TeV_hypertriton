@@ -56,7 +56,7 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars):
 
     print('Loading MC signal')
     mc_signal = TreeHandler()
-    mc_signal.get_handler_from_large_file(file_name = data_path + filename_dict['MC_signal_filename'],tree_name= "SignalTable")        
+    mc_signal.get_handler_from_large_file(file_name = data_path + filename_dict['MC_signal_filename'],tree_name= filename_dict['MC_signal_table'])        
     print('MC signal loaded\n')
 
     #Efficiency plots
