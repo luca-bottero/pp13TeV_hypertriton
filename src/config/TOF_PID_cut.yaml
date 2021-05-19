@@ -20,11 +20,11 @@ filename_dict :
   train_bckg_table    : 'DataTable'
   data_table          : 'DataTable'
 
-
 presel_dict :
-  MC_presel           : 'rej_accept > 0 and pt > 1.5'   #g_reconstructed = True
-  background_presel   : 'centrality < 1 and pt > 1.5'
-  data_presel         : 'centrality < 1 and pt > 1.5'
+  MC_presel           : 'rej_accept > 0 and pt > 1.5'    
+  appl_bckg_presel    : 'centrality < 1. and pt > 1.5'
+  train_bckg_presel   : 'centrality < 1. and pt > 1.5'
+  data_presel         : 'centrality < 1. and pt > 1.5'
   bckg_presel_vars    : ['ct', 'pt']
   data_presel_vars    : ['ct', 'pt']
 

@@ -4,7 +4,7 @@ flag_dict :
   plot_m_mppivert     : True
   plot_mppi_mdpi      : True
   plot_mppi_mdpi_fine : True
-  plot_presel_eff     : False   #for this analysis it must be False to avoid error
+  plot_presel_eff     : True   #for this analysis it must be False to avoid error
   plot_scatter        : False
   root_plots          : True
 

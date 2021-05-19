@@ -19,7 +19,7 @@ from hipe4ml import plot_utils
 
 #CONFIG
 
-configs = ['TOF_PID_cut.yaml']
+configs = ['MIX_data_LS.yaml']
 
 #config_filename = 'OLD_centrality_0dot1_perc.yaml'
 
