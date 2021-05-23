@@ -40,6 +40,10 @@ for config_filename in configs:
 
     train_vars = config_params['train_vars']
 
+    params = config_params['params']
+
+    params_range = config_params['params_range']
+
     #CONFIG SETUP
     filename_dict['analysis_path'] = '../analysis_results/' +filename_dict['analysis_name']
 
@@ -59,7 +63,7 @@ for config_filename in configs:
 
     if flag_dict['train_model']:
         print('Starting model training & application\n')
-        train.train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars)
+        train.train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars, params, params_range)
         print('Model training & application complete\n')
 
 

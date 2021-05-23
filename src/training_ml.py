@@ -49,7 +49,7 @@ def load_eff_scores(output_data_path):
 
     return eff_array, scores
 
-def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars):
+def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars, params, params_range):
 
     data_path = filename_dict['data_path']
     analysis_path = filename_dict['analysis_path']
@@ -85,8 +85,8 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars):
     if flag_dict['plot_scatter']:
         utils.plot_scatter(background_ls, filename_dict, 'bckg', train_vars)
 
-    train_test_data, y_pred_test, model_hdl = utils.train_xgboost_model(mc_signal, background_ls, filename_dict, train_vars, 
-                                                                            optimize_bayes = flag_dict['optimize_bayes'])
+    train_test_data, y_pred_test, model_hdl = utils.train_xgboost_model(mc_signal, background_ls, filename_dict, params, 
+                                                                            params_range, flag_dict, train_vars)
         
     print('Saving model handler')
     model_hdl.dump_model_handler(analysis_path + '/model/model_hdl')

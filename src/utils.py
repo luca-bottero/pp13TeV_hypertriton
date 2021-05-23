@@ -19,13 +19,14 @@ import matplotlib
 
 matplotlib.use('pdf')
 
-def train_xgboost_model(signal, background, filename_dict, training_variables='', testsize = 0.5, optimize_bayes = False):
+def train_xgboost_model(signal, background, filename_dict, params, params_range, flag_dict, training_variables='', testsize = 0.5):
     '''
     Trains an XGBOOST model using hipe4ml and plot output distribution and feature importance
     '''
     
     print('Training XGBOOST model')
 
+    '''
     params = {'n_jobs' : 8,  
                 'seed': 42,
                 'objective': 'binary:logistic',
@@ -38,9 +39,9 @@ def train_xgboost_model(signal, background, filename_dict, training_variables=''
                 'min_child_weight': 5.751,
                 'subsample': 0.7447,
                 'colsample_bytree': 0.5727,
-                }
+                }'''
     
-    params_range = {
+    '''params_range = {
     "max_depth": (5, 20),           # defines the maximum depth of a single tree (regularization)
     "learning_rate": (0.01, 0.3),   # learning rate
     "n_estimators": (50, 500),      # number of boosting trees
@@ -48,7 +49,7 @@ def train_xgboost_model(signal, background, filename_dict, training_variables=''
     "min_child_weight": (1, 12),
     "subsample": (0.5, 0.9),        # denotes the fraction of observations to be randomly samples for each tree
     "colsample_bytree": (0.5, 0.9),
-    }
+    }'''
 
     train_test_data = train_test_generator([signal, background], [1,0], test_size=testsize)
 
@@ -57,9 +58,10 @@ def train_xgboost_model(signal, background, filename_dict, training_variables=''
 
     model_clf = xgb.XGBClassifier()
     model_hdl = ModelHandler(model_clf, training_variables)
-    model_hdl.set_model_params(params)
+    if not flag_dict['use_default_param']:
+        model_hdl.set_model_params(params)
 
-    if optimize_bayes:
+    if flag_dict['optimize_bayes']:
         print('Doing Bayes optimization of hyperparameters\n')
         model_hdl.optimize_params_bayes(train_test_data, params_range,'roc_auc',njobs=-1)
     
