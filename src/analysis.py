@@ -19,7 +19,7 @@ from hipe4ml import plot_utils
 
 #CONFIG
 
-configs = ['MIX_data_LS.yaml']
+configs = ['train_on_sidebands/TOF_PID_cut_SB.yaml']
 
 #config_filename = 'OLD_centrality_0dot1_perc.yaml'
 
@@ -51,7 +51,7 @@ for config_filename in configs:
 
     utils.folder_setup(filename_dict['analysis_path'])
 
-    copyfile('./config/' + config_filename, filename_dict['analysis_path'] + config_filename)
+    copyfile('./config/' + config_filename, filename_dict['analysis_path'] + '/' + filename_dict['analysis_name'])
 
     ##########################################################################
 
@@ -124,4 +124,5 @@ for config_filename in configs:
         mass_fit.data_ls_comp_plots(data,background_ls,scores,eff_array, filename_dict)
 
    
+
 

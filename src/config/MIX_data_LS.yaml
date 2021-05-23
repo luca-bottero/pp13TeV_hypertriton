@@ -13,7 +13,7 @@ filename_dict :
   analysis_name       : 'MIX_data_LS'
   MC_signal_filename  : 'SignalTable_pp_mtexp.root'
   appl_bckg_filename  : 'DataTable_pp_LS_rot.root' 
-  train_bckg_filename : 'DataTable_pp_data.root'    #train bande laterali dei dati
+  train_bckg_filename : 'DataTable_pp_data.root'    #train on sidebands
   data_filename       : 'DataTable_pp_data.root'  
   MC_signal_table     : 'SignalTable'
   appl_bckg_table     : 'DataTable'
