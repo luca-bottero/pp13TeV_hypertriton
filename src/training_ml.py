@@ -74,7 +74,7 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars, pa
 
     utils.save_data_description(filename_dict, mc_signal.get_data_frame(), append = False, name = 'MC signal')
 
-    print('Loading background data fo training')
+    print('Loading background data for training')
     background_ls = TreeHandler()
     background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['train_bckg_filename'],tree_name= filename_dict['train_bckg_table'])
     background_ls.apply_preselections(presel_dict['train_bckg_presel'])

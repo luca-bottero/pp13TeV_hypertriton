@@ -125,7 +125,7 @@ for config_filename in configs:
     if flag_dict['root_plots']:
         #background_ls_OLD = train.load_data_with_scores('/home/lbottero/pp13TeV_hypertriton/analysis_results/ROT_TOF_PID/output_data/bckg_ls_scores.parquet.gzip')
 
-        mass_fit.data_ls_comp_plots(data,background_ls,scores,eff_array, filename_dict)
+        mass_fit.data_ls_comp_plots(data, background_ls, scores, eff_array, filename_dict, flag_dict)
 
    
 
