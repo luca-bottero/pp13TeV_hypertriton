@@ -1,27 +1,35 @@
 flag_dict :
   train_model         : True
-  optimize_bayes      : True
+  optimize_bayes      : False
   use_default_param   : True      #If True XGBOOST's default params are used
   norm_on_sidebands   : True
   #Plots' flags
-  plot_m_mppivert     : False
-  plot_mppi_mdpi      : False
+  plot_m_mppivert     : True
+  plot_mppi_mdpi      : True
   plot_mppi_mdpi_fine : False
   plot_presel_eff     : True
   plot_scatter        : False
   root_plots          : True
 
 filename_dict :
-  data_path           : '../data/TOF_PID_cut/'
-  analysis_name       : 'TOF_PID_cut_SB'
-  MC_signal_filename  : 'SignalTable_pp13TeV_tofPID_mtexp_OLD.root'
-  appl_bckg_filename  : 'DataTable_pp_LS_OLD.root'
-  train_bckg_filename : 'DataTable_pp_OLD.root'    #train on sidebands
-  data_filename       : 'DataTable_pp_OLD.root'  
+  data_path           : '../data/NO_TOF_PID_cut/'
+  analysis_name       : 'NO_TOF_PID_cut'
+  MC_signal_filename  : 'SignalTable_pp13TeV_mtexp.root'
+  appl_bckg_filename  : 'DataTable_pp_LS.root'
+  train_bckg_filename : 'DataTable_pp_LS.root'   
+  data_filename       : 'DataTable_pp.root'  
   MC_signal_table     : 'SignalTable'
   appl_bckg_table     : 'DataTable'
   train_bckg_table    : 'DataTable'
   data_table          : 'DataTable'
+
+presel_dict :
+  MC_presel           : 'rej_accept > 0 and pt > 1.5'    
+  appl_bckg_presel    : 'centrality < 1. and pt > 1.5'
+  train_bckg_presel   : 'centrality < 1. and pt > 1.5'
+  data_presel         : 'centrality < 1. and pt > 1.5'
+  bckg_presel_vars    : ['ct', 'pt']
+  data_presel_vars    : ['ct', 'pt']
 
 presel_dict :
   MC_presel           : 'rej_accept > 0 and pt > 1.5'    
@@ -45,13 +53,13 @@ params : {  'n_jobs' : 8,
             'colsample_bytree': 0.5727,}
 
 params_range : {
-    max_depth : [5, 20],           # defines the maximum depth of a single tree [regularization]
-    learning_rate : [0.01, 0.3],   # learning rate
-    n_estimators : [50, 500],      # number of boosting trees
-    gamma : [0.3, 1.1],            # specifies the minimum loss reduction required to make a split
-    min_child_weight : [1, 12],
-    subsample : [0.5, 0.9],        # denotes the fraction of observations to be randomly samples for each tree
-    colsample_bytree : [0.5, 0.9],
+    "max_depth": (5, 20),           # defines the maximum depth of a single tree (regularization)
+    "learning_rate": (0.01, 0.3),   # learning rate
+    "n_estimators": (50, 500),      # number of boosting trees
+    "gamma": (0.3, 1.1),            # specifies the minimum loss reduction required to make a split
+    "min_child_weight": (1, 12),
+    "subsample": (0.5, 0.9),        # denotes the fraction of observations to be randomly samples for each tree
+    "colsample_bytree": (0.5, 0.9),
     }
 
 eff_array  : [0.3,0.9,0.01]       #min, max, step
