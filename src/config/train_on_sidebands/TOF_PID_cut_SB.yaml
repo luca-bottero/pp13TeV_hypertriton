@@ -1,11 +1,11 @@
 flag_dict :
-  train_model         : True
-  optimize_bayes      : True
+  train_model         : False
+  optimize_bayes      : False
   use_default_param   : True      #If True XGBOOST's default params are used
   norm_on_sidebands   : True
   #Plots' flags
-  plot_m_mppivert     : False
-  plot_mppi_mdpi      : False
+  plot_m_mppivert     : True
+  plot_mppi_mdpi      : True
   plot_mppi_mdpi_fine : False
   plot_presel_eff     : True
   plot_scatter        : False
