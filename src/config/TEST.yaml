@@ -3,7 +3,7 @@ flag_dict :
   benchmark_opt       : False
   optimize_bayes      : False
   optimize_optuna     : True
-  use_default_param   : False      #If True XGBOOST's default params are used
+  use_default_param   : True      #If True XGBOOST's default params are used
   norm_on_sidebands   : False
   #Plots' flags
   plot_m_mppivert     : False
@@ -11,16 +11,15 @@ flag_dict :
   plot_mppi_mdpi_fine : False
   plot_presel_eff     : False
   plot_scatter        : False
-  plot_optim          : True
   root_plots          : False
 
 filename_dict :
-  data_path           : '../data/NO_TOF_PID_cut/'
-  analysis_name       : 'NO_TOF_PID_cut'
-  MC_signal_filename  : 'SignalTable_pp13TeV_mtexp.root'
-  appl_bckg_filename  : 'DataTable_pp_LS.root'
-  train_bckg_filename : 'DataTable_pp_LS.root'   
-  data_filename       : 'DataTable_pp.root'  
+  data_path           : '../data/TEST/'
+  analysis_name       : 'TEST'
+  MC_signal_filename  : 'SignalTable_pp13TeV_mtexp_Test.root'
+  appl_bckg_filename  : 'DataTable_pp_LS_Test.root'
+  train_bckg_filename : 'DataTable_pp_Test.root'    #train on sidebands
+  data_filename       : 'DataTable_pp_Test.root'  
   MC_signal_table     : 'SignalTable'
   appl_bckg_table     : 'DataTable'
   train_bckg_table    : 'DataTable'
@@ -29,7 +28,7 @@ filename_dict :
 presel_dict :
   MC_presel           : 'rej_accept > 0 and pt > 1.5'    
   appl_bckg_presel    : 'centrality < 1. and pt > 1.5'
-  train_bckg_presel   : 'centrality < 1. and pt > 1.5'
+  train_bckg_presel   : '(m < 2.75 or m > 3.01) and centrality < 1. and pt > 1.5'
   data_presel         : 'centrality < 1. and pt > 1.5'
   bckg_presel_vars    : ['ct', 'pt']
   data_presel_vars    : ['ct', 'pt']
@@ -47,16 +46,16 @@ params : {  'n_jobs' : 8,
             'subsample': 0.7447,
             'colsample_bytree': 0.5727,}
 
-params_range : {
+params_range : { #use_label_encoder : False,
     max_depth : [5, 20],           # defines the maximum depth of a single tree [regularization]
     learning_rate : [0.01, 0.3],   # learning rate
     n_estimators : [50, 500],      # number of boosting trees
     gamma : [0.3, 1.1],            # specifies the minimum loss reduction required to make a split
     min_child_weight : [1, 12],
     subsample : [0.5, 0.9],        # denotes the fraction of observations to be randomly samples for each tree
-    colsample_bytree : [0.5, 0.9],
+    colsample_bytree : [0.5, 0.9]
     }
-    
+
 eff_array  : [0.3,0.9,0.01]       #min, max, step
 train_vars : ["ct", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr",
                   "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2"]

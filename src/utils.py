@@ -8,6 +8,7 @@ import os
 import xgboost as xgb
 import mass_fit
 import hist
+import optuna
 import seaborn as sns
 from concurrent.futures import ThreadPoolExecutor
 from sklearn.model_selection import train_test_split
@@ -26,30 +27,7 @@ def train_xgboost_model(signal, background, filename_dict, params, params_range,
     
     print('Training XGBOOST model')
 
-    '''
-    params = {'n_jobs' : 8,  
-                'seed': 42,
-                'objective': 'binary:logistic',
-                'eval_metric': 'auc',
-                'tree_method': 'hist',
-                'max_depth': 13,
-                'learning_rate': 0.09823,
-                'n_estimators': 181,
-                'gamma': 0.4467,
-                'min_child_weight': 5.751,
-                'subsample': 0.7447,
-                'colsample_bytree': 0.5727,
-                }'''
-    
-    '''params_range = {
-    "max_depth": (5, 20),           # defines the maximum depth of a single tree (regularization)
-    "learning_rate": (0.01, 0.3),   # learning rate
-    "n_estimators": (50, 500),      # number of boosting trees
-    "gamma": (0.3, 1.1),            # specifies the minimum loss reduction required to make a split
-    "min_child_weight": (1, 12),
-    "subsample": (0.5, 0.9),        # denotes the fraction of observations to be randomly samples for each tree
-    "colsample_bytree": (0.5, 0.9),
-    }'''
+    training_fig_path = filename_dict['analysis_path'] + "/images/training"
 
     train_test_data = train_test_generator([signal, background], [1,0], test_size=testsize)
 
@@ -61,12 +39,82 @@ def train_xgboost_model(signal, background, filename_dict, params, params_range,
     if not flag_dict['use_default_param']:
         model_hdl.set_model_params(params)
 
+    if flag_dict['benchmark_opt']:
+
+        print('Benchamarking optimizers\n')
+        import time
+        from sklearn.metrics import roc_auc_score
+        times_sk = []
+        roc_sk = []
+
+        for i in range(1):
+            start = time.time()
+
+            model_hdl.optimize_params_bayes(train_test_data, params_range,'roc_auc',njobs=-1)
+            model_hdl.train_test_model(train_test_data, )
+
+            y_pred_test = model_hdl.predict(train_test_data[2], True)       #used to evaluate model performance
+
+            roc_sk.append(roc_auc_score(train_test_data[3], y_pred_test))
+
+            times_sk.append(time.time() - start)
+
+        print('\nBAYES OPTIMIZATION WITH SKLEARN')
+        print('Mean time : ' + str(np.mean(times_sk)))
+        print('Mean ROC : ' + str(np.mean(roc_sk)))
+        print('--------------\n')
+        print('OPTUNA')
+
+        time = []
+        roc = []
+
+        for i in range(1):
+            
+            for key in params:
+                if isinstance(params[key], str):
+                    params_range[key] = params[key]
+
+            model_hdl.optimize_params_optuna(train_test_data, params_range,'roc_auc', timeout = np.mean(times_sk) ,n_jobs=-1)
+            model_hdl.train_test_model(train_test_data, )
+
+            y_pred_test = model_hdl.predict(train_test_data[2], True)       #used to evaluate model performance
+
+            roc.append(roc_auc_score(train_test_data[3], y_pred_test))
+
+        print('\nBAYES OPTIMIZATION WITH SKLEARN')
+        print('Mean time : ' + str(np.mean(times_sk)))
+        print('Mean ROC : ' + str(np.mean(roc_sk)))
+        print('--------------\n')
+        print('OPTUNA')
+        print('Fixed time : ' + str(np.mean(time)))
+        print('Mean ROC : ' + str(np.mean(roc)))
+        print('--------------\n')
+
+
     if flag_dict['optimize_bayes']:
         print('Doing Bayes optimization of hyperparameters\n')
-        model_hdl.optimize_params_bayes(train_test_data, params_range,'roc_auc',njobs=-1)
-    
-    model_hdl.train_test_model(train_test_data, )     
+        model_hdl.optimize_params_bayes(train_test_data, params_range,'roc_auc',n_jobs=-1)
+    if flag_dict['optimize_optuna']:
+        print('Doing Optuna optimization of hyperparameters\n')
+        for key in params:
+                if isinstance(params[key], str):
+                    params_range[key] = params[key]
+        study = model_hdl.optimize_params_optuna(train_test_data, params_range, scoring = 'roc_auc', timeout = 1200)
 
+        print('Parameters optimization done!\n')
+
+        if flag_dict['plot_optim']:
+            print('Saving optimization plots')
+            fig = optuna.visualization.plot_slice(study)
+            fig.write_image(training_fig_path + '/optuna_slice.png')
+            fig = optuna.visualization.plot_optimization_history(study)
+            fig.write_image(training_fig_path + '/optuna_history.png')
+            print('Done\n')
+        
+
+
+    model_hdl.train_test_model(train_test_data, )
+    print(model_hdl.get_model_params())     
 
     print('Predicting values on training and test datas')
     y_pred_train = model_hdl.predict(train_test_data[0], True)
@@ -76,7 +124,6 @@ def train_xgboost_model(signal, background, filename_dict, params, params_range,
     plt.rcParams["figure.figsize"] = (10, 7)
     leg_labels = ['background', 'signal']
 
-    training_fig_path = filename_dict['analysis_path'] + "/images/training"
 
     print('Saving Output comparison plot')
     plt.figure()
@@ -176,7 +223,6 @@ def scatter_with_hist(x_data,y_data,x_axis,y_axis,filename_dict,x_label='',y_lab
         name (str, optional): the name of the saved plot. Defaults to ''.
     """    
 
-   
     plt.close()
     
     plot = (
@@ -293,8 +339,6 @@ def plot_distr_comparison(hdl1, hdl2, name, filename_dict, label_1 = 'df1', labe
             plt.close()
 
     print('Done\n')
-    
-
 
 def folder_setup(analysis_path = 'TEST'):   
     """creates all the needed folders for the analysis
@@ -327,4 +371,67 @@ def folder_setup(analysis_path = 'TEST'):
         print('An analysis with the same name already exists. Previous results will be overwritten')
 
     
-        
+def benchmark_hyperparam_optimizers(filename_dict, params, params_range, flag_dict, presel_dict, training_variables='', testsize = 0.5):
+
+    import time
+    from sklearn.metrics import roc_auc_score
+
+    N_run = 1
+
+    data_path = filename_dict['data_path']
+    analysis_path = filename_dict['analysis_path']
+
+    print('Loading MC signal')
+    mc_signal = TreeHandler()
+    mc_signal.get_handler_from_large_file(file_name = data_path + filename_dict['MC_signal_filename'],tree_name= filename_dict['MC_signal_table'])        
+    print('MC signal loaded\n')
+
+    print('Loading background data for training')
+    background_ls = TreeHandler()
+    background_ls.get_handler_from_large_file(file_name = data_path + filename_dict['train_bckg_filename'],tree_name= filename_dict['train_bckg_table'])
+    background_ls.apply_preselections(presel_dict['train_bckg_presel'])
+    background_ls.shuffle_data_frame(size = min(background_ls.get_n_cand(), mc_signal.get_n_cand() * 4))
+    print('Done\n')
+
+    train_test_data = train_test_generator([mc_signal, background_ls], [1,0], test_size=testsize)
+
+    if training_variables == '':
+        training_variables = train_test_data[0].columns.tolist()
+
+    model_clf = xgb.XGBClassifier()
+    model_hdl = ModelHandler(model_clf, training_variables)
+    
+    times = []
+    roc = []
+
+    for i in range(N_run):
+        start = time.time()
+
+        model_hdl.optimize_params_bayes(train_test_data, params_range,'roc_auc',njobs=-1)
+        model_hdl.train_test_model(train_test_data, )
+
+        y_pred_test = model_hdl.predict(train_test_data[2], True)       #used to evaluate model performance
+
+        roc.append(roc_auc_score(train_test_data[3], y_pred_test))
+
+        times.append(time.time() - start)
+
+    print('BAYES OPTIMIZATION WITH SKLEARN')
+    print('Mean time : ' + str(np.mean(time)))
+    print('Mean ROC : ' + str(np.mean(roc)))
+    print('--------------\n')
+
+    for i in range(N_run):
+        model_hdl.optimize_params_optuna(train_test_data, params_range,'roc_auc', timeout = np.mean(times) ,njobs=-1)
+        model_hdl.train_test_model(train_test_data, )
+
+        y_pred_test = model_hdl.predict(train_test_data[2], True)       #used to evaluate model performance
+
+        roc.append(roc_auc_score(train_test_data[3], y_pred_test))
+
+    print('OPTUNA')
+    print('Fixed time : ' + str(np.mean(time)))
+    print('Mean ROC : ' + str(np.mean(roc)))
+    print('--------------\n')
+
+    

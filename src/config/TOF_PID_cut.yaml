@@ -1,12 +1,18 @@
 flag_dict :
   train_model         : True
+  benchmark_opt       : False
   optimize_bayes      : False
-  plot_m_mppivert     : True
-  plot_mppi_mdpi      : True
-  plot_mppi_mdpi_fine : True
-  plot_presel_eff     : True
+  optimize_optuna     : True
+  use_default_param   : False      #If True XGBOOST's default params are used
+  norm_on_sidebands   : False
+  #Plots' flags
+  plot_m_mppivert     : False
+  plot_mppi_mdpi      : False
+  plot_mppi_mdpi_fine : False
+  plot_presel_eff     : False
   plot_scatter        : False
-  root_plots          : True
+  plot_optim          : True
+  root_plots          : False
 
 filename_dict :
   data_path           : '../data/TOF_PID_cut/'
@@ -27,6 +33,30 @@ presel_dict :
   data_presel         : 'centrality < 1. and pt > 1.5'
   bckg_presel_vars    : ['ct', 'pt']
   data_presel_vars    : ['ct', 'pt']
+
+params : {  'n_jobs' : 8,  
+            'seed': 42,
+            'objective': 'binary:logistic',
+            'eval_metric': 'auc',
+            'tree_method': 'hist',
+            'use_label_encoder': False,
+            'max_depth': 13,
+            'learning_rate': 0.09823,
+            'n_estimators': 181,
+            'gamma': 0.4467,
+            'min_child_weight': 5.751,
+            'subsample': 0.7447,
+            'colsample_bytree': 0.5727,}
+
+params_range : {
+    max_depth : [5, 20],           # defines the maximum depth of a single tree [regularization]
+    learning_rate : [0.01, 0.3],   # learning rate
+    n_estimators : [50, 500],      # number of boosting trees
+    gamma : [0.3, 1.1],            # specifies the minimum loss reduction required to make a split
+    min_child_weight : [1, 12],
+    subsample : [0.5, 0.9],        # denotes the fraction of observations to be randomly samples for each tree
+    colsample_bytree : [0.5, 0.9]
+    }
 
 eff_array  : [0.3,0.9,0.01]       #min, max, step
 train_vars : ["ct", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr",

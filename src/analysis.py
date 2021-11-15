@@ -19,7 +19,7 @@ from hipe4ml import plot_utils
 
 #CONFIG
 
-configs = ['train_on_sidebands/TOF_PID_cut_SB.yaml']
+configs = ['TOF_PID_cut.yaml']
 
 #config_filename = 'OLD_centrality_0dot1_perc.yaml'
 
@@ -45,7 +45,7 @@ for config_filename in configs:
     params_range = config_params['params_range']
 
     #CONFIG SETUP
-    filename_dict['analysis_path'] = '../analysis_results/' +filename_dict['analysis_name']
+    filename_dict['analysis_path'] = '../analysis_results/' + filename_dict['analysis_name']
 
     if filename_dict['analysis_path'][-1] != '/':
             filename_dict['analysis_path'] += '/'
@@ -59,13 +59,16 @@ for config_filename in configs:
 
     ##########################################################################
 
-    print('\nHypertriton 3-body - pp @ 13 Tev\n')
+    print('\nHypertriton 3-body - pp @ 13 TeV\n')
 
     if flag_dict['train_model']:
         print('Starting model training & application\n')
-        train.train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars, params, params_range)
+        train.train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars, 
+                            params, params_range)
         print('Model training & application complete\n')
 
+    #print('BENCHMARKING')
+    #utils.benchmark_hyperparam_optimizers(filename_dict, params, params_range, flag_dict, presel_dict, train_vars)
 
     model_hdl = ModelHandler()
     model_hdl.load_model_handler(filename_dict['analysis_path']+ '/model/model_hdl')
