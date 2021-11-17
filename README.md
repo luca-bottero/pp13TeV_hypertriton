@@ -28,3 +28,31 @@ TOF_PID_cut
     ├── output_data
     └── results
 ```
+
+**Source Code**
+
+The code is organized as follows:
+
+```
+src
+    ├── analysis.py
+    ├── cmb_fit_erf.C
+    ├── cmb_fit_exp.C
+    ├── config
+    │   ├── MIX_data_LS.yaml
+    │   ├── NO_TOF_PID_cut.yaml
+    │   ├── TOF_PID_cut.yaml
+    │   └── train_on_sidebands
+    │       ├── NO_TOF_PID_cut_SB.yaml
+    │       └── TOF_PID_cut_SB.yaml
+    ├── mass_fit.py
+    ├── pp_visualization.py
+    ├── prova.py
+    ├── __pycache__
+    │   ├── mass_fit.cpython-38.pyc
+    │   ├── training_ml.cpython-38.pyc
+    │   └── utils.cpython-38.pyc
+    ├── training_ml.py
+    └── utils.py
+
+```
