@@ -101,7 +101,7 @@ def train_xgboost_model(signal, background, filename_dict, params, params_range,
                 if isinstance(params[key], str):
                     params_range[key] = params[key]
         study = model_hdl.optimize_params_optuna(train_test_data, params_range, scoring = 'roc_auc', 
-                                                    timeout = 1200, n_jobs = 50)
+                                                    timeout = 1200, n_jobs = 50, n_trials = None)
 
         print('Parameters optimization done!\n')
 
@@ -111,6 +111,10 @@ def train_xgboost_model(signal, background, filename_dict, params, params_range,
             fig.write_image(training_fig_path + '/optuna_slice.png')
             fig = optuna.visualization.plot_optimization_history(study)
             fig.write_image(training_fig_path + '/optuna_history.png')
+            fig = optuna.visualization.plot_param_importances(study)
+            fig.write_image(training_fig_path + '/optuna_param_importance.png')
+            fig = optuna.visualization.plot_contour(study)
+            fig.write_image(training_fig_path + '/optuna_contour.png')
             print('Done\n')
         
 
