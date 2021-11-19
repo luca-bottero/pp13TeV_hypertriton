@@ -74,7 +74,7 @@ def train_xgboost_model(signal, background, filename_dict, params, params_range,
                 if isinstance(params[key], str):
                     params_range[key] = params[key]
 
-            model_hdl.optimize_params_optuna(train_test_data, params_range,'roc_auc', timeout = np.mean(times_sk) ,n_jobs=-1)
+            model_hdl.optimize_params_optuna(train_test_data, params_range,'roc_auc', timeout = 1200 ,n_jobs=64)
             model_hdl.train_test_model(train_test_data, )
 
             y_pred_test = model_hdl.predict(train_test_data[2], True)       #used to evaluate model performance
@@ -101,7 +101,7 @@ def train_xgboost_model(signal, background, filename_dict, params, params_range,
                 if isinstance(params[key], str):
                     params_range[key] = params[key]
         study = model_hdl.optimize_params_optuna(train_test_data, params_range, scoring = 'roc_auc', 
-                                                    timeout = 1200, n_jobs = 50, n_trials = None)
+                                                    timeout = 3600, n_jobs = 64, n_trials = None)
 
         print('Parameters optimization done!\n')
 
@@ -111,13 +111,12 @@ def train_xgboost_model(signal, background, filename_dict, params, params_range,
             fig.write_image(training_fig_path + '/optuna_slice.png')
             fig = optuna.visualization.plot_optimization_history(study)
             fig.write_image(training_fig_path + '/optuna_history.png')
-            fig = optuna.visualization.plot_param_importances(study)
+            '''fig = optuna.visualization.plot_param_importances(study)
             fig.write_image(training_fig_path + '/optuna_param_importance.png')
             fig = optuna.visualization.plot_contour(study)
-            fig.write_image(training_fig_path + '/optuna_contour.png')
+            fig.write_image(training_fig_path + '/optuna_contour.png')'''
             print('Done\n')
         
-
 
     model_hdl.train_test_model(train_test_data, )
     print(model_hdl.get_model_params())     
@@ -129,7 +128,6 @@ def train_xgboost_model(signal, background, filename_dict, params, params_range,
 
     plt.rcParams["figure.figsize"] = (10, 7)
     leg_labels = ['background', 'signal']
-
 
     print('Saving Output comparison plot')
     plt.figure()

@@ -54,7 +54,7 @@ params_range : {
     n_estimators : [50, 500],      # number of boosting trees
     gamma : [0.3, 1.1],            # specifies the minimum loss reduction required to make a split
     min_child_weight : [1, 12],
-    subsample : [0.5, 0.9],        # denotes the fraction of observations to be randomly samples for each tree
+    subsample : [0.5, 0.9],        # denotes the fraction of observations to be randomly sampled for each tree
     colsample_bytree : [0.5, 0.9]
     }
 
