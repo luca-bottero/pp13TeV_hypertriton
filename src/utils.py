@@ -74,7 +74,7 @@ def train_xgboost_model(signal, background, filename_dict, params, params_range,
                 if isinstance(params[key], str):
                     params_range[key] = params[key]
 
-            model_hdl.optimize_params_optuna(train_test_data, params_range,'roc_auc', timeout = 1200 ,n_jobs=64)
+            model_hdl.optimize_params_optuna(train_test_data, params_range,'roc_auc', timeout = flag_dict['timeout'] ,n_jobs=flag_dict['n_jobs'])
             model_hdl.train_test_model(train_test_data, )
 
             y_pred_test = model_hdl.predict(train_test_data[2], True)       #used to evaluate model performance
