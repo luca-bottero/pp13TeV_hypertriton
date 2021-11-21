@@ -93,7 +93,7 @@ def train_xgboost_model(signal, background, filename_dict, params, params_range,
 
     if flag_dict['optimize_bayes']:
         print('Doing Bayes optimization of hyperparameters\n')
-        model_hdl.optimize_params_bayes(train_test_data, params_range,'roc_auc',n_jobs=-1)
+        model_hdl.optimize_params_bayes(train_test_data, params_range,'roc_auc',n_jobs = flag_dict['n_jobs'])
         
     if flag_dict['optimize_optuna']:
         print('Doing Optuna optimization of hyperparameters\n')
@@ -101,7 +101,7 @@ def train_xgboost_model(signal, background, filename_dict, params, params_range,
                 if isinstance(params[key], str):
                     params_range[key] = params[key]
         study = model_hdl.optimize_params_optuna(train_test_data, params_range, scoring = 'roc_auc', 
-                                                    timeout = 3600, n_jobs = 64, n_trials = None)
+                                                    timeout = flag_dict['timeout'], n_jobs = flag_dict['n_jobs'], n_trials = None)
 
         print('Parameters optimization done!\n')
 
@@ -116,6 +116,10 @@ def train_xgboost_model(signal, background, filename_dict, params, params_range,
             fig = optuna.visualization.plot_contour(study)
             fig.write_image(training_fig_path + '/optuna_contour.png')'''
             print('Done\n')
+
+        import joblib
+
+        joblib.dump(study, analysis_path + "model/study.pkl")
         
 
     model_hdl.train_test_model(train_test_data, )

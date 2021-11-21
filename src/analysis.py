@@ -19,7 +19,7 @@ from hipe4ml import plot_utils
 
 #CONFIG
 
-configs = ['train_on_sidebands/NO_TOF_PID_cut_SB.yaml']
+configs = ['/optuna_test/TOF_PID_cut_OPTUNA.yaml']
 
 #config_filename = 'OLD_centrality_0dot1_perc.yaml'
 
