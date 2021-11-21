@@ -119,7 +119,7 @@ def train_xgboost_model(signal, background, filename_dict, params, params_range,
 
         import joblib
 
-        joblib.dump(study, analysis_path + "model/study.pkl")
+        joblib.dump(study, filename_dict['analysis_path'] + "model/study.pkl")
         
 
     model_hdl.train_test_model(train_test_data, )

@@ -14,7 +14,7 @@ flag_dict :
   plot_optim          : True
   root_plots          : False
   n_jobs              : 100
-  timeout             : 600
+  timeout             : 1200
 
 filename_dict :
   data_path           : '../data/TOF_PID_cut/'
