@@ -92,8 +92,11 @@ def train_xgboost_model(signal, background, filename_dict, params, params_range,
 
 
     if flag_dict['optimize_bayes']:
+        import time
         print('Doing Bayes optimization of hyperparameters\n')
-        model_hdl.optimize_params_bayes(train_test_data, params_range,'roc_auc',n_jobs = flag_dict['n_jobs'])
+        start = time.time()
+        model_hdl.optimize_params_bayes(train_test_data, params_range,'roc_auc',n_iter = 700, njobs = flag_dict['n_jobs'])
+        print('Elapsed time: ' + str(time.time() - start))
         
     if flag_dict['optimize_optuna']:
         print('Doing Optuna optimization of hyperparameters\n')
