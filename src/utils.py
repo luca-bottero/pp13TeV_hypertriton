@@ -387,7 +387,7 @@ def folder_setup(analysis_path = 'TEST'):
         print('An analysis with the same name already exists. Previous results will be overwritten')
 
     
-def benchmark_hyperparam_optimizers(filename_dict, params, params_range, flag_dict, presel_dict, training_variables='', testsize = 0.5):
+def benchmark_hyperparam_optimizers(filename_dict, params, params_range, flag_dict, presel_dict, training_variables='', testsize = 0.75):
 
     import time
     from sklearn.metrics import roc_auc_score

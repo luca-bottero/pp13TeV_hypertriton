@@ -1,5 +1,5 @@
 flag_dict :
-  train_model         : False
+  train_model         : True
   benchmark_opt       : False
   optimize_bayes      : False
   optimize_optuna     : False
@@ -10,7 +10,7 @@ flag_dict :
   plot_mppi_mdpi      : True
   plot_mppi_mdpi_fine : False
   plot_presel_eff     : True
-  plot_scatter        : True
+  plot_scatter        : False
   plot_optim          : True
   root_plots          : True
   n_jobs              : 64
@@ -36,19 +36,24 @@ presel_dict :
   bckg_presel_vars    : ['ct', 'pt']
   data_presel_vars    : ['ct', 'pt']
 
-params : {  'n_jobs' : 8,  
-            'seed': 42,
-            'objective': 'binary:logistic',
-            'eval_metric': 'auc',
-            'tree_method': 'hist',
-            'use_label_encoder': False,
-            'max_depth': 13,
-            'learning_rate': 0.09823,
-            'n_estimators': 181,
-            'gamma': 0.4467,
-            'min_child_weight': 5.751,
-            'subsample': 0.7447,
-            'colsample_bytree': 0.5727,}
+params : { 'objective': 'binary:logistic',
+        'use_label_encoder': False,
+        'base_score': 0.5,
+        'booster': 'gbtree',
+        'colsample_bylevel': 1,
+        'colsample_bynode': 1,
+        'colsample_bytree': 0.6930400820913286,
+        'gamma': 0.31776391412570243,
+        'learning_rate': 0.03992542641931217,
+        'max_delta_step': 0,
+        'max_depth': 7,
+        'min_child_weight': 9,
+        'n_estimators': 476,
+        'n_jobs': 16,
+        'reg_alpha': 0,
+        'reg_lambda': 1,
+        'scale_pos_weight': 1,
+        'subsample': 0.6905960143347599,}
 
 params_range : {
     max_depth : [5, 20],           # defines the maximum depth of a single tree [regularization]
@@ -60,6 +65,6 @@ params_range : {
     colsample_bytree : [0.5, 0.9]
     }
 
-eff_array  : [0.3,0.9,0.01]       #min, max, step
+eff_array  : [0.3,0.99,0.01]       #min, max, step
 train_vars : ["ct", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr",
                   "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2"]
