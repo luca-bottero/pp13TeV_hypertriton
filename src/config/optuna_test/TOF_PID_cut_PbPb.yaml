@@ -18,7 +18,7 @@ flag_dict :
 
 filename_dict :
   data_path           : '../data/TOF_PID_cut/'
-  analysis_name       : 'Opt_test_DEFAULT'
+  analysis_name       : 'Opt_test_PbPb'
   MC_signal_filename  : 'SignalTable_pp13TeV_tofPID_mtexp_OLD.root'
   appl_bckg_filename  : 'DataTable_pp_LS_OLD.root'
   train_bckg_filename : 'DataTable_pp_LS_OLD.root'   
@@ -36,7 +36,7 @@ presel_dict :
   bckg_presel_vars    : ['ct', 'pt']
   data_presel_vars    : ['ct', 'pt']
 
-params : {  'n_jobs' : 8,  
+params : {  'n_jobs' : 16,  
             'seed': 42,
             'objective': 'binary:logistic',
             'eval_metric': 'auc',

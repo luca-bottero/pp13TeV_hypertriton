@@ -2,6 +2,12 @@ import numpy as np
 import optuna
 import joblib
 import matplotlib.pyplot as plt
+import pickle
+from hipe4ml.model_handler import ModelHandler
+
+##################################################################################
+
+# PERFORMANCE AS A FUNCTION OF ITERATION 
 
 study = joblib.load("../analysis_results/Opt_test_OPTUNA/model/study.pkl")
 
@@ -26,13 +32,28 @@ plt.legend()
 plt.savefig('../opt_comp.png', dpi = 100, facecolor = 'white')
 plt.close()
 
+##################################################################################
+
+# BEST HYPERPARAMETERS FOR EACH METHOD
+
+names = ['Opt_test_OPTUNA', 'Opt_test_BAYES', 'Opt_test_DEFAULT', 'Opt_test_PbPb']
+
+for name in names:
+    model_hdl = ModelHandler()
+    model_hdl.load_model_handler('../analysis_results/' + name + '/model/model_hdl')
+
+    print(name)
+    print(model_hdl.get_model_params())
+    print('\n---------------\n')
+
+##################################################################################
+
+# PLOT SUPERIMPOSED ROC
 
 objects = []
-path = ''
-names = []
 
-for i,n in enumerate(names):
-    with (open(n + path, "rb")) as openfile:
+for n in names:
+    with (open('../analysis_results/' + n + '/images/training/ROC_AUC_train_test.pickle', "rb")) as openfile:
         while True:
             try:
                 objects.append(pickle.load(openfile))
