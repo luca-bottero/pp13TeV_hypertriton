@@ -149,7 +149,12 @@ def train_xgboost_model(signal, background, filename_dict, params, params_range,
     roc_train_test_fig = plot_utils.plot_roc_train_test(train_test_data[3], y_pred_test,
                                                         train_test_data[1], y_pred_train, None, leg_labels) #ROC AUC plot
     plt.savefig(training_fig_path + '/ROC_AUC_train_test.png',dpi=300,facecolor='white')
+    
+    import pickle
+    with open(training_fig_path + '/ROC_AUC_train_test.pickle', 'wb') as f:
+        pickle.dump(roc_train_test_fig, f) 
     plt.close()
+
     print('Done\n')
 
     print('Saving feature importance plots')

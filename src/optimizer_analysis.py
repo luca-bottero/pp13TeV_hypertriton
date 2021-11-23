@@ -24,3 +24,19 @@ plt.ylabel('ROC AUC')
 plt.legend()
 
 plt.savefig('../opt_comp.png', dpi = 100, facecolor = 'white')
+plt.close()
+
+
+objects = []
+path = ''
+names = []
+
+for i,n in enumerate(names):
+    with (open(n + path, "rb")) as openfile:
+        while True:
+            try:
+                objects.append(pickle.load(openfile))
+            except EOFError:
+                break
+
+plt.show()
