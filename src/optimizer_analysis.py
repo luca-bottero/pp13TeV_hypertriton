@@ -38,18 +38,20 @@ plt.close()
 
 names = ['Opt_test_OPTUNA', 'Opt_test_BAYES', 'Opt_test_DEFAULT', 'Opt_test_PbPb']
 
-for name in names:
-    model_hdl = ModelHandler()
-    model_hdl.load_model_handler('../analysis_results/' + name + '/model/model_hdl')
+if False:
+    for name in names:
+        model_hdl = ModelHandler()
+        model_hdl.load_model_handler('../analysis_results/' + name + '/model/model_hdl')
 
-    print(name)
-    print(model_hdl.get_model_params())
-    print('\n---------------\n')
+        print(name)
+        print(model_hdl.get_model_params())
+        print('\n---------------\n')
 
 ##################################################################################
 
 # PLOT SUPERIMPOSED ROC
 
+plt.close()
 objects = []
 
 for n in names:
@@ -60,4 +62,18 @@ for n in names:
             except EOFError:
                 break
 
+ax = []
+
+for i,f in enumerate(objects):
+    objects[i].gca().set_facecolor('none')
+    objects[i].set_facecolor('none')
+    objects[i].savefig(str(i) + '.png')
+    ax.append(objects[i])
+    objects[i].gca().plot()
+
 plt.show()
+for i in range(len(ax)):
+    ax[i]
+    plt.plot()
+
+plt.savefig('roc.png')
