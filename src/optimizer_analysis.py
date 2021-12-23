@@ -17,12 +17,20 @@ trials = study.trials
 trials_array = np.array([t.values[0] for t in trials])
 trials_array = np.extract(trials_array >= 0.993, trials_array)
 
+T = 50
+mask = np.array([i/T for i in range(T)])
+
 plt.plot(trials_array, 'o', label = 'Optuna Trials', alpha = 0.2)
-plt.plot(np.maximum.accumulate(trials_array), label = 'Optuna Best')
-plt.plot(np.ones(len(trials_array)) * 0.994424, label = 'Default XGBOOST')
-plt.plot(np.ones(len(trials_array)) * 0.99313, label = 'PbPb hyperparameters')
+optuna_ma = [np.sum(trials_array[i-T:i]*mask)/np.sum(mask) for i in range(T, len(trials_array))]
+plt.plot(np.array(list(range(len(optuna_ma)))) + T, optuna_ma, label = 'Optuna MA', color = 'black')
+
+#plt.plot(np.maximum.accumulate(trials_array), label = 'Optuna Best')
+plt.plot(np.ones(len(trials_array)) * 0.994424, label = 'Default XGBOOST', color = 'red')
+#plt.plot(np.ones(len(trials_array)) * 0.99313, label = 'PbPb hyperparameters')
 plt.plot(bayes, 'o', label = 'Bayes trials', alpha = 0.2)
-plt.plot(np.maximum.accumulate(bayes), label = 'Bayes best')
+bayes_ma = [np.sum(bayes[i-T:i]*mask)/np.sum(mask) for i in range(T, len(bayes))]
+plt.plot(np.array(list(range(len(bayes_ma)))) + T, bayes_ma, label = 'Bayes MA', color = 'red')
+#plt.plot(np.maximum.accumulate(bayes), label = 'Bayes best')
 
 plt.title('Comparison of hyperparameters optimizers')
 plt.xlabel('Iteration')
@@ -50,7 +58,7 @@ if False:
 ##################################################################################
 
 # PLOT SUPERIMPOSED ROC
-
+'''
 plt.close()
 objects = []
 
@@ -76,4 +84,4 @@ for i in range(len(ax)):
     ax[i]
     plt.plot()
 
-plt.savefig('roc.png')
+plt.savefig('roc.png')'''
