@@ -379,6 +379,7 @@ def folder_setup(analysis_path = 'TEST'):
         os.makedirs(analysis_path + '/images/var_distribution')
         os.makedirs(analysis_path + '/images/var_distribution/signal_bckg')
         os.makedirs(analysis_path + '/images/var_distribution/data_bckg')
+        os.makedirs(analysis_path + '/images/mass_distr_LS')
 
         os.makedirs(analysis_path + '/model')
 
@@ -450,4 +451,15 @@ def benchmark_hyperparam_optimizers(filename_dict, params, params_range, flag_di
     print('Mean ROC : ' + str(np.mean(roc)))
     print('--------------\n')
 
-    
+def plot_significance(efficiencies, significances, filename_dict, suffix = ''):
+
+    sigs = [e*s for e,s in zip(efficiencies, significances)]
+
+    plt.close()
+    plt.plot(efficiencies, sigs)
+    plt.title('Significance as a function of BDT efficiency')
+    plt.xlabel('BDT efficiency')
+    plt.ylabel('Significance * BDT efficiency')
+    plt.savefig(filename_dict['analysis_path'] + 'results/significance_plot_' + suffix + '.png', dpi = 300, facecolor = 'white')
+    plt.close()
+

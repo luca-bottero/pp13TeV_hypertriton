@@ -19,7 +19,7 @@ from hipe4ml import plot_utils
 
 #CONFIG
 
-configs = ['/train_on_sidebands/NO_TOF_PID_cut_SB.yaml']
+configs = ['/TOF_PID_cut.yaml']
 
 #config_filename = 'OLD_centrality_0dot1_perc.yaml'
 
@@ -130,6 +130,6 @@ for config_filename in configs:
 
         mass_fit.data_ls_comp_plots(data, background_ls, scores, eff_array, filename_dict, flag_dict)
 
-   
+    mass_fit.systematic_estimate(data, scores, eff_array, filename_dict)
 
 

@@ -1,15 +1,15 @@
 flag_dict :
-  train_model         : True
+  train_model         : False
   benchmark_opt       : False
   optimize_bayes      : False
   optimize_optuna     : False
   use_default_param   : False      #If True XGBOOST's default params are used
   norm_on_sidebands   : False
   #Plots' flags
-  plot_m_mppivert     : True
-  plot_mppi_mdpi      : True
+  plot_m_mppivert     : False
+  plot_mppi_mdpi      : False
   plot_mppi_mdpi_fine : False
-  plot_presel_eff     : True
+  plot_presel_eff     : False
   plot_scatter        : False
   plot_optim          : True
   root_plots          : True
@@ -36,6 +36,7 @@ presel_dict :
   bckg_presel_vars    : ['ct', 'pt']
   data_presel_vars    : ['ct', 'pt']
 
+#Result from the optimiziation (100 cores for 600 seconds)
 params : { 'objective': 'binary:logistic',
         'use_label_encoder': False,
         'base_score': 0.5,
@@ -65,6 +66,6 @@ params_range : {
     colsample_bytree : [0.5, 0.9]
     }
 
-eff_array  : [0.3,0.99,0.01]       #min, max, step
+eff_array  : [0.3,0.9,0.01]       #min, max, step
 train_vars : ["ct", "cos_pa" , "tpc_ncls_de" , "tpc_ncls_pr" , "tpc_ncls_pi", "tpc_nsig_de", "tpc_nsig_pr",
                   "tpc_nsig_pi", "dca_de_pr", "dca_de_pi", "dca_pr_pi", "dca_de_sv", "dca_pr_sv", "dca_pi_sv", "chi2"]

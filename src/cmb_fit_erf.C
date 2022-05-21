@@ -8,6 +8,9 @@
 #include "TCanvas.h"
 #include "TStyle.h"
 #include <string>
+#include <math.h>
+#include <stdio.h>
+#include <iostream>
 
 using std::string;
 
@@ -133,4 +136,19 @@ void cmb_fit_erf(TH1D * hB, TH1D * hSB, string name) {
    hSB->Draw("PE");
 
    c1->Write();
+
+
+   double signal, background, significance;
+
+   signal = fS -> Integral(2.9912 - 0.006, 2.9912 + 0.006);
+   background = fS -> Integral(2.9912 - 0.006, 2.9912 + 0.006);
+
+   significance = signal / sqrt(signal + background);
+
+   printf("%f",significance);
+   
+   return significance;
+
+
+
 }
