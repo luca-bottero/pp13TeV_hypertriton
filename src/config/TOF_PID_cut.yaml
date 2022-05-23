@@ -12,7 +12,7 @@ flag_dict :
   plot_presel_eff     : False
   plot_scatter        : False
   plot_optim          : True
-  root_plots          : True
+  root_plots          : False
   n_jobs              : 64
   timeout             : 1200
 
