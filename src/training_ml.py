@@ -74,10 +74,7 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars, pa
                                     mc_signal.get_data_frame().query('gReconstructed > 0 & ' + presel_dict['MC_presel'])[var],
                                     var, presel_dict['data_presel'], var, filename_dict, path = 'images/presel_eff/')
     
-    n_before_presel = mc_signal.get_n_cand()
     mc_signal.apply_preselections(presel_dict['MC_presel'])
-    
-    presel_eff = 1 - mc_signal.get_n_cand()/n_before_presel
 
     #Scatter plot of the MC signal
     if flag_dict['plot_scatter']:
@@ -113,8 +110,11 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars, pa
     data.get_handler_from_large_file(file_name = data_path + filename_dict['data_filename'],tree_name= filename_dict['data_table'],
                                          model_handler = model_hdl)
 
+    n_before_presel = data.get_n_cand()
     data.apply_preselections(presel_dict['data_presel'])
+    presel_eff = 1 - data.get_n_cand()/n_before_presel
     print('Data loaded\n')
+    print('Preselection efficiency: ', presel_eff)
 
     #Scatter plot of data
     if flag_dict['plot_scatter']:
