@@ -141,11 +141,14 @@ void cmb_fit_erf(TH1D * hB, TH1D * hSB, string name) {
    double signal, background, significance;
 
    signal = fS -> Integral(2.9912 - 0.006, 2.9912 + 0.006);
-   background = fS -> Integral(2.9912 - 0.006, 2.9912 + 0.006);
+   background = fB -> Integral(2.9912 - 0.006, 2.9912 + 0.006);
+
+   printf("Signal %f \n", signal);
+   printf("Backgorund %f \n", background);
 
    significance = signal / sqrt(signal + background);
 
-   printf("%f",significance);
+   printf("Significance: %f",significance);
    
    return significance;
 

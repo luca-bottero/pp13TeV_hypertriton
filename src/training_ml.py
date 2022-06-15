@@ -15,7 +15,7 @@ def load_data_with_scores(filename):
     print('Loading file: ' + filename)
     return pd.read_parquet(filename)
 
-def save_eff_scores(eff_array, scores, output_data_path):
+def save_eff_scores(eff_array, scores, output_data_path, presel_eff):
 
     if output_data_path[-1] != '/':
         output_data_path += '/'
@@ -35,6 +35,10 @@ def save_eff_scores(eff_array, scores, output_data_path):
             f.write('\n')
     f.close()
 
+    with open(output_data_path + 'presel_eff.csv','w') as f:
+        f.write(str(presel_eff))
+    f.close()
+
 def load_eff_scores(output_data_path):
     if output_data_path[-1] != '/':
         output_data_path += '/'
@@ -47,7 +51,11 @@ def load_eff_scores(output_data_path):
         scores = np.array(f.read().splitlines()).astype(np.float)
     f.close()
 
-    return eff_array, scores
+    with open(output_data_path + 'presel_eff.csv') as f:
+        presel_eff = f.read().astype(np.float)
+    f.close()
+
+    return eff_array, scores, presel_eff
 
 def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars, params, params_range):
 
@@ -66,7 +74,10 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars, pa
                                     mc_signal.get_data_frame().query('gReconstructed > 0 & ' + presel_dict['MC_presel'])[var],
                                     var, presel_dict['data_presel'], var, filename_dict, path = 'images/presel_eff/')
     
+    n_before_presel = mc_signal.get_n_cand()
     mc_signal.apply_preselections(presel_dict['MC_presel'])
+    
+    presel_eff = 1 - mc_signal.get_n_cand()/n_before_presel
 
     #Scatter plot of the MC signal
     if flag_dict['plot_scatter']:
@@ -133,7 +144,7 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars, pa
     save_data_with_scores(background_ls, analysis_path + '/output_data/bckg_ls_scores')
     save_data_with_scores(data, analysis_path + '/output_data/data_scores')    
 
-    save_eff_scores(eff_array, scores, analysis_path + '/output_data')
+    save_eff_scores(eff_array, scores, analysis_path + '/output_data', presel_eff)
 
     del background_ls
     del data

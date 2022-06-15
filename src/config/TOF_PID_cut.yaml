@@ -1,5 +1,5 @@
 flag_dict :
-  train_model         : False
+  train_model         : True
   benchmark_opt       : False
   optimize_bayes      : False
   optimize_optuna     : False
@@ -12,7 +12,7 @@ flag_dict :
   plot_presel_eff     : False
   plot_scatter        : False
   plot_optim          : True
-  root_plots          : True
+  root_plots          : False
   n_jobs              : 64
   timeout             : 1200
 

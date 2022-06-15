@@ -75,7 +75,7 @@ for config_filename in configs:
 
     print('Model loaded\n')
 
-    eff_array, scores = train.load_eff_scores(filename_dict['analysis_path']+ 'output_data/')
+    eff_array, scores, presel_eff = train.load_eff_scores(filename_dict['analysis_path']+ 'output_data/')
 
     data = train.load_data_with_scores(filename_dict['analysis_path']+ 'output_data/data_scores.parquet.gzip')                #pd dataframe already processed
     print('Data loaded\n')
@@ -130,6 +130,6 @@ for config_filename in configs:
 
         mass_fit.data_ls_comp_plots(data, background_ls, scores, eff_array, filename_dict, flag_dict)
 
-    mass_fit.systematic_estimate(data, scores, eff_array, filename_dict)
+    mass_fit.systematic_estimate(data, scores, eff_array, presel_eff,filename_dict)
 
 
