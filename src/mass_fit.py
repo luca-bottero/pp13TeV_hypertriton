@@ -34,7 +34,7 @@ def h1_invmass(counts, mass_range=[2.96, 3.04] , bins=34, name=''):
     th1.SetDirectory(0)
     return th1
 
-def mass_fitter(hist, score, efficiency, filename_dict, presel_eff, N_ev = 8.119086e9):
+def mass_fitter(hist, score, efficiency, filename_dict, presel_eff, N_ev = 869085971): #7.581079e9    8.119086e9
     aghast_hist = aghast.from_numpy(hist)
     root_hist = aghast.to_root(aghast_hist,'Efficiency ' + str(np.round(efficiency,4)))
 
@@ -94,10 +94,11 @@ def mass_fitter(hist, score, efficiency, filename_dict, presel_eff, N_ev = 8.119
     
     #s = gaus.Integral(m - d_m, m + d_m) * 100
     s = 2.87e-7 * 0.4 * 2 * N_ev * presel_eff * efficiency
-    b = bkg.Integral(m - d_m, m + d_m) * 100
+    b = bkg.Integral(m - d_m, m + d_m)
     significance = s/np.sqrt(s+b)
 
     print('Significance at', efficiency, 'efficiency')
+    print('Preselection efficiency', presel_eff)
     print('Signal', s)
     print('Background', b)
     print('Signal-Background ratio', s/b)

@@ -52,7 +52,7 @@ def load_eff_scores(output_data_path):
     f.close()
 
     with open(output_data_path + 'presel_eff.csv') as f:
-        presel_eff = f.read().astype(np.float)
+        presel_eff = np.float(f.read())
     f.close()
 
     return eff_array, scores, presel_eff
@@ -74,7 +74,13 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars, pa
                                     mc_signal.get_data_frame().query('gReconstructed > 0 & ' + presel_dict['MC_presel'])[var],
                                     var, presel_dict['data_presel'], var, filename_dict, path = 'images/presel_eff/')
     
+    n_before_presel = mc_signal.get_data_frame().query('rej_accept > 0')['m'].count()
+    presel_eff = mc_signal.get_data_frame().query('gReconstructed > 0 & ' + presel_dict['MC_presel'])['m'].count()/n_before_presel
+    print('Preselection efficiency:', presel_eff)
+
+
     mc_signal.apply_preselections(presel_dict['MC_presel'])
+    
 
     #Scatter plot of the MC signal
     if flag_dict['plot_scatter']:
@@ -110,11 +116,8 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars, pa
     data.get_handler_from_large_file(file_name = data_path + filename_dict['data_filename'],tree_name= filename_dict['data_table'],
                                          model_handler = model_hdl)
 
-    n_before_presel = data.get_n_cand()
     data.apply_preselections(presel_dict['data_presel'])
-    presel_eff = 1 - data.get_n_cand()/n_before_presel
     print('Data loaded\n')
-    print('Preselection efficiency: ', presel_eff)
 
     #Scatter plot of data
     if flag_dict['plot_scatter']:
@@ -134,9 +137,10 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars, pa
     #data.apply_model_handler(model_hdl)
 
     #print(background_ls)
-    utils.plot_distr_comparison(mc_signal,background_ls,'signal_bckg/', 
-                                filename_dict, 'MC signal', 'Background')
-    utils.plot_distr_comparison(data,background_ls,'data_bckg/',
+    if flag_dict['plot_comp_of_distr']:
+        utils.plot_distr_comparison(mc_signal,background_ls,'signal_bckg/', 
+                                    filename_dict, 'MC signal', 'Background')
+        utils.plot_distr_comparison(data,background_ls,'data_bckg/',
                                 filename_dict, 'Data', 'Background')
 
 
