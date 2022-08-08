@@ -453,8 +453,8 @@ def benchmark_hyperparam_optimizers(filename_dict, params, params_range, flag_di
 
 def plot_significance(efficiencies, significances, filename_dict, suffix = ''):
 
-    sigs = [e*s for e,s in zip(efficiencies, significances)]
-
+    sigs = np.array([e*s for e,s in zip(efficiencies, significances)])
+    
     plt.close()
     plt.plot(efficiencies, sigs)
     plt.title('Significance as a function of BDT efficiency')

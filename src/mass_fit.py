@@ -1,4 +1,5 @@
 #%%
+from re import S
 import ROOT
 ROOT.gROOT.SetBatch(True)
 
@@ -120,7 +121,7 @@ def mass_fitter(hist, score, efficiency, filename_dict, presel_eff, N_ev = 86908
     count = root_hist.GetEntries()
     error = np.sqrt(count)
 
-    return count, error, significance
+    return s, b, significance
 
 
 def data_ls_comp_plots(data, ls, scores, efficiencies, filename_dict, flag_dict):
@@ -216,17 +217,17 @@ def data_ls_comp_plots(data, ls, scores, efficiencies, filename_dict, flag_dict)
 
 def systematic_estimate(data,scores,efficiencies, presel_eff, filename_dict):
 
-    count = []
-    errors = []
+    s_arr = []
+    b_arr = []
     sigs = []
     i = 0
     for score in scores:
         selected_data_hndl = data.query('model_output > ' + str(score))
         #hist = plot_utils.plot_distr(selected_data_hndl, column='m', bins=34, colors='orange', density=False,fill=True, range=[2.96,3.04])
         hist = np.histogram(selected_data_hndl['m'],bins=36,range=(2.96,3.04))
-        cnt, err, significance = mass_fitter(hist=hist ,score=score, efficiency=efficiencies[i], presel_eff=presel_eff, filename_dict=filename_dict)
-        count.append(cnt)
-        errors.append(err)
+        s, b, significance = mass_fitter(hist=hist ,score=score, efficiency=efficiencies[i], presel_eff=presel_eff, filename_dict=filename_dict)
+        s_arr.append(s)
+        b_arr.append(b)
         sigs.append(significance)
         i += 1
 
@@ -248,10 +249,27 @@ def systematic_estimate(data,scores,efficiencies, presel_eff, filename_dict):
     plt.annotate('Mean: ' + str(np.round(np.mean(count),4)) + "\n$\sigma$: " + str(np.round(np.std(count),4)) ,xy=(0.68,23))
     plt.savefig('../analysis/images/mass_distr/fit_count_eff_rect.png',dpi=300,facecolor = 'white')'''
 
-    sigs = [e*s for e,s in zip(efficiencies, sigs)]
+    sigs = np.array([e*s for e,s in zip(efficiencies, sigs)])
+    print('\n\nMax significance: ', sigs.max())
+    print('BDT Efficiency at max significance: ', efficiencies[sigs.argmax()])
+
+    def err(s,b):
+        sigma_s = np.sqrt(s)
+        sigma_b = np.sqrt(b)
+
+        error = (sigma_b**2 * s**2 + sigma_s**2 * (2*b + s)**2)/((b + s)**3)
+
+        return 0.5 * np.sqrt(error)
+
+    sigs_err = list(map(err, s_arr, b_arr))
+    #print(sigs_err)
 
     plt.close()
     plt.plot(efficiencies, sigs)
+    #plt.fill_between(efficiencies, sigs - sigs_err, sigs + sigs_err, alpha = 0.3)
+    #plt.axvline(efficiencies[sigs.argmax()], color ='r', ls = '--', ymax = sigs.max())
+    #plt.axhline(sigs.max(), color = 'r')
+    plt.text(0.3, 3.5, 'Max significance: ' + str(sigs.max()) + '\nBDT Efficiency at max significance: ' + str(efficiencies[sigs.argmax()]))
     plt.title('Significance as a function of BDT efficiency')
     plt.xlabel('BDT efficiency')
     plt.ylabel('Significance * BDT efficiency')
