@@ -1,4 +1,5 @@
 #%%
+from logging import root
 from re import S
 import ROOT
 ROOT.gROOT.SetBatch(True)
@@ -35,7 +36,7 @@ def h1_invmass(counts, mass_range=[2.96, 3.04] , bins=34, name=''):
     th1.SetDirectory(0)
     return th1
 
-def mass_fitter(hist, score, efficiency, filename_dict, presel_eff, N_ev = 869085971): #7.581079e9    8.119086e9
+def mass_fitter(hist, score, efficiency, filename_dict, presel_eff, N_ev = 900e6): #7.581079e9    8.119086e9 869085971
     aghast_hist = aghast.from_numpy(hist)
     root_hist = aghast.to_root(aghast_hist,'Efficiency ' + str(np.round(efficiency,4)))
 
@@ -94,10 +95,12 @@ def mass_fitter(hist, score, efficiency, filename_dict, presel_eff, N_ev = 86908
     par[3], par[4], par[5] = poly_par[0], poly_par[1], poly_par[2]'''
     
     #s = gaus.Integral(m - d_m, m + d_m) * 100
-    s = 2.87e-7 * 0.4 * 2 * N_ev * presel_eff * efficiency
-    b = bkg.Integral(m - d_m, m + d_m)
+    s = 2.59e-7 * 0.4 * 2 * N_ev * presel_eff * efficiency
+    sigma_s = 0.5e-7 * 0.4 * 2 * N_ev * presel_eff * efficiency
+    b = bkg.Integral(m - d_m, m + d_m) / root_hist.GetBinWidth(1)
     significance = s/np.sqrt(s+b)
 
+    print('Bin width', root_hist.GetBinWidth(1))
     print('Significance at', efficiency, 'efficiency')
     print('Preselection efficiency', presel_eff)
     print('Signal', s)
@@ -121,7 +124,7 @@ def mass_fitter(hist, score, efficiency, filename_dict, presel_eff, N_ev = 86908
     count = root_hist.GetEntries()
     error = np.sqrt(count)
 
-    return s, b, significance
+    return s, sigma_s, b, significance
 
 
 def data_ls_comp_plots(data, ls, scores, efficiencies, filename_dict, flag_dict):
@@ -218,6 +221,7 @@ def data_ls_comp_plots(data, ls, scores, efficiencies, filename_dict, flag_dict)
 def systematic_estimate(data,scores,efficiencies, presel_eff, filename_dict):
 
     s_arr = []
+    sigma_s_arr = []
     b_arr = []
     sigs = []
     i = 0
@@ -225,8 +229,9 @@ def systematic_estimate(data,scores,efficiencies, presel_eff, filename_dict):
         selected_data_hndl = data.query('model_output > ' + str(score))
         #hist = plot_utils.plot_distr(selected_data_hndl, column='m', bins=34, colors='orange', density=False,fill=True, range=[2.96,3.04])
         hist = np.histogram(selected_data_hndl['m'],bins=36,range=(2.96,3.04))
-        s, b, significance = mass_fitter(hist=hist ,score=score, efficiency=efficiencies[i], presel_eff=presel_eff, filename_dict=filename_dict)
+        s, sigma_s, b, significance = mass_fitter(hist=hist ,score=score, efficiency=efficiencies[i], presel_eff=presel_eff, filename_dict=filename_dict)
         s_arr.append(s)
+        sigma_s_arr.append(sigma_s)
         b_arr.append(b)
         sigs.append(significance)
         i += 1
@@ -253,23 +258,23 @@ def systematic_estimate(data,scores,efficiencies, presel_eff, filename_dict):
     print('\n\nMax significance: ', sigs.max())
     print('BDT Efficiency at max significance: ', efficiencies[sigs.argmax()])
 
-    def err(s,b):
-        sigma_s = np.sqrt(s)
+    def err(s,b, sigma_s):
+        sigma_s = 0.5 #np.sqrt(s)       da propagare (y)
         sigma_b = np.sqrt(b)
 
         error = (sigma_b**2 * s**2 + sigma_s**2 * (2*b + s)**2)/((b + s)**3)
 
         return 0.5 * np.sqrt(error)
 
-    sigs_err = list(map(err, s_arr, b_arr))
+    sigs_err = list(map(err, s_arr, b_arr, sigma_s_arr))
     #print(sigs_err)
 
     plt.close()
     plt.plot(efficiencies, sigs)
-    #plt.fill_between(efficiencies, sigs - sigs_err, sigs + sigs_err, alpha = 0.3)
-    #plt.axvline(efficiencies[sigs.argmax()], color ='r', ls = '--', ymax = sigs.max())
-    #plt.axhline(sigs.max(), color = 'r')
-    plt.text(0.3, 3.5, 'Max significance: ' + str(sigs.max()) + '\nBDT Efficiency at max significance: ' + str(efficiencies[sigs.argmax()]))
+    plt.fill_between(efficiencies, sigs - sigs_err, sigs + sigs_err, alpha = 0.3)
+    plt.axvline(efficiencies[sigs.argmax()], color ='r', ls = '--', ymax = sigs.max())
+    plt.axhline(sigs.max(), color = 'r')
+    #plt.text(0.3, 3.5, 'Max significance: ' + str(sigs.max()) + '\nBDT Efficiency at max significance: ' + str(efficiencies[sigs.argmax()]))
     plt.title('Significance as a function of BDT efficiency')
     plt.xlabel('BDT efficiency')
     plt.ylabel('Significance * BDT efficiency')
