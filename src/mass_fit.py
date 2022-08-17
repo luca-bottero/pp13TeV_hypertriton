@@ -90,9 +90,9 @@ def mass_fitter(hist, score, efficiency, filename_dict, presel_eff, N_ev = 900e6
     
     par = array( 'd', 6*[0.] )
     #gaus_par = gaus.GetParameters()
-    poly_par = bkg.GetParameters()
+    bkg_par = bkg.GetParameters()
     '''par[0], par[1], par[2] = gaus_par[0], gaus_par[1], gaus_par[2]
-    par[3], par[4], par[5] = poly_par[0], poly_par[1], poly_par[2]'''
+    par[3], par[4], par[5] = bkg_par[0], bkg_par[1], bkg_par[2]'''
     
     #s = gaus.Integral(m - d_m, m + d_m) * 100
     s = 2.59e-7 * 0.4 * 2 * N_ev * presel_eff * efficiency
@@ -125,6 +125,111 @@ def mass_fitter(hist, score, efficiency, filename_dict, presel_eff, N_ev = 900e6
     error = np.sqrt(count)
 
     return s, sigma_s, b, significance
+
+
+def signal_fitter(hist, score, efficiency, filename_dict, presel_eff, N_ev = 900e6): #7.581079e9    8.119086e9 869085971
+    aghast_hist = aghast.from_numpy(hist)
+    root_hist = aghast.to_root(aghast_hist,'Efficiency ' + str(np.round(efficiency,4)))
+
+    #root_hist = h1_invmass(hist[0], name = 'eff_' + str(np.round(efficiency,4)), bins = 34)
+
+    root_hist.SetTitle('Counts as a function of mass;m [GeV/c^{2}];Counts')
+
+    canvas = ROOT.TCanvas()
+    root_hist.Draw('PE')
+    canvas.Draw('PE SAME')
+
+    gaus = ROOT.TF1('gaus','gaus',2.96,3.04)
+    bkg = ROOT.TF1('bkg','[0]/(1 + TMath::Exp(-[1]*(x-[2]))) + [3]',2.96,3.04)
+    total = ROOT.TF1('total','gaus(0) + [3]/(1 + TMath::Exp(-[4]*(x-[5]))) + [6]',2.96,3.04)
+
+
+    bkg.SetParLimits(3, 0., 5.)
+    bkg.SetParameter(0, 15)
+    bkg.SetParLimits(2, 2.99, 3.0)
+    bkg.SetParLimits(1, 10., 500.)
+    #bkg.SetParLimits(3, 2.)
+    #total = ROOT.TF1('total','gaus(0) + poly(3)',2.96,3.04)
+
+    '''total.SetParameter(3, 2.992)
+    total.SetParLimits(3, 2.99, 2.995)
+    total.SetParameter(2, 100)  #26
+    total.SetParameter(4, 0.0032)
+    total.SetParLimits(4, 0.001, 0.01)'''
+    '''total.SetParameter(1, 2.992)
+    total.SetParLimits(1, 2.99, 2.995)
+    total.SetParameter(0, 100)  #26
+    total.SetParameter(2, 0.0032)
+    total.SetParLimits(2, 0.001, 0.01)'''
+    
+    gaus.SetLineColor( ROOT.kGreen )
+    bkg.SetLineColor( ROOT.kRed )
+    total.SetLineColor( ROOT.kBlue )
+
+    gaus.SetLineStyle(7)   #7 = dotted
+    #bkg.SetLineStyle(7)
+
+    m = 2.9912
+    d_m = 3 * 0.002
+
+    root_hist.Fit('gaus','R0','',m - d_m, m + d_m)
+    root_hist.Fit('bkg','R0+','',2.96,3.04)
+
+    
+
+    par = array( 'd', 7*[0.] )
+    gaus_par = gaus.GetParameters()
+    bkg_par = bkg.GetParameters()
+    par[0], par[1], par[2] = gaus_par[0], gaus_par[1], gaus_par[2]
+    par[3], par[4], par[5], par[6] = bkg_par[0], bkg_par[1], bkg_par[2], bkg_par[3]
+    
+    total.SetParameters(par)
+
+    gaus.SetNpx(1000)
+    bkg.SetNpx(1000)
+    total.SetNpx(1000)
+
+    gaus.Draw('SAME')
+    bkg.Draw('SAME')
+    total.Draw('SAME')
+
+    total.Draw('SAME')
+
+    ROOT.gStyle.SetOptFit(111111)
+
+    canvas.SetName('eff_' + str(efficiency))
+    canvas.Write()
+
+
+
+
+    #ROOT.gStyle.SetOptFit(0)
+    #canvas.SaveAs(filename_dict['analysis_path'] + 'images/mass_distr_LS/LS_hist_eff_' + str(np.round(efficiency,4)) + '.png')
+
+    '''count = total.GetParameters()[2]
+    error = total.GetParError(2)'''
+
+    count = root_hist.GetEntries()
+    error = np.sqrt(count)
+
+    
+
+    count = gaus.Integral(m - d_m, m + d_m) / root_hist.GetBinWidth(1)
+    b = bkg.Integral(m - d_m, m + d_m) / root_hist.GetBinWidth(1)
+    fitted_mass = par[1]
+
+    print('Efficiency', efficiency)
+    print('Count', count)
+    print('Parameters', par)
+
+
+
+
+    return count, fitted_mass
+
+
+
+
 
 
 def data_ls_comp_plots(data, ls, scores, efficiencies, filename_dict, flag_dict):
@@ -280,6 +385,22 @@ def systematic_estimate(data,scores,efficiencies, presel_eff, filename_dict):
     plt.ylabel('Significance * BDT efficiency')
     plt.savefig(filename_dict['analysis_path'] + 'results/significance_plot.png', dpi = 300, facecolor = 'white')
     plt.close()
+
+    counts = []
+    masses = []
+
+    ff = ROOT.TFile(filename_dict['analysis_path'] + 'results/mass_fit.root','recreate')
+
+    for i in range(sigs.argmax()-10, sigs.argmax()+11):
+        selected_data_hdl = data.query('model_output > ' + str(scores[i]))
+        #hist = plot_utils.plot_distr(selected_data_hndl, column='m', bins=34, colors='orange', density=False,fill=True, range=[2.96,3.04])
+        hist = np.histogram(selected_data_hdl['m'], bins=36, range=(2.96,3.04))
+        count, fitted_mass = signal_fitter(hist=hist ,score=score, efficiency=efficiencies[i], presel_eff=presel_eff, filename_dict=filename_dict)
+        counts.append(count)
+        masses.append(fitted_mass)
+
+    ff.Close()
+
 
 
 
