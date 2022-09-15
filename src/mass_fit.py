@@ -149,7 +149,13 @@ def signal_fitter(hist, efficiency, significance, sig_err): #7.581079e9    8.119
     bkg.SetParLimits(2, 2.99, 3.0)
     bkg.SetParLimits(1, 10., 500.)
     #bkg.SetParLimits(3, 2.)
-    #total = ROOT.TF1('total','gaus(0) + poly(3)',2.96,3.04)
+
+    total.SetParLimits(6, 0., 5.)
+    total.SetParameter(3, 15)
+    total.SetParLimits(5, 2.99, 3.0)
+    total.SetParLimits(4, 10., 500.)
+
+   
 
     '''total.SetParameter(3, 2.992)
     total.SetParLimits(3, 2.99, 2.995)
@@ -201,22 +207,24 @@ def signal_fitter(hist, efficiency, significance, sig_err): #7.581079e9    8.119
     for bin in range(low_bin, high_bin + 1):    # restore mass peak counts
         root_hist.SetBinContent(bin,original_bin_contents[bin - low_bin])'''
 
-    root_hist.Fit('gaus','R0+','',m - d_m, m + d_m)
+    root_hist.Fit('gaus','R0+','',m-d_m, m+d_m)
 
     par = array( 'd', 7*[0.] )
     gaus_par = gaus.GetParameters()
     bkg_par = bkg.GetParameters()
     par[0], par[1], par[2] = gaus_par[0], gaus_par[1], gaus_par[2]
     par[3], par[4], par[5], par[6] = bkg_par[0], bkg_par[1], bkg_par[2], bkg_par[3]
-    
+
     total.SetParameters(par)
+
+    root_hist.Fit('total', 'R0+', '', 2.96, 3.04)
 
     gaus.SetNpx(1000)
     bkg.SetNpx(1000)
     total.SetNpx(1000)
 
     #gaus.Draw('SAME')
-    bkg.Draw('SAME')
+    #bkg.Draw('SAME')
     total.Draw('SAME')
 
     root_hist.SetStats(0)
@@ -388,14 +396,16 @@ def systematic_estimate(data,scores,efficiencies, presel_eff, filename_dict):
     #print(sigs_err)
 
     plt.close()
+    fig, ax = plt.subplots()
     plt.plot(efficiencies, sigs)
     plt.fill_between(efficiencies, sigs - sigs_err, sigs + sigs_err, alpha = 0.3)
-    plt.axvline(efficiencies[sigs.argmax()], color ='r', ls = '--', ymax = sigs.max())
-    plt.axhline(sigs.max(), color = 'r')
+    plt.axvline(efficiencies[sigs.argmax()], color ='r', ls = '--', ymax = sigs.max(), alpha = 0.8)
+    plt.axhline(sigs.max(), color = 'r', alpha = 0.8)
     #plt.text(0.3, 3.5, 'Max significance: ' + str(sigs.max()) + '\nBDT Efficiency at max significance: ' + str(efficiencies[sigs.argmax()]))
     plt.title('Significance as a function of BDT efficiency')
     plt.xlabel('BDT efficiency')
     plt.ylabel('Significance * BDT efficiency')
+    ax.minorticks_on()
     plt.savefig(filename_dict['analysis_path'] + 'results/significance_plot.png', dpi = 300, facecolor = 'white')
     plt.close()
 
@@ -414,6 +424,20 @@ def systematic_estimate(data,scores,efficiencies, presel_eff, filename_dict):
 
     ff.Close()
 
+    plt.close()
+    efficiencies = np.array(efficiencies)
+    fig, ax = plt.subplots()
+    plt.plot(efficiencies, sigs/efficiencies)
+    plt.axvline(efficiencies[(sigs/efficiencies).argmax()], color ='r', ls = '--', ymax = sigs.max(), alpha = 0.8)
+    plt.axhline((sigs/efficiencies).max(), color = 'r', alpha = 0.8)
+    plt.fill_between(efficiencies, (sigs - sigs_err)/efficiencies, (sigs + sigs_err)/efficiencies, alpha = 0.3)
+    plt.title('Efficiency-normalized Significance as a function of BDT efficiency')
+    plt.xlabel('BDT efficiency')
+    plt.ylabel(r'$\frac{S(3\sigma)}{BDT efficiency}$', fontsize=16)
+    ax.minorticks_on()
+    #ax.yaxis.set_tick_params(which='minor', bottom=False)
+    plt.savefig(filename_dict['analysis_path'] + 'results/significance_norm_plot.png', dpi=300, facecolor='white')
+    plt.close()
 
 
 
