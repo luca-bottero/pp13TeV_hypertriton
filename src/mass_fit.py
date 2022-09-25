@@ -99,7 +99,7 @@ def mass_fitter(hist, score, efficiency, filename_dict, presel_eff, N_ev = 900e6
     sigma_s = 0.5e-7 * 0.4 * 2 * N_ev * presel_eff * efficiency
     b = bkg.Integral(m - d_m, m + d_m) / root_hist.GetBinWidth(1)
     significance = s/np.sqrt(s+b)
-
+   
     print('Bin width', root_hist.GetBinWidth(1))
     print('Significance at', efficiency, 'efficiency')
     print('Preselection efficiency', presel_eff)
@@ -217,7 +217,7 @@ def signal_fitter(hist, efficiency, significance, sig_err): #7.581079e9    8.119
 
     total.SetParameters(par)
 
-    root_hist.Fit('total', 'R0+', '', 2.96, 3.04)
+    r = root_hist.Fit('total', 'RS0+', '', 2.96, 3.04)
 
     gaus.SetNpx(1000)
     bkg.SetNpx(1000)
@@ -233,12 +233,14 @@ def signal_fitter(hist, efficiency, significance, sig_err): #7.581079e9    8.119
 
     count = gaus.Integral(m - d_m, m + d_m) / root_hist.GetBinWidth(1)
     b = bkg.Integral(m - d_m, m + d_m) / root_hist.GetBinWidth(1)
-    fitted_mass = par[1]
+
+    measured_significance = count/np.sqrt(count + b)
 
     latex = ROOT.TLatex()
     latex.SetNDC()
     latex.SetTextSize(0.04)
-    latex.DrawLatex(0.6 ,0.83, "Significance (3 #sigma) " + str(np.round(significance,1)) +  " #pm " + str(np.round(3*sig_err,1)) )
+    latex.DrawLatex(0.6 ,0.88, "Exp. Signif. (3 #sigma) " + str(np.round(significance,1)) +  " #pm " + str(np.round(3*sig_err,1)) )
+    latex.DrawLatex(0.6 ,0.83, "Calc. Signif. " + str(np.round(measured_significance,1)) )#+  " #pm " + str(np.round(3*sig_err,1)) )
     latex.DrawLatex(0.6 ,0.78, "S (3 #sigma) " + str(np.round(count)) +  " #pm " + str(np.round(3*np.sqrt(count))) )
     latex.DrawLatex(0.6 ,0.73, "B (3 #sigma) " + str(np.round(b)) +  " #pm " + str(np.round(3*np.sqrt(b))) )
     latex.DrawLatex(0.6 ,0.68, "S/B " + str(np.round(count/b)) )
@@ -246,11 +248,19 @@ def signal_fitter(hist, efficiency, significance, sig_err): #7.581079e9    8.119
     canvas.SetName('eff_' + str(efficiency))
     canvas.Write()
 
+    #cov =  r.GetCovarianceMatrix()
+    sigma_s = np.sqrt(count) #gaus.IntegralError(m - d_m, m + d_m, r.GetParams(), cov.GetMatrixArray()) / root_hist.GetBinWidth(1)
+
+    fitted_mass = total.GetParameters()[1]
+    fitted_mass_err = total.GetParError(1)
+    mass_variance = total.GetParameters()[2]
+    mass_variance_err = total.GetParError(2)
+    
     print('Efficiency', efficiency)
-    print('Count', count)
+    print('Count {0} +- {1}'.format(count, sigma_s))
     print('Background', b)
 
-    return count, fitted_mass
+    return count, b, sigma_s, (fitted_mass, fitted_mass_err), (mass_variance, mass_variance_err)
 
 
 def data_ls_comp_plots(data, ls, scores, efficiencies, filename_dict, flag_dict):
@@ -385,7 +395,7 @@ def systematic_estimate(data,scores,efficiencies, presel_eff, filename_dict):
     print('BDT Efficiency at max significance: ', efficiencies[sigs.argmax()])
 
     def err(s,b, sigma_s):
-        sigma_s = 0.5 #np.sqrt(s)       da propagare (y)
+        #sigma_s = 0.5 #np.sqrt(s)       da propagare (y)
         sigma_b = np.sqrt(b)
 
         error = (sigma_b**2 * s**2 + sigma_s**2 * (2*b + s)**2)/((b + s)**3)
@@ -394,7 +404,8 @@ def systematic_estimate(data,scores,efficiencies, presel_eff, filename_dict):
 
     sigs_err = list(map(err, s_arr, b_arr, sigma_s_arr))
     #print(sigs_err)
-
+    
+    # Expected significance:
     plt.close()
     fig, ax = plt.subplots()
     plt.plot(efficiencies, sigs)
@@ -402,41 +413,118 @@ def systematic_estimate(data,scores,efficiencies, presel_eff, filename_dict):
     plt.axvline(efficiencies[sigs.argmax()], color ='r', ls = '--', ymax = sigs.max(), alpha = 0.8)
     plt.axhline(sigs.max(), color = 'r', alpha = 0.8)
     #plt.text(0.3, 3.5, 'Max significance: ' + str(sigs.max()) + '\nBDT Efficiency at max significance: ' + str(efficiencies[sigs.argmax()]))
-    plt.title('Significance as a function of BDT efficiency')
+    plt.title('Expected significance as a function of BDT efficiency')
     plt.xlabel('BDT efficiency')
     plt.ylabel('Significance * BDT efficiency')
     ax.minorticks_on()
-    plt.savefig(filename_dict['analysis_path'] + 'results/significance_plot.png', dpi = 300, facecolor = 'white')
+    plt.savefig(filename_dict['analysis_path'] + 'results/significance_expected_plot.png', dpi = 300, facecolor = 'white')
     plt.close()
 
     counts = []
+    bkgs = []
+    sigma_s_arr = []
     masses = []
+    masses_err = []
+    mass_variances = []
+    mass_variances_err = []
 
     ff = ROOT.TFile(filename_dict['analysis_path'] + 'results/mass_fit.root','recreate')
 
-    for i in range(sigs.argmax()-10, sigs.argmax()+11):
+    for i in range(len(efficiencies)):
         selected_data_hdl = data.query('model_output > ' + str(scores[i]))
         #hist = plot_utils.plot_distr(selected_data_hndl, column='m', bins=34, colors='orange', density=False,fill=True, range=[2.96,3.04])
         hist = np.histogram(selected_data_hdl['m'], bins=36, range=(2.96,3.04))
-        count, fitted_mass = signal_fitter(hist=hist, efficiency=efficiencies[i], significance=sigs[i], sig_err=sigs_err[i])
+        count, bkg, sigma_s,fitted_mass, mass_variance = signal_fitter(hist=hist, efficiency=efficiencies[i], significance=sigs[i], sig_err=sigs_err[i])
         counts.append(count)
-        masses.append(fitted_mass)
+        bkgs.append(bkg)
+        sigma_s_arr.append(sigma_s)
+        masses.append(fitted_mass[0])
+        masses_err.append(fitted_mass[1])
+        mass_variances.append(mass_variance[0])
+        mass_variances_err.append(mass_variance[1])
 
     ff.Close()
 
+    masses = np.array(masses)
+    masses_err = np.array(masses_err)
+    mass_variances = np.array(mass_variances)
+    mass_variances_err = np.array(mass_variances_err)
+
+
+    idx_max = np.argwhere(efficiencies == 0.8)[0,0]
+
+
+    # Signal/BDT_eff vs. BDT_eff:
     plt.close()
     efficiencies = np.array(efficiencies)
+    counts = np.array(counts)
     fig, ax = plt.subplots()
-    plt.plot(efficiencies, sigs/efficiencies)
-    plt.axvline(efficiencies[(sigs/efficiencies).argmax()], color ='r', ls = '--', ymax = sigs.max(), alpha = 0.8)
-    plt.axhline((sigs/efficiencies).max(), color = 'r', alpha = 0.8)
-    plt.fill_between(efficiencies, (sigs - sigs_err)/efficiencies, (sigs + sigs_err)/efficiencies, alpha = 0.3)
-    plt.title('Efficiency-normalized Significance as a function of BDT efficiency')
+    plt.plot(efficiencies[:idx_max], counts[:idx_max]/efficiencies[:idx_max])
+    #plt.axvline(efficiencies[:idx_max][(count/efficiencies[:idx_max]).argmax()], color ='r', ls = '--', ymax = count.max(), alpha = 0.8)
+    #plt.axhline((sigs/efficiencies[:idx_max]).max(), color = 'r', alpha = 0.8)
+    plt.fill_between(efficiencies[:idx_max], np.maximum(np.zeros_like(counts[:idx_max]),(counts[:idx_max] - np.sqrt(counts[:idx_max]))/efficiencies[:idx_max]), 
+                        (counts[:idx_max] + np.sqrt(counts[:idx_max]))/efficiencies[:idx_max], alpha = 0.3)
+    plt.title('Efficiency-normalized Signal as a function of BDT efficiency')
     plt.xlabel('BDT efficiency')
     plt.ylabel(r'$\frac{S(3\sigma)}{BDT efficiency}$', fontsize=16)
     ax.minorticks_on()
+    plt.tight_layout()
     #ax.yaxis.set_tick_params(which='minor', bottom=False)
-    plt.savefig(filename_dict['analysis_path'] + 'results/significance_norm_plot.png', dpi=300, facecolor='white')
+    plt.savefig(filename_dict['analysis_path'] + 'results/signal_norm_plot.png', dpi=300, facecolor='white')
+    plt.close()
+
+
+    # Measured significance:
+    plt.close()
+    efficiencies = np.array(efficiencies)
+    counts = np.array(counts)
+    bkgs = np.array(bkgs)
+    fig, ax = plt.subplots()
+    sigs = counts/np.sqrt(counts + bkgs)
+    sigs_err = list(map(err, counts, bkgs, np.array(sigma_s_arr)))
+    plt.plot(efficiencies[:idx_max], sigs[:idx_max]*efficiencies[:idx_max])
+    #plt.axvline(efficiencies[(sigs*efficiencies).argmax()], color ='r', ls = '--', ymax = sigs.max(), alpha = 0.8)
+    #plt.axhline((sigs*efficiencies).max(), color = 'r', alpha = 0.8)
+    plt.fill_between(efficiencies[:idx_max], np.maximum(np.zeros_like(sigs[:idx_max]), (sigs[:idx_max] - sigs_err[:idx_max])*efficiencies[:idx_max]), 
+                                                            (sigs[:idx_max] + sigs_err[idx_max])*efficiencies[:idx_max], alpha = 0.3)
+    plt.title('Measured Significance as a function of BDT efficiency')
+    plt.xlabel('BDT efficiency')
+    plt.ylabel('Significance*efficiency', fontsize=16)
+    ax.minorticks_on()
+    plt.tight_layout()
+    #ax.yaxis.set_tick_params(which='minor', bottom=False)
+    plt.savefig(filename_dict['analysis_path'] + 'results/significance_measured_plot.png', dpi=300, facecolor='white')
+    plt.close()
+
+    # If BDT eff is too high the fit does not perfom well
+    max_idx = 4
+    masses = np.array(masses[:-max_idx])
+    masses_err = np.array(masses_err[:-max_idx])
+    mass_variances = np.array(mass_variances[:-max_idx])
+    mass_variances_err = np.array(mass_variances_err[:-max_idx])
+
+    # Mass vs. BDT eff
+    fig, ax = plt.subplots()
+    plt.plot(efficiencies[:-max_idx], masses)
+    plt.fill_between(efficiencies[:-max_idx], masses - masses_err, masses + masses_err, alpha = 0.3)
+    plt.title('Fitted mass as a function of BDT efficiency')
+    plt.xlabel('BDT efficiency')
+    plt.ylabel('Fitted mass')
+    ax.minorticks_on()
+    plt.tight_layout()
+    plt.savefig(filename_dict['analysis_path'] + 'results/fitted_mass_vs_DBT_eff.png', dpi=300, facecolor='white')
+    plt.close()
+
+    # Mass variance vs. BDT eff
+    fig, ax = plt.subplots()
+    plt.plot(efficiencies[:-max_idx], mass_variances)
+    plt.fill_between(efficiencies[:-max_idx], mass_variances - mass_variances_err, mass_variances + mass_variances_err, alpha = 0.3)
+    plt.title('Fitted mass variance as a function of BDT efficiency')
+    plt.xlabel('BDT efficiency')
+    plt.ylabel('Fitted mass variance')
+    ax.minorticks_on()
+    plt.tight_layout()
+    plt.savefig(filename_dict['analysis_path'] + 'results/fitted_mass_variance_vs_BDT_eff.png', dpi=300, facecolor='white')
     plt.close()
 
 
