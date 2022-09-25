@@ -17,6 +17,7 @@ from hipe4ml.tree_handler import TreeHandler
 from hipe4ml.analysis_utils import *
 from hipe4ml import plot_utils
 import matplotlib
+import aghast
 
 matplotlib.use('pdf')
 
@@ -371,7 +372,7 @@ def folder_setup(analysis_path = 'TEST'):
 
     if not os.path.exists(analysis_path):
         os.makedirs(analysis_path)
-        os.makedirs(analysis_path + '/results')
+        os.makedirs(analysis_path + '/results/var_distr_vs_BDT_eff')
 
         os.makedirs(analysis_path + '/images/training')
         os.makedirs(analysis_path + '/images/presel_eff')
@@ -463,3 +464,22 @@ def plot_significance(efficiencies, significances, filename_dict, suffix = ''):
     plt.savefig(filename_dict['analysis_path'] + 'results/significance_plot_' + suffix + '.png', dpi = 300, facecolor = 'white')
     plt.close()
 
+def plot_distr_vs_BDT_eff_root(tree_hdl, column, scores, efficiencies, filename_dict, filename, bins=100, range=(0,1), title=''):
+
+    ff = ROOT.TFile(filename_dict['analysis_path']+'results/var_distr_vs_BDT_eff/'+filename+'.root','recreate')
+
+    for score,eff in zip(scores,efficiencies):
+        selected_data_hndl = tree_hdl.query('model_output > ' + str(score))
+        hist = np.histogram(selected_data_hndl[column],bins=bins,range=range)
+        aghast_hist = aghast.from_numpy(hist)
+        root_hist = aghast.to_root(aghast_hist,'Efficiency ' + str(np.round(eff,4)))
+        root_hist.SetTitle(title)
+
+        canvas = ROOT.TCanvas()
+        root_hist.Draw('PE')
+        canvas.Draw('PE SAME')
+
+        canvas.SetName('eff_' + str(eff))
+        canvas.Write()
+
+    ff.Close()
