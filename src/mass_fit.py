@@ -259,6 +259,8 @@ def signal_fitter(hist, efficiency, significance, sig_err): #7.581079e9    8.119
     print('Efficiency', efficiency)
     print('Count {0} +- {1}'.format(count, sigma_s))
     print('Background', b)
+    print('Fitted mass ', fitted_mass, '+-', fitted_mass_err)
+    print('Mass variance', mass_variance, '+-', mass_variance_err)
 
     return count, b, sigma_s, (fitted_mass, fitted_mass_err), (mass_variance, mass_variance_err)
 
@@ -506,7 +508,7 @@ def systematic_estimate(data,scores,efficiencies, presel_eff, filename_dict):
     # Mass vs. BDT eff
     fig, ax = plt.subplots()
     plt.plot(efficiencies[:-max_idx], masses)
-    plt.fill_between(efficiencies[:-max_idx], masses - masses_err, masses + masses_err, alpha = 0.3)
+    #plt.fill_between(efficiencies[:-max_idx], masses - masses_err, masses + masses_err, alpha = 0.3)
     plt.title('Fitted mass as a function of BDT efficiency')
     plt.xlabel('BDT efficiency')
     plt.ylabel('Fitted mass')
@@ -518,7 +520,7 @@ def systematic_estimate(data,scores,efficiencies, presel_eff, filename_dict):
     # Mass variance vs. BDT eff
     fig, ax = plt.subplots()
     plt.plot(efficiencies[:-max_idx], mass_variances)
-    plt.fill_between(efficiencies[:-max_idx], mass_variances - mass_variances_err, mass_variances + mass_variances_err, alpha = 0.3)
+    #plt.fill_between(efficiencies[:-max_idx], mass_variances - mass_variances_err, mass_variances + mass_variances_err, alpha = 0.3)
     plt.title('Fitted mass variance as a function of BDT efficiency')
     plt.xlabel('BDT efficiency')
     plt.ylabel('Fitted mass variance')

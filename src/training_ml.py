@@ -133,8 +133,7 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars, pa
 
     utils.save_data_description(filename_dict, background_ls.get_data_frame(), name = 'Background')
     
-    #background_ls.apply_model_handler(model_hdl)
-    #data.apply_model_handler(model_hdl)
+    
 
     #print(background_ls)
     if flag_dict['plot_comp_of_distr']:
@@ -143,10 +142,13 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars, pa
         utils.plot_distr_comparison(data,background_ls,'data_bckg/',
                                 filename_dict, 'Data', 'Background')
 
+    background_ls.apply_model_handler(model_hdl)
+    data.apply_model_handler(model_hdl)
+    mc_signal.apply_model_handler(model_hdl)
 
-    
     save_data_with_scores(background_ls, analysis_path + '/output_data/bckg_ls_scores')
     save_data_with_scores(data, analysis_path + '/output_data/data_scores')    
+    save_data_with_scores(mc_signal, analysis_path + '/output_data/mc_signal_scores')
 
     save_eff_scores(eff_array, scores, analysis_path + '/output_data', presel_eff)
 

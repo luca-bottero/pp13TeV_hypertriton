@@ -85,6 +85,8 @@ for config_filename in configs:
     print('Background LS loaded\n')
     #background_ls.query('model_output > -5', inplace = True)            ## PARAM!!!!!
     #print('Query on background LS applied\n')
+    mc_signal = train.load_data_with_scores(filename_dict['analysis_path']+ 'output_data/mc_signal_scores.parquet.gzip')
+    print('MC signal loaded\n')
         
 
     if flag_dict['plot_m_mppivert']:
@@ -133,4 +135,7 @@ for config_filename in configs:
     mass_fit.systematic_estimate(data, scores, eff_array, presel_eff,filename_dict)
 
     utils.plot_distr_vs_BDT_eff_root(data, 'chi2', scores, eff_array, filename_dict, 'chi2_data',
+                                        100, (0,16), 'Counts as a function of $\chi^$;$\chi^2$";Counts')
+
+    utils.plot_distr_vs_BDT_eff_root(mc_signal, 'chi2', scores, eff_array, filename_dict, 'chi2_mc_signal',
                                         100, (0,16), 'Counts as a function of $\chi^$;$\chi^2$";Counts')
