@@ -19,7 +19,7 @@ from hipe4ml import plot_utils
 
 #CONFIG
 
-configs = ['/TOF_PID_cut.yaml']
+configs = ['/train_on_sidebands/TOF_PID_cut_SB.yaml']
 
 #config_filename = 'OLD_centrality_0dot1_perc.yaml'
 
@@ -134,6 +134,6 @@ for config_filename in configs:
 
     mass_fit.systematic_estimate(data, scores, eff_array, presel_eff,filename_dict)
 
-    utils.plot_distr_vs_BDT_eff_root([data, mc_signal], 'chi2', scores, eff_array, filename_dict, 'chi2_data',
+    utils.plot_distr_vs_BDT_eff_root([data, mc_signal], 'chi2', scores, eff_array, filename_dict, 'chi2_data_mc',
                                         100, (0,16), r'Counts as a function of #chi^{2};#chi^{2}";Counts')
 
