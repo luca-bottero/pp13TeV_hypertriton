@@ -464,21 +464,55 @@ def plot_significance(efficiencies, significances, filename_dict, suffix = ''):
     plt.savefig(filename_dict['analysis_path'] + 'results/significance_plot_' + suffix + '.png', dpi = 300, facecolor = 'white')
     plt.close()
 
-def plot_distr_vs_BDT_eff_root(tree_hdl, column, scores, efficiencies, filename_dict, filename, bins=100, range=(0,1), title=''):
+def plot_distr_vs_BDT_eff_root(tree_hdls, column, scores, efficiencies, filename_dict, 
+                                filename, bins=100, range=(0,1), title='', normalized = True):
 
     ff = ROOT.TFile(filename_dict['analysis_path']+'results/var_distr_vs_BDT_eff/'+filename+'.root','recreate')
 
+    if not isinstance(tree_hdls, list):
+        raise TypeError('tree_hdls must be a list of tree_handler')
+
     for score,eff in zip(scores,efficiencies):
-        selected_data_hndl = tree_hdl.query('model_output > ' + str(score))
+        selected_data_hndl = tree_hdls[0].query('model_output > ' + str(score))
+        
         hist = np.histogram(selected_data_hndl[column],bins=bins,range=range)
+        
         aghast_hist = aghast.from_numpy(hist)
-        root_hist = aghast.to_root(aghast_hist,'Efficiency ' + str(np.round(eff,4)))
+        root_hist = aghast.to_root(aghast_hist,'Data: Efficiency ' + str(np.round(eff,4)))
         root_hist.SetTitle(title)
+        root_hist.SetLineColor(2)
+
+        if normalized:
+            root_hist.Scale(1./root_hist.Integral(), "width")
+
+        if len(tree_hdls) == 2:
+            selected_data_hndl = tree_hdls[1].query('model_output > ' + str(score))
+        
+            hist = np.histogram(selected_data_hndl[column],bins=bins,range=range)
+            
+            aghast_hist = aghast.from_numpy(hist)
+            root_hist_2 = aghast.to_root(aghast_hist,'MC: Efficiency ' + str(np.round(eff,4)))
+
+            if normalized:
+                root_hist_2.Scale(1./root_hist_2.Integral(), "width")
 
         canvas = ROOT.TCanvas()
         root_hist.Draw('PE')
         canvas.Draw('PE SAME')
 
+        root_hist_2.Draw('PE SAME')
+        canvas.Draw('PE SAME')
+
+        legend = ROOT.TLegend(0.7,0.7,0.9,0.9) 
+        legend.SetBorderSize(0)
+        legend.SetFillColor(0)
+        legend.AddEntry(root_hist, "Data")
+        legend.AddEntry(root_hist_2, "MC")
+        legend.Draw()
+
+        ROOT.gStyle.SetOptStat(0)
+        ROOT.gStyle.SetOptFit(0)
+        #root_hist_2.SetOptStat(0)
         canvas.SetName('eff_' + str(eff))
         canvas.Write()
 

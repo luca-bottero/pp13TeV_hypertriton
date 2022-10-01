@@ -134,8 +134,6 @@ for config_filename in configs:
 
     mass_fit.systematic_estimate(data, scores, eff_array, presel_eff,filename_dict)
 
-    utils.plot_distr_vs_BDT_eff_root(data, 'chi2', scores, eff_array, filename_dict, 'chi2_data',
+    utils.plot_distr_vs_BDT_eff_root([data, mc_signal], 'chi2', scores, eff_array, filename_dict, 'chi2_data',
                                         100, (0,16), r'Counts as a function of #chi^{2};#chi^{2}";Counts')
 
-    utils.plot_distr_vs_BDT_eff_root(mc_signal, 'chi2', scores, eff_array, filename_dict, 'chi2_mc_signal',
-                                        100, (0,16), r'Counts as a function of #chi^{2};#chi^{2}";Counts')
