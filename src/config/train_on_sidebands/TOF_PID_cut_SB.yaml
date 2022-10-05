@@ -13,9 +13,11 @@ flag_dict :
   plot_presel_eff     : True
   plot_scatter        : False
   plot_optim          : True
-  root_plots          : False
+  root_plots          : True
   n_jobs              : 64
   timeout             : 1200
+  subtract_bkg        : True
+  only_gaus           : True
 
 filename_dict :
   data_path           : '../data/TOF_PID_cut/'
@@ -32,7 +34,7 @@ filename_dict :
 presel_dict :
   MC_presel           : 'rej_accept > 0 and pt > 1.5'    
   appl_bckg_presel    : 'centrality < 1. and pt > 1.5'
-  train_bckg_presel   : '(m < 2.75 or m > 3.01) and centrality < 1. and pt > 1.5'
+  train_bckg_presel   : 'm > 3.04 and centrality < 1. and pt > 1.5'   # or m > 3.01
   data_presel         : 'centrality < 1. and pt > 1.5'
   bckg_presel_vars    : ['ct', 'pt']
   data_presel_vars    : ['ct', 'pt']

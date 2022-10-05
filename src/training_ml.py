@@ -81,6 +81,7 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars, pa
 
     mc_signal.apply_preselections(presel_dict['MC_presel'])
     
+    
 
     #Scatter plot of the MC signal
     if flag_dict['plot_scatter']:
@@ -95,13 +96,17 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars, pa
     background_ls.shuffle_data_frame(size = min(background_ls.get_n_cand(), mc_signal.get_n_cand() * 4))
     print('Done\n')
 
+
+    print('Background candidates number', background_ls.get_n_cand())
+        
+
     #Scatter plot of background
     if flag_dict['plot_scatter']:
         utils.plot_scatter(background_ls, filename_dict, 'bckg', train_vars)
 
     train_test_data, y_pred_test, model_hdl = utils.train_xgboost_model(mc_signal, background_ls, filename_dict, params, 
                                                                             params_range, flag_dict, train_vars)
-        
+
     print('Saving model handler')
     model_hdl.dump_model_handler(analysis_path + '/model/model_hdl')
     print('Model handler saved\n')
@@ -134,7 +139,6 @@ def train_model(filename_dict, presel_dict, flag_dict, eff_array, train_vars, pa
     utils.save_data_description(filename_dict, background_ls.get_data_frame(), name = 'Background')
     
     
-
     #print(background_ls)
     if flag_dict['plot_comp_of_distr']:
         utils.plot_distr_comparison(mc_signal,background_ls,'signal_bckg/', 

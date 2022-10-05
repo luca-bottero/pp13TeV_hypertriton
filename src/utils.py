@@ -465,12 +465,15 @@ def plot_significance(efficiencies, significances, filename_dict, suffix = ''):
     plt.close()
 
 def plot_distr_vs_BDT_eff_root(tree_hdls, column, scores, efficiencies, filename_dict, 
-                                filename, bins=100, range=(0,1), title='', normalized = True):
+                                filename, bins=100, range=(0,1), title='', normalized=True, kolmogorov=False):
 
     ff = ROOT.TFile(filename_dict['analysis_path']+'results/var_distr_vs_BDT_eff/'+filename+'.root','recreate')
 
     if not isinstance(tree_hdls, list):
         raise TypeError('tree_hdls must be a list of tree_handler')
+
+    if kolmogorov:
+        k_test_res = []
 
     for score,eff in zip(scores,efficiencies):
         selected_data_hndl = tree_hdls[0].query('model_output > ' + str(score))
@@ -496,6 +499,11 @@ def plot_distr_vs_BDT_eff_root(tree_hdls, column, scores, efficiencies, filename
             if normalized:
                 root_hist_2.Scale(1./root_hist_2.Integral(), "width")
 
+            if kolmogorov:
+                k_test = root_hist.KolmogorovTest(root_hist_2)
+                print('Kolmogorov compatibility test:', k_test)
+                k_test_res.append(k_test)
+
         canvas = ROOT.TCanvas()
         root_hist.Draw('PE')
         canvas.Draw('PE SAME')
@@ -507,7 +515,7 @@ def plot_distr_vs_BDT_eff_root(tree_hdls, column, scores, efficiencies, filename
         legend.SetBorderSize(0)
         legend.SetFillColor(0)
         legend.AddEntry(root_hist, "Data")
-        legend.AddEntry(root_hist_2, "MC")
+        legend.AddEntry(root_hist_2, "LS")
         legend.Draw()
 
         ROOT.gStyle.SetOptStat(0)
@@ -517,3 +525,13 @@ def plot_distr_vs_BDT_eff_root(tree_hdls, column, scores, efficiencies, filename
         canvas.Write()
 
     ff.Close()
+
+    if kolmogorov:
+        plt.close()
+        plt.plot(efficiencies, k_test_res)
+        plt.title('Kolmogorov Test probability')
+        plt.ylabel('P')
+        plt.xlabel('BDT_eff')
+        plt.savefig(filename_dict['analysis_path']+'results/var_distr_vs_BDT_eff/'+filename+'_KOLMOGOROV.png',
+                        facecolor = 'white', dpi=300)
+        plt.close()

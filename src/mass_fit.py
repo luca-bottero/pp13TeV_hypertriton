@@ -20,7 +20,9 @@ from array import array
 
 def normalize_ls(data_counts, ls_counts, bins):
     bin_centers = 0.5 * (bins[1:] + bins[:-1])
-    side_region = np.logical_or(bin_centers<2.992-2*0.0025, bin_centers>2.992+2*0.0025)
+    # side_region = np.logical_or(bin_centers<2.992-2*0.0025, bin_centers>2.992+2*0.0025)
+    side_region = bin_centers>3.01
+    print("NORMALISING LS")
     
     side_data_counts = np.sum(data_counts[side_region])
     side_ls_counts = np.sum(ls_counts[side_region])
@@ -127,9 +129,15 @@ def mass_fitter(hist, score, efficiency, filename_dict, presel_eff, N_ev = 900e6
     return s, sigma_s, b, significance
 
 
-def signal_fitter(hist, efficiency, significance, sig_err): #7.581079e9    8.119086e9 869085971
+def signal_fitter(hist, efficiency, significance, sig_err, bkg_hist=None, only_gaus=False): #7.581079e9    8.119086e9 869085971
     aghast_hist = aghast.from_numpy(hist)
     root_hist = aghast.to_root(aghast_hist,'Efficiency ' + str(np.round(efficiency,4)))
+
+    if bkg_hist is not None:
+        aghast_hist = aghast.from_numpy(bkg_hist)
+        bkg_hist = aghast.to_root(aghast_hist, 'Efficiency ' + str(np.round(efficiency,4)))
+
+        root_hist.Add(bkg_hist, -1)
 
     #root_hist = h1_invmass(hist[0], name = 'eff_' + str(np.round(efficiency,4)), bins = 34)
 
@@ -142,8 +150,6 @@ def signal_fitter(hist, efficiency, significance, sig_err): #7.581079e9    8.119
     gaus = ROOT.TF1('gaus','gaus',2.96,3.04)
     bkg = ROOT.TF1('bkg','[0]/(1 + TMath::Exp(-[1]*(x-[2]))) + [3]',2.96,3.04)
     total = ROOT.TF1('total','gaus(0) + [3]/(1 + TMath::Exp(-[4]*(x-[5]))) + [6]',2.96,3.04)
-
-
     bkg.SetParLimits(3, 0., 5.)
     bkg.SetParameter(0, 15)
     bkg.SetParLimits(2, 2.99, 3.0)
@@ -155,6 +161,10 @@ def signal_fitter(hist, efficiency, significance, sig_err): #7.581079e9    8.119
     total.SetParLimits(5, 2.99, 3.0)
     total.SetParLimits(4, 10., 500.)
 
+    '''gaus.SetParLimits(0, 0., 30.)
+    gaus.SetParLimits(1, 10., 500.)
+    gaus.SetParLimits(2, 2.99, 3.0)
+    gaus.SetParLimits(3, 0., 5.)'''
    
 
     '''total.SetParameter(3, 2.992)
@@ -172,7 +182,8 @@ def signal_fitter(hist, efficiency, significance, sig_err): #7.581079e9    8.119
     bkg.SetLineColor( ROOT.kRed )
     total.SetLineColor( ROOT.kBlue )
 
-    gaus.SetLineStyle(7)   #7 = dotted
+    if not only_gaus:
+        gaus.SetLineStyle(7)   #7 = dotted
     #bkg.SetLineStyle(7)
 
     m = 2.9912
@@ -225,7 +236,12 @@ def signal_fitter(hist, efficiency, significance, sig_err): #7.581079e9    8.119
 
     #gaus.Draw('SAME')
     #bkg.Draw('SAME')
-    total.Draw('SAME')
+
+    if only_gaus:
+        gaus.SetLineColor( ROOT.kBlue )
+        gaus.Draw('SAME')
+    else:
+        total.Draw('SAME')
 
     root_hist.SetStats(0)
 
@@ -270,7 +286,7 @@ def data_ls_comp_plots(data, ls, scores, efficiencies, filename_dict, flag_dict)
     ROOT.gROOT.LoadMacro("cmb_fit_erf.C")
     from ROOT import cmb_fit_exp, cmb_fit_erf
 
-    n_bins = 80     #PARAM !!!
+    n_bins = 36     #PARAM !!!
 
     ff = ROOT.TFile(filename_dict['analysis_path'] + 'results/data_ls.root','recreate')
 
@@ -310,6 +326,9 @@ def data_ls_comp_plots(data, ls, scores, efficiencies, filename_dict, flag_dict)
 
         root_hist_ls = h1_invmass(np.round(ls_counts), name = 'eff_' + str(np.round(efficiency,4)), bins = n_bins)
         root_hist_ls_erf = h1_invmass(np.round(ls_counts), name = 'eff_erf_' + str(np.round(efficiency,4)), bins = n_bins)
+
+        if flag_dict['subtract_bkg']:
+            root_hist_data = root_hist_data - root_hist_ls
 
         root_hist_data.SetTitle('Counts as a function of mass;m [GeV/c^{2}];Counts')
 
@@ -354,9 +373,9 @@ def data_ls_comp_plots(data, ls, scores, efficiencies, filename_dict, flag_dict)
 
     print(sigs_erf)
 
-    utils.plot_significance(efficiencies, sigs_erf, filename_dict, 'erf')
+    #utils.plot_significance(efficiencies, sigs_erf, filename_dict, 'erf')
 
-def systematic_estimate(data,scores,efficiencies, presel_eff, filename_dict):
+def systematic_estimate(data, bkg_hdl, scores, efficiencies, presel_eff, filename_dict, flag_dict, simult = False):
 
     s_arr = []
     sigma_s_arr = []
@@ -367,7 +386,11 @@ def systematic_estimate(data,scores,efficiencies, presel_eff, filename_dict):
         selected_data_hndl = data.query('model_output > ' + str(score))
         #hist = plot_utils.plot_distr(selected_data_hndl, column='m', bins=34, colors='orange', density=False,fill=True, range=[2.96,3.04])
         hist = np.histogram(selected_data_hndl['m'],bins=36,range=(2.96,3.04))
-        s, sigma_s, b, significance = mass_fitter(hist=hist ,score=score, efficiency=efficiencies[i], presel_eff=presel_eff, filename_dict=filename_dict)
+        if not simult:
+            s, sigma_s, b, significance = mass_fitter(hist=hist ,score=score, efficiency=efficiencies[i], 
+                                                        presel_eff=presel_eff, filename_dict=filename_dict)
+        else:
+            s, sigma_s, b; significance = 1,1
         s_arr.append(s)
         sigma_s_arr.append(sigma_s)
         b_arr.append(b)
@@ -436,7 +459,16 @@ def systematic_estimate(data,scores,efficiencies, presel_eff, filename_dict):
         selected_data_hdl = data.query('model_output > ' + str(scores[i]))
         #hist = plot_utils.plot_distr(selected_data_hndl, column='m', bins=34, colors='orange', density=False,fill=True, range=[2.96,3.04])
         hist = np.histogram(selected_data_hdl['m'], bins=36, range=(2.96,3.04))
-        count, bkg, sigma_s,fitted_mass, mass_variance = signal_fitter(hist=hist, efficiency=efficiencies[i], significance=sigs[i], sig_err=sigs_err[i])
+        
+        if flag_dict['subtract_bkg']:
+            selected_bkg_hdl = bkg_hdl.query('model_output > ' + str(scores[i]))
+            bkg_hist = np.histogram(selected_bkg_hdl['m'], bins=36, range=(2.96,3.04))
+            count, bkg, sigma_s, fitted_mass, mass_variance = signal_fitter(hist=hist, bkg_hist=bkg_hist, efficiency=efficiencies[i], 
+                                                                            significance=sigs[i], sig_err=sigs_err[i], only_gaus=flag_dict['only_gaus'])
+        else:
+            count, bkg, sigma_s, fitted_mass, mass_variance = signal_fitter(hist=hist, efficiency=efficiencies[i], 
+                                                                            significance=sigs[i], sig_err=sigs_err[i])
+
         counts.append(count)
         bkgs.append(bkg)
         sigma_s_arr.append(sigma_s)

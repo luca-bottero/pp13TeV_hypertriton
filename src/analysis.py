@@ -132,8 +132,15 @@ for config_filename in configs:
 
         mass_fit.data_ls_comp_plots(data, background_ls, scores, eff_array, filename_dict, flag_dict)
 
-    mass_fit.systematic_estimate(data, scores, eff_array, presel_eff,filename_dict)
+    mass_fit.systematic_estimate(data, background_ls, scores, eff_array, presel_eff, filename_dict, flag_dict)
 
     utils.plot_distr_vs_BDT_eff_root([data, mc_signal], 'chi2', scores, eff_array, filename_dict, 'chi2_data_mc',
                                         100, (0,16), r'Counts as a function of #chi^{2};#chi^{2}";Counts')
 
+    utils.plot_distr_vs_BDT_eff_root([data.query('(m > 2.9912-0.002) and (m < 2.9912+0.002)'), 
+                                        background_ls.query('(m > 2.9912-0.002) and (m < 2.9912+0.002)')], 
+                                        'chi2', scores, eff_array, filename_dict, 'chi2_data_ls_mass_window',
+                                        100, (0,16), r'Counts as a function of #chi^{2}  for m = 2.9912 #\pm 0.002 #GeV/c^2;#chi^{2}";Counts', 
+                                        normalized = False, kolmogorov = True)
+
+ 
