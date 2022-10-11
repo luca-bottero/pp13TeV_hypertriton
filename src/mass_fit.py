@@ -129,7 +129,7 @@ def mass_fitter(hist, score, efficiency, filename_dict, presel_eff, N_ev = 900e6
     return s, sigma_s, b, significance
 
 
-def signal_fitter(hist, efficiency, significance, sig_err, bkg_hist=None, only_gaus=False): #7.581079e9    8.119086e9 869085971
+def signal_fitter(hist, efficiency, significance, sig_err, bkg_hist=None, only_gaus=False, method='fit'): #7.581079e9    8.119086e9 869085971
     aghast_hist = aghast.from_numpy(hist)
     root_hist = aghast.to_root(aghast_hist,'Efficiency ' + str(np.round(efficiency,4)))
 
@@ -245,9 +245,11 @@ def signal_fitter(hist, efficiency, significance, sig_err, bkg_hist=None, only_g
 
     root_hist.SetStats(0)
 
-    count = root_hist.GetEntries()
+    if method == 'bins':
+        count = sum(original_bin_contents)
+    elif method == 'fit':
+        count = gaus.Integral(m - d_m, m + d_m) / root_hist.GetBinWidth(1)
 
-    count = gaus.Integral(m - d_m, m + d_m) / root_hist.GetBinWidth(1)
     b = bkg.Integral(m - d_m, m + d_m) / root_hist.GetBinWidth(1)
 
     measured_significance = count/np.sqrt(count + b)
@@ -453,6 +455,8 @@ def systematic_estimate(data, bkg_hdl, scores, efficiencies, presel_eff, filenam
     mass_variances = []
     mass_variances_err = []
 
+    # Mass fit
+
     ff = ROOT.TFile(filename_dict['analysis_path'] + 'results/mass_fit.root','recreate')
 
     for i in range(len(efficiencies)):
@@ -486,7 +490,6 @@ def systematic_estimate(data, bkg_hdl, scores, efficiencies, presel_eff, filenam
 
 
     idx_max = np.argwhere(efficiencies == 0.8)[0,0]
-
 
     # Signal/BDT_eff vs. BDT_eff:
     plt.close()
@@ -560,8 +563,50 @@ def systematic_estimate(data, bkg_hdl, scores, efficiencies, presel_eff, filenam
     plt.tight_layout()
     plt.savefig(filename_dict['analysis_path'] + 'results/fitted_mass_variance_vs_BDT_eff.png', dpi=300, facecolor='white')
     plt.close()
+    
+    counts_fit = []
+    counts_bin = []
+
+    for i in range(len(efficiencies)):
+        selected_data_hdl = data.query('model_output > ' + str(scores[i]))
+        #hist = plot_utils.plot_distr(selected_data_hndl, column='m', bins=34, colors='orange', density=False,fill=True, range=[2.96,3.04])
+
+        selected_bkg_hdl = bkg_hdl.query('model_output > ' + str(scores[i]))
+        bkg_hist = np.histogram(selected_bkg_hdl['m'], bins=36, range=(2.96,3.04))
+
+        count, _, _, _, _, = signal_fitter(hist=hist, bkg_hist=bkg_hist, efficiency=efficiencies[i], 
+                                             significance=sigs[i], sig_err=sigs_err[i], only_gaus=flag_dict['only_gaus'], method='fit')
+        counts_fit.append(count)        
+
+        
+        count, _, _, _, _= signal_fitter(hist=hist, bkg_hist=bkg_hist, efficiency=efficiencies[i], 
+                                             significance=sigs[i], sig_err=sigs_err[i], only_gaus=flag_dict['only_gaus'], method='bins')
+        counts_bin.append(count)
+
+    counts_fit = np.array(counts_fit)
+    counts_bin = np.array(counts_bin)
+        
+    # Yield vs. BDT eff with fit
+    fig, ax = plt.subplots()
+    plt.title('Counts from fit')
+    plt.xlabel('BDT_eff')
+    plt.ylabel('Yield')
+    ax.minorticks_on()
+    plt.plot(efficiencies, 0.25*counts_fit/900e6)       # factor for at denominator is 2 (matter+antimatter) * 2 (rapidity -1 to 1 rescaled)
+    plt.savefig(filename_dict['analysis_path'] + 'results/yield_vs_BDT_eff_fit.png', dpi=300, facecolor='white')
+
+    # Yield vs. BDT eff with bin
+    fig, ax = plt.subplots()
+    plt.title('Counts from bin')
+    plt.xlabel('BDT_eff')
+    plt.ylabel('Yield')
+    ax.minorticks_on()
+    plt.plot(efficiencies, 0.25*counts_bin/900e6)       # factor for at denominator is 2 (matter+antimatter) * 2 (rapidity -1 to 1 rescaled)
+    plt.savefig(filename_dict['analysis_path'] + 'results/yield_vs_BDT_eff_bin.png', dpi=300, facecolor='white')
+
+
+    
 
 
 
 
-#%%

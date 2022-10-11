@@ -500,7 +500,7 @@ def plot_distr_vs_BDT_eff_root(tree_hdls, column, scores, efficiencies, filename
                 root_hist_2.Scale(1./root_hist_2.Integral(), "width")
 
             if kolmogorov:
-                k_test = root_hist.KolmogorovTest(root_hist_2)
+                k_test = root_hist.KolmogorovTest(root_hist_2, 'X')
                 print('Kolmogorov compatibility test:', k_test)
                 k_test_res.append(k_test)
 
