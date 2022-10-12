@@ -134,6 +134,7 @@ def signal_fitter(hist, efficiency, significance, sig_err, bkg_hist=None, only_g
     root_hist = aghast.to_root(aghast_hist,'Efficiency ' + str(np.round(efficiency,4)))
 
     if bkg_hist is not None:
+        # If a background hist is passed it is subtracted from the main one
         aghast_hist = aghast.from_numpy(bkg_hist)
         bkg_hist = aghast.to_root(aghast_hist, 'Efficiency ' + str(np.round(efficiency,4)))
 
@@ -166,7 +167,6 @@ def signal_fitter(hist, efficiency, significance, sig_err, bkg_hist=None, only_g
     gaus.SetParLimits(2, 2.99, 3.0)
     gaus.SetParLimits(3, 0., 5.)'''
    
-
     '''total.SetParameter(3, 2.992)
     total.SetParLimits(3, 2.99, 2.995)
     total.SetParameter(2, 100)  #26
@@ -579,7 +579,7 @@ def systematic_estimate(data, bkg_hdl, scores, efficiencies, presel_eff, filenam
         counts_fit.append(count)        
 
         
-        count, _, _, _, _= signal_fitter(hist=hist, bkg_hist=bkg_hist, efficiency=efficiencies[i], 
+        count, _, _, _, _, = signal_fitter(hist=hist, bkg_hist=bkg_hist, efficiency=efficiencies[i], 
                                              significance=sigs[i], sig_err=sigs_err[i], only_gaus=flag_dict['only_gaus'], method='bins')
         counts_bin.append(count)
 
@@ -592,7 +592,7 @@ def systematic_estimate(data, bkg_hdl, scores, efficiencies, presel_eff, filenam
     plt.xlabel('BDT_eff')
     plt.ylabel('Yield')
     ax.minorticks_on()
-    plt.plot(efficiencies, 0.25*counts_fit/900e6)       # factor for at denominator is 2 (matter+antimatter) * 2 (rapidity -1 to 1 rescaled)
+    plt.plot(efficiencies, 0.25*counts_fit/900e6/0.4)       # factor 4 at denominator is 2 (matter+antimatter) * 2 (rapidity -1 to 1 rescaled)
     plt.savefig(filename_dict['analysis_path'] + 'results/yield_vs_BDT_eff_fit.png', dpi=300, facecolor='white')
 
     # Yield vs. BDT eff with bin
@@ -601,8 +601,18 @@ def systematic_estimate(data, bkg_hdl, scores, efficiencies, presel_eff, filenam
     plt.xlabel('BDT_eff')
     plt.ylabel('Yield')
     ax.minorticks_on()
-    plt.plot(efficiencies, 0.25*counts_bin/900e6)       # factor for at denominator is 2 (matter+antimatter) * 2 (rapidity -1 to 1 rescaled)
+    plt.plot(efficiencies, 0.25*counts_bin/900e6/0.4)       # factor 4 at denominator is 2 (matter+antimatter) * 2 (rapidity -1 to 1 rescaled)
     plt.savefig(filename_dict['analysis_path'] + 'results/yield_vs_BDT_eff_bin.png', dpi=300, facecolor='white')
+
+    # Yield vs. BDT eff combined
+    fig, ax = plt.subplots()
+    plt.xlabel('BDT_eff')
+    plt.ylabel('Yield')
+    ax.minorticks_on()
+    plt.plot(efficiencies, 0.25*counts_bin/900e6/0.4, label = 'Bin')
+    plt.plot(efficiencies, 0.25*counts_fit/900e6/0.4, label = 'Fit')
+    plt.legend()
+    plt.savefig(filename_dict['analysis_path'] + 'results/yield_vs_BDT_eff_both.png', dpi=300, facecolor='white')
 
 
     
