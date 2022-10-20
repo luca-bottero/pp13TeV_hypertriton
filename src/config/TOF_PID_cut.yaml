@@ -4,7 +4,7 @@ flag_dict :
   optimize_bayes      : False
   optimize_optuna     : False
   use_default_param   : False      #If True XGBOOST's default params are used
-  norm_on_sidebands   : False
+  norm_on_sidebands   : True
   #Plots' flags
   plot_comp_of_distr  : False
   plot_m_mppivert     : False
